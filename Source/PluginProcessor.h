@@ -71,6 +71,7 @@ public:
 private:
     MidiQueue queue;
     bool isPlaying;
+    double timeAtProcess;
 
     static BusesProperties getBusesLayout()
     {

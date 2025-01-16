@@ -4,6 +4,13 @@
 
 using namespace juce;
 
+struct MidiEventStats
+{
+    MidiMessage message;
+    double playHeadPosition;
+
+};
+
 class MidiQueue
 {
 public:

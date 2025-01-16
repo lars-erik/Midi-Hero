@@ -141,14 +141,14 @@ void MidiHeroAudioProcessor::process(AudioBuffer<Element>& audio, MidiBuffer& mi
 
     if (const AudioPlayHead* currentPlayHead = getPlayHead())
     {
-        Optional<AudioPlayHead::PositionInfo> posInfo = currentPlayHead->getPosition();
-        if (posInfo.hasValue())
+        if (Optional<AudioPlayHead::PositionInfo> posInfo = currentPlayHead->getPosition())
         {
             const AudioPlayHead::PositionInfo value = *posInfo;
+            timeAtProcess = *value.getTimeInSeconds();
             if (value.getIsPlaying() != isPlaying)
             {
                 isPlaying = value.getIsPlaying();
-                queue.push(MidiMessage(isPlaying ? 0xfa : 0xfc, 0));
+                queue.push(MidiMessage(isPlaying ? 0xfa : 0xfc, 0, 0, timeAtProcess));
             }
         }
     }
@@ -187,6 +187,13 @@ void MidiHeroAudioProcessor::timerCallback()
 {
     std::vector<MidiMessage> messages;
     queue.pop(std::back_inserter(messages));
+    for(MidiMessage& msg : messages)
+    {
+        if (!msg.isMidiStart() && !msg.isMidiStop())
+        {
+            msg.setTimeStamp(timeAtProcess);
+        }
+    }
     model.addMessages(messages.begin(), messages.end());
 }
 
