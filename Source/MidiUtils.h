@@ -4,37 +4,44 @@
 
 using namespace juce;
 
-struct MidiEventStats
+struct TimedMidiMessage
 {
     MidiMessage message;
-    double playHeadPosition;
+    AudioPlayHead::PositionInfo position;
 
+    TimedMidiMessage() = default;
+
+    TimedMidiMessage(MidiMessage message, const AudioPlayHead::PositionInfo& position)
+        : message(std::move(message)),
+          position(position)
+    {
+    }
 };
 
 class MidiQueue
 {
 public:
-    void push(const MidiBuffer& buffer)
+    void push(const MidiBuffer& buffer, const AudioPlayHead::PositionInfo& position)
     {
         for (const auto metadata : buffer)
-            fifo.write(1).forEach([&](int dest) { messages[(size_t)dest] = metadata.getMessage(); });
+            fifo.write(1).forEach([&](int dest) { messages[(size_t)dest] = TimedMidiMessage(metadata.getMessage(), position); });
     }
 
-    void push(const MidiMessage& message)
+    void push(const MidiMessage& message, const AudioPlayHead::PositionInfo& position)
     {
-        fifo.write(1).forEach([&](int dest) { messages[(size_t)dest] = message; });
+        fifo.write(1).forEach([&](int dest) { messages[(size_t)dest] = TimedMidiMessage(message, position); });
     }
 
     template <typename OutputIt>
     void pop(OutputIt out)
     {
-        fifo.read(fifo.getNumReady()).forEach([&](int source) { *out++ = messages[(size_t)source]; });
+        fifo.read(fifo.getNumReady()).forEach([&](int source) { *out++ = messages[static_cast<size_t>(source)]; });
     }
 
 private:
     static constexpr auto queueSize = 1 << 14;
     AbstractFifo fifo{ queueSize };
-    std::vector<MidiMessage> messages = std::vector<MidiMessage>(queueSize);
+    std::vector<TimedMidiMessage> messages = std::vector<TimedMidiMessage>(queueSize);
 };
 
 // Stores the last N messages. Safe to access from the message thread only.
@@ -56,7 +63,7 @@ public:
         NullCheckedInvocation::invoke(onChange);
     }
 
-    void addMessage(const MidiMessage& message)
+    void addMessage(const TimedMidiMessage& message)
     {
         messages.push_back(message);
     }
@@ -68,7 +75,7 @@ public:
         NullCheckedInvocation::invoke(onChange);
     }
 
-    const MidiMessage& operator[] (size_t ind) const { return messages[ind]; }
+    const TimedMidiMessage& operator[] (size_t ind) const { return messages[ind]; }
 
     size_t size() const { return messages.size(); }
 
@@ -76,7 +83,7 @@ public:
 
 private:
     static constexpr auto numToStore = 1000;
-    std::vector<MidiMessage> messages;
+    std::vector<TimedMidiMessage> messages;
 };
 
 //==============================================================================
@@ -90,12 +97,16 @@ public:
         addAndMakeVisible(table);
 
         table.setModel(this);
-        table.setClickingTogglesRowSelection(false);
+        //table.setClickingTogglesRowSelection(false);
+        
         table.setHeader([&]
             {
                 auto header = std::make_unique<TableHeaderComponent>();
                 header->addColumn("Message", messageColumn, 200, 30, -1, TableHeaderComponent::notSortable);
-                header->addColumn("Time", timeColumn, 100, 30, -1, TableHeaderComponent::notSortable);
+                header->addColumn("Bar", barColumn, 100, 30, -1, TableHeaderComponent::notSortable);
+                header->addColumn("Timestamp", timeColumn, 100, 30, -1, TableHeaderComponent::notSortable);
+                header->addColumn("PPQ", ppqColumn, 100, 30, -1, TableHeaderComponent::notSortable);
+                header->addColumn("Adjusted", adjustedColumn, 100, 30, -1, TableHeaderComponent::notSortable);
                 header->addColumn("Channel", channelColumn, 100, 30, -1, TableHeaderComponent::notSortable);
                 header->addColumn("Data", dataColumn, 200, 30, -1, TableHeaderComponent::notSortable);
                 return header;
@@ -113,6 +124,9 @@ private:
     {
         messageColumn = 1,
         timeColumn,
+        barColumn,
+        ppqColumn,
+        adjustedColumn,
         channelColumn,
         dataColumn
     };
@@ -132,15 +146,19 @@ private:
         const auto index = (int)messages.size() - 1 - rowNumber;
         const auto message = messages[(size_t)index];
 
+
         return new Label({}, [&]
             {
                 switch (columnId)
                 {
-                case messageColumn: return getEventString(message);
-                case timeColumn:    return String(message.getTimeStamp());
-                case channelColumn: return String(message.getChannel());
-                case dataColumn:    return getDataString(message);
-                default:            break;
+                case messageColumn:  return getEventString(message.message);
+                case timeColumn:     return String(message.message.getTimeStamp());
+                case barColumn:      return String(*message.position.getPpqPositionOfLastBarStart());
+                case ppqColumn:      return String(*message.position.getPpqPosition());
+                case adjustedColumn: return String(message.message.getTimeStamp() / 9600.0 + *message.position.getPpqPosition());
+                case channelColumn:  return String(message.message.getChannel());
+                case dataColumn:     return getDataString(message.message);
+                default:             break;
                 }
 
                 jassertfalse;

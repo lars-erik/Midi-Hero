@@ -17,6 +17,7 @@ MidiHeroAudioProcessorEditor::MidiHeroAudioProcessorEditor (MidiHeroAudioProcess
     addAndMakeVisible(clearButton);
 
     setResizable(true, true);
+    centreWithSize(1024, 768);
     lastUIWidth.referTo(audioProcessor.state.getChildWithName("uiState").getPropertyAsValue("width", nullptr));
     lastUIHeight.referTo(audioProcessor.state.getChildWithName("uiState").getPropertyAsValue("height", nullptr));
     setSize(lastUIWidth.getValue(), lastUIHeight.getValue());

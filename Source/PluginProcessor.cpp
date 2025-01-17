@@ -137,21 +137,32 @@ template <typename Element>
 void MidiHeroAudioProcessor::process(AudioBuffer<Element>& audio, MidiBuffer& midi)
 {
     //audio.clear();
-    queue.push(midi);
 
+    Optional<AudioPlayHead::PositionInfo> posInfo;
     if (const AudioPlayHead* currentPlayHead = getPlayHead())
     {
-        if (Optional<AudioPlayHead::PositionInfo> posInfo = currentPlayHead->getPosition())
+        posInfo = currentPlayHead->getPosition();
+        if (posInfo)
         {
             const AudioPlayHead::PositionInfo value = *posInfo;
             timeAtProcess = *value.getTimeInSeconds();
             if (value.getIsPlaying() != isPlaying)
             {
                 isPlaying = value.getIsPlaying();
-                queue.push(MidiMessage(isPlaying ? 0xfa : 0xfc, 0, 0, timeAtProcess));
+                queue.push(MidiMessage(isPlaying ? 0xfa : 0xfc, 0, 0, timeAtProcess), value);
             }
         }
     }
+
+    if (posInfo)
+    {
+        queue.push(midi, *posInfo);
+    }
+    else
+    {
+        queue.push(midi, AudioPlayHead::PositionInfo());
+    }
+
 
     // Don't think we need this?
     /*
@@ -185,15 +196,8 @@ void MidiHeroAudioProcessor::process(AudioBuffer<Element>& audio, MidiBuffer& mi
 
 void MidiHeroAudioProcessor::timerCallback() 
 {
-    std::vector<MidiMessage> messages;
+    std::vector<TimedMidiMessage> messages;
     queue.pop(std::back_inserter(messages));
-    for(MidiMessage& msg : messages)
-    {
-        if (!msg.isMidiStart() && !msg.isMidiStop())
-        {
-            msg.setTimeStamp(timeAtProcess);
-        }
-    }
     model.addMessages(messages.begin(), messages.end());
 }
 
