@@ -164,7 +164,8 @@ private:
                 case timeColumn:     return String(message.message.getTimeStamp());
                 case barColumn:      return String(message.position.getPpqPositionOfLastBarStart().orFallback(0));
                 case ppqColumn:      return String(message.position.getPpqPosition().orFallback(0));
-                case adjustedColumn: return String(message.message.getTimeStamp() / 9600.0 + message.position.getPpqPosition().orFallback(0));
+                // TODO: Replace with processor currentSampleRate / 2.
+                case adjustedColumn: return String(message.message.getTimeStamp() / 22050 + message.position.getPpqPosition().orFallback(0));
                 case channelColumn:  return String(message.message.getChannel());
                 case dataColumn:     return getDataString(message.message);
                 default:             break;
