@@ -79,6 +79,15 @@ public:
 
     size_t size() const { return messages.size(); }
 
+    // Provide const iterators for read-only access
+    std::vector<TimedMidiMessage>::const_iterator begin() const {
+        return messages.cbegin();
+    }
+
+    std::vector<TimedMidiMessage>::const_iterator end() const {
+        return messages.cend();
+    }
+
     std::function<void()> onChange;
 
 private:
@@ -153,9 +162,9 @@ private:
                 {
                 case messageColumn:  return getEventString(message.message);
                 case timeColumn:     return String(message.message.getTimeStamp());
-                case barColumn:      return String(*message.position.getPpqPositionOfLastBarStart());
-                case ppqColumn:      return String(*message.position.getPpqPosition());
-                case adjustedColumn: return String(message.message.getTimeStamp() / 9600.0 + *message.position.getPpqPosition());
+                case barColumn:      return String(message.position.getPpqPositionOfLastBarStart().orFallback(0));
+                case ppqColumn:      return String(message.position.getPpqPosition().orFallback(0));
+                case adjustedColumn: return String(message.message.getTimeStamp() / 9600.0 + message.position.getPpqPosition().orFallback(0));
                 case channelColumn:  return String(message.message.getChannel());
                 case dataColumn:     return getDataString(message.message);
                 default:             break;
