@@ -1,3 +1,8 @@
+.vs/
 Builds/
 JuceLibraryCode/
 Live/
+Tests/Midi Hero_Tests/x64/
+Tests/Midi Hero_Tests/Midi Hero_Tests/
+
+*.user
