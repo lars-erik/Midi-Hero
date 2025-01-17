@@ -165,6 +165,7 @@ private:
                 case barColumn:      return String(message.position.getPpqPositionOfLastBarStart().orFallback(0));
                 case ppqColumn:      return String(message.position.getPpqPosition().orFallback(0));
                 // TODO: Replace with processor currentSampleRate / 2.
+                // We need to pass currentSampleRate and make the formula timestamp / currentSampleRate * 60 / bpm + ppq position
                 case adjustedColumn: return String(message.message.getTimeStamp() / 22050 + message.position.getPpqPosition().orFallback(0));
                 case channelColumn:  return String(message.message.getChannel());
                 case dataColumn:     return getDataString(message.message);
