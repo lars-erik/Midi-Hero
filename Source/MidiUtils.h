@@ -48,6 +48,26 @@ struct TimedMidiMessage
         return result;
     }
 
+    double getScore(int divisionLevel) const
+    {
+        const int diff = abs(getPpqDiffInMs(divisionLevel));
+        if (diff < 10) return 1;
+        if (diff < 20) return .75;
+        if (diff < 30) return .5;
+        if (diff < 40) return .25;
+        return 0;
+    }
+
+    std::string getScoreName(int divisionLevel) const
+    {
+        const int diff = abs(getPpqDiffInMs(divisionLevel));
+        if (diff < 10) return "Perfect";
+        if (diff < 20) return "Good";
+        if (diff < 30) return "Off";
+        if (diff < 40) return "Bad";
+        return "Audible";
+    }
+
 private:
     static double roundToDecimals(double value, int decimals) {
         double scale = std::pow(10.0, decimals);

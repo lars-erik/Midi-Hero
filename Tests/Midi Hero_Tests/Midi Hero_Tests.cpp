@@ -38,7 +38,9 @@ string buildReport(vector<TimedMidiMessage>& notes, int divisionLevel)
     printColumn(stream, "Position", 10, false);
     printColumn(stream, "Intended", 10, false);
     printColumn(stream, "Diff", 10, false);
-    printColumn(stream, "Data", 10, false);
+    printColumn(stream, "Data", 20, false);
+    printColumn(stream, "Score", 10, false);
+    printColumn(stream, "Judgement", 10, false);
     stream << endl;
 
     for (auto& note : notes)
@@ -47,7 +49,9 @@ string buildReport(vector<TimedMidiMessage>& notes, int divisionLevel)
         printColumn(stream, note.getAdjustedPpqPosition(), 10);
         printColumn(stream, note.getIntendedPpqPosition(divisionLevel), 10);
         printColumn(stream, note.getPpqDiffInMs(divisionLevel), 10);
-        printColumn(stream, MidiTable::getDataString(note.message), 10, false);
+        printColumn(stream, MidiTable::getDataString(note.message), 20, false);
+        printColumn(stream, note.getScore(divisionLevel), 10);
+        printColumn(stream, note.getScoreName(divisionLevel), 10, false);
         stream << endl;
     }
 
