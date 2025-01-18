@@ -5,6 +5,8 @@
 #include "resource.h"
 #include "TestData.h"
 
+#include <numeric>
+
 using namespace juce;
 using namespace std;
 
@@ -61,13 +63,26 @@ string buildReport(vector<TimedMidiMessage>& notes, int divisionLevel)
 TEST_CASE("Note calculations for quantized play")
 {
     constexpr int DivisionLevel = 8;
-
     auto model = getTestData(IDR_QUANTIZED_CSV_FILE);
     auto notes = filterMessages(model, [&](const TimedMidiMessage& msg) { return msg.message.isNoteOn(); });
 
     string report = buildReport(notes, DivisionLevel);
 
     ApprovalTests::Approvals::verify(report);
+}
+
+TEST_CASE("Quantized score is 100%")
+{
+    constexpr int DivisionLevel = 8;
+    auto model = getTestData(IDR_QUANTIZED_CSV_FILE);
+    auto notes = filterMessages(model, [&](const TimedMidiMessage& msg) { return msg.message.isNoteOn(); });
+
+    vector<double> scores;
+    transform(notes.begin(), notes.end(), back_inserter(scores), [](const TimedMidiMessage& m) { return m.getScore(DivisionLevel); });
+    double score = accumulate(scores.begin(), scores.end(), 0.0);
+    double totalScore = score / notes.size();
+
+    REQUIRE(totalScore == 1);
 }
 
 TEST_CASE("Note calculations for off play")
@@ -80,4 +95,19 @@ TEST_CASE("Note calculations for off play")
     string report = buildReport(notes, DivisionLevel);
 
     ApprovalTests::Approvals::verify(report);
+}
+
+TEST_CASE("Off score is 60%")
+{
+    constexpr int DivisionLevel = 4;
+    auto model = getTestData(IDR_OFF_CSV_FILE);
+    auto notes = filterMessages(model, [&](const TimedMidiMessage& msg) { return msg.message.isNoteOn(); });
+
+    vector<double> scores;
+    transform(notes.begin(), notes.end(), back_inserter(scores), [](const TimedMidiMessage& m) { return m.getScore(DivisionLevel); });
+    double score = accumulate(scores.begin(), scores.end(), 0.0);
+    double totalScore = round(score / notes.size() * 100) / 100;
+
+    INFO("Has score " << score << " out of " << notes.size() << " yielding total score " << totalScore);
+    REQUIRE(approx(totalScore, .6));
 }
