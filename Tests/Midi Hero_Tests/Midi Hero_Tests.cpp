@@ -24,7 +24,15 @@ TEST_CASE("Calculates PPQ for quantized notes", "[basic]")
 {
     auto model = getTestData();
     std::vector<TimedMidiMessage> notes;
-    std::copy_if(model.begin(), model.end(), std::back_inserter(notes), [&](const TimedMidiMessage& msg) { return msg.message.isNoteOn(); });
+    std::copy_if(
+        model.begin(), 
+        model.end(), 
+        std::back_inserter(notes), 
+        [&](const TimedMidiMessage& msg)
+        {
+            return msg.message.isNoteOn();
+        }
+    );
 
     REQUIRE(notes.size() == 16);
     REQUIRE(notes.at(0).getAdjustedPpqPosition() == 0);
@@ -45,3 +53,20 @@ TEST_CASE("Calculates PPQ for quantized notes", "[basic]")
     REQUIRE(notes.at(15).getAdjustedPpqPosition() == 7.375);
 }
 
+bool approx(double a, double b, double tolerance = 1e-6) {
+    return std::fabs(a - b) <= tolerance;
+}
+
+double predictClosestPosition(double inputPosition, int divisionLevel) {
+    double step = 1.0 / divisionLevel; // Grid step size
+    double nearest = std::round(inputPosition / step) * step;
+    return nearest;
+}
+
+TEST_CASE("Quantization Prediction") {
+    REQUIRE(approx(predictClosestPosition(0.49, 2), 0.5));  // 8ths
+    REQUIRE(approx(predictClosestPosition(0.26, 4), 0.25)); // 16ths
+    REQUIRE(approx(predictClosestPosition(0.13, 8), 0.125)); // 32nds
+    REQUIRE(approx(predictClosestPosition(0.87, 4), 0.75)); // 16ths
+    REQUIRE(approx(predictClosestPosition(1.01, 2), 1.0));  // Out of range
+}
