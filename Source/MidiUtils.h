@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iterator>
+#include <cmath>
 
 using namespace juce;
 
@@ -8,28 +9,45 @@ struct TimedMidiMessage
 {
     MidiMessage message;
     AudioPlayHead::PositionInfo position;
+    double sampleRate;
 
     TimedMidiMessage() = default;
 
-    TimedMidiMessage(MidiMessage message, const AudioPlayHead::PositionInfo& position)
+    TimedMidiMessage(MidiMessage message, const AudioPlayHead::PositionInfo& position, const double sampleRate)
         : message(std::move(message)),
-          position(position)
+          position(position),
+          sampleRate(sampleRate)
     {
     }
+
+    double getAdjustedPpqPosition() const
+    {
+        double samplesPerPpq = sampleRate * 60 / position.getBpm().orFallback(60);
+        double adjustedPpqPosition = message.getTimeStamp() / samplesPerPpq + position.getPpqPosition().orFallback(0);
+        double result = roundToDecimals(adjustedPpqPosition, 3);
+        return result;
+    }
+
+private:
+    static double roundToDecimals(double value, int decimals) {
+        double scale = std::pow(10.0, decimals);
+        return std::round(value * scale) / scale;
+    }
+
 };
 
 class MidiQueue
 {
 public:
-    void push(const MidiBuffer& buffer, const AudioPlayHead::PositionInfo& position)
+    void push(const MidiBuffer& buffer, const AudioPlayHead::PositionInfo& position, const double sampleRate)
     {
         for (const auto metadata : buffer)
-            fifo.write(1).forEach([&](int dest) { messages[(size_t)dest] = TimedMidiMessage(metadata.getMessage(), position); });
+            fifo.write(1).forEach([&](int dest) { messages[(size_t)dest] = TimedMidiMessage(metadata.getMessage(), position, sampleRate); });
     }
 
-    void push(const MidiMessage& message, const AudioPlayHead::PositionInfo& position)
+    void push(const MidiMessage& message, const AudioPlayHead::PositionInfo& position, const double sampleRate)
     {
-        fifo.write(1).forEach([&](int dest) { messages[(size_t)dest] = TimedMidiMessage(message, position); });
+        fifo.write(1).forEach([&](int dest) { messages[(size_t)dest] = TimedMidiMessage(message, position, sampleRate); });
     }
 
     template <typename OutputIt>
@@ -164,9 +182,7 @@ private:
                 case timeColumn:     return String(message.message.getTimeStamp());
                 case barColumn:      return String(message.position.getPpqPositionOfLastBarStart().orFallback(0));
                 case ppqColumn:      return String(message.position.getPpqPosition().orFallback(0));
-                // TODO: Replace with processor currentSampleRate / 2.
-                // We need to pass currentSampleRate and make the formula timestamp / currentSampleRate * 60 / bpm + ppq position
-                case adjustedColumn: return String(message.message.getTimeStamp() / 22050 + message.position.getPpqPosition().orFallback(0));
+                case adjustedColumn: return String(message.getAdjustedPpqPosition());
                 case channelColumn:  return String(message.message.getChannel());
                 case dataColumn:     return getDataString(message.message);
                 default:             break;

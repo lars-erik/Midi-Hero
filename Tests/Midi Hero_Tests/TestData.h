@@ -6,6 +6,8 @@
 #include <sstream>
 #include <iostream>
 
+#include "MidiUtils.h"
+
 struct MidiData {
     double timeInSeconds;
     double ppqPosition;
@@ -15,6 +17,31 @@ struct MidiData {
     int byte3;
     double timeStamp;
 };
+
+inline std::vector<TimedMidiMessage> transformToModel(std::vector<MidiData>& data, double bpm, double sampleRate)
+{
+    std::vector<TimedMidiMessage> messages;
+    std::transform(
+        data.begin(), 
+        data.end(), 
+        std::back_inserter(messages),
+        [sampleRate, bpm](const MidiData& data)
+        {
+            auto position = AudioPlayHead::PositionInfo();
+            position.setBpm(bpm);
+            position.setPpqPosition(data.ppqPosition);
+            position.setPpqPositionOfLastBarStart(data.barPpqPosition);
+            position.setTimeInSeconds(data.timeInSeconds);
+            return TimedMidiMessage(
+                MidiMessage(data.byte1, data.byte2, data.byte3, data.timeStamp),
+                position,
+                sampleRate
+            );
+        }
+    );
+
+    return messages;
+}
 
 inline std::string loadCsvFromResource(int resourceId, const wchar_t* resourceType) {
     // Find the resource in the executable

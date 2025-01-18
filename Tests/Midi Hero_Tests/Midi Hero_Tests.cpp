@@ -5,14 +5,43 @@
 
 using namespace juce;
 
-TEST_CASE("I'm alive", "[basic]")
+std::vector<TimedMidiMessage> getTestData()
 {
     auto midiData = readCsvFile(IDR_CSV_FILE, L"CSV");
-    auto first = midiData.at(0);
-    auto second = midiData.at(1);
+    auto model = transformToModel(midiData, 120, 44100);
+    return model;
+}
 
-    REQUIRE(first.byte1 == 0xfa);
-    REQUIRE(second.byte1 == 0xfc);
-    REQUIRE(second.timeInSeconds == 1);
+TEST_CASE("Can read MIDI data", "[basic]")
+{
+    auto model = getTestData();
+
+    REQUIRE(model.size() == 35);
+    REQUIRE(model.at(0).message.isMidiStart());
+}
+
+TEST_CASE("Calculates PPQ for quantized notes", "[basic]")
+{
+    auto model = getTestData();
+    std::vector<TimedMidiMessage> notes;
+    std::copy_if(model.begin(), model.end(), std::back_inserter(notes), [&](const TimedMidiMessage& msg) { return msg.message.isNoteOn(); });
+
+    REQUIRE(notes.size() == 16);
+    REQUIRE(notes.at(0).getAdjustedPpqPosition() == 0);
+    REQUIRE(notes.at(1).getAdjustedPpqPosition() == 1);
+    REQUIRE(notes.at(2).getAdjustedPpqPosition() == 2);
+    REQUIRE(notes.at(3).getAdjustedPpqPosition() == 3);
+    REQUIRE(notes.at(4).getAdjustedPpqPosition() == 4);
+    REQUIRE(notes.at(5).getAdjustedPpqPosition() == 4.5);
+    REQUIRE(notes.at(6).getAdjustedPpqPosition() == 5);
+    REQUIRE(notes.at(7).getAdjustedPpqPosition() == 5.5);
+    REQUIRE(notes.at(8).getAdjustedPpqPosition() == 6);
+    REQUIRE(notes.at(9).getAdjustedPpqPosition() == 6.25);
+    REQUIRE(notes.at(10).getAdjustedPpqPosition() == 6.5);
+    REQUIRE(notes.at(11).getAdjustedPpqPosition() == 6.75);
+    REQUIRE(notes.at(12).getAdjustedPpqPosition() == 7);
+    REQUIRE(notes.at(13).getAdjustedPpqPosition() == 7.125);
+    REQUIRE(notes.at(14).getAdjustedPpqPosition() == 7.25);
+    REQUIRE(notes.at(15).getAdjustedPpqPosition() == 7.375);
 }
 
