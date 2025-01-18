@@ -166,6 +166,43 @@ public:
 
     void resized() override { table.setBounds(getLocalBounds()); }
 
+    static String getEventString(const MidiMessage& m)
+    {
+        if (m.isNoteOn())           return "Note on";
+        if (m.isNoteOff())          return "Note off";
+        if (m.isProgramChange())    return "Program change";
+        if (m.isPitchWheel())       return "Pitch wheel";
+        if (m.isAftertouch())       return "Aftertouch";
+        if (m.isChannelPressure())  return "Channel pressure";
+        if (m.isAllNotesOff())      return "All notes off";
+        if (m.isAllSoundOff())      return "All sound off";
+        if (m.isMetaEvent())        return "Meta event";
+        if (m.isMidiStart())        return "MIDI Start";
+        if (m.isMidiStop())         return "MIDI Stop";
+        if (m.isMidiContinue())     return "MIDI Continue";
+
+        if (m.isController())
+        {
+            const auto* name = MidiMessage::getControllerName(m.getControllerNumber());
+            return "Controller " + (name == nullptr ? String(m.getControllerNumber()) : String(name));
+        }
+
+        return String::toHexString(m.getRawData(), m.getRawDataSize());
+    }
+
+    static String getDataString(const MidiMessage& m)
+    {
+        if (m.isNoteOn())           return MidiMessage::getMidiNoteName(m.getNoteNumber(), true, true, 3) + " Velocity " + String(m.getVelocity());
+        if (m.isNoteOff())          return MidiMessage::getMidiNoteName(m.getNoteNumber(), true, true, 3) + " Velocity " + String(m.getVelocity());
+        if (m.isProgramChange())    return String(m.getProgramChangeNumber());
+        if (m.isPitchWheel())       return String(m.getPitchWheelValue());
+        if (m.isAftertouch())       return MidiMessage::getMidiNoteName(m.getNoteNumber(), true, true, 3) + ": " + String(m.getAfterTouchValue());
+        if (m.isChannelPressure())  return String(m.getChannelPressureValue());
+        if (m.isController())       return String(m.getControllerValue());
+
+        return {};
+    }
+
 private:
     enum
     {
@@ -211,43 +248,6 @@ private:
                 jassertfalse;
                 return String();
             }());
-    }
-
-    static String getEventString(const MidiMessage& m)
-    {
-        if (m.isNoteOn())           return "Note on";
-        if (m.isNoteOff())          return "Note off";
-        if (m.isProgramChange())    return "Program change";
-        if (m.isPitchWheel())       return "Pitch wheel";
-        if (m.isAftertouch())       return "Aftertouch";
-        if (m.isChannelPressure())  return "Channel pressure";
-        if (m.isAllNotesOff())      return "All notes off";
-        if (m.isAllSoundOff())      return "All sound off";
-        if (m.isMetaEvent())        return "Meta event";
-        if (m.isMidiStart())        return "MIDI Start";
-        if (m.isMidiStop())         return "MIDI Stop";
-        if (m.isMidiContinue())     return "MIDI Continue";
-
-        if (m.isController())
-        {
-            const auto* name = MidiMessage::getControllerName(m.getControllerNumber());
-            return "Controller " + (name == nullptr ? String(m.getControllerNumber()) : String(name));
-        }
-
-        return String::toHexString(m.getRawData(), m.getRawDataSize());
-    }
-
-    static String getDataString(const MidiMessage& m)
-    {
-        if (m.isNoteOn())           return MidiMessage::getMidiNoteName(m.getNoteNumber(), true, true, 3) + " Velocity " + String(m.getVelocity());
-        if (m.isNoteOff())          return MidiMessage::getMidiNoteName(m.getNoteNumber(), true, true, 3) + " Velocity " + String(m.getVelocity());
-        if (m.isProgramChange())    return String(m.getProgramChangeNumber());
-        if (m.isPitchWheel())       return String(m.getPitchWheelValue());
-        if (m.isAftertouch())       return MidiMessage::getMidiNoteName(m.getNoteNumber(), true, true, 3) + ": " + String(m.getAfterTouchValue());
-        if (m.isChannelPressure())  return String(m.getChannelPressureValue());
-        if (m.isController())       return String(m.getControllerValue());
-
-        return {};
     }
 
     MidiListModel& messages;
