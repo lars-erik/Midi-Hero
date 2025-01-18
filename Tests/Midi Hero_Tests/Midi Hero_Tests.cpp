@@ -8,13 +8,6 @@
 using namespace juce;
 using namespace std;
 
-vector<TimedMidiMessage> getTestData(int identifier)
-{
-    auto midiData = readCsvFile(identifier, L"CSV");
-    auto model = transformToModel(midiData, 120, 44100);
-    return model;
-}
-
 bool approx(double a, double b, double tolerance = 1e-6) {
     return fabs(a - b) <= tolerance;
 }

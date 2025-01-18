@@ -43,7 +43,7 @@ struct TimedMidiMessage
     {
         double secPerQuarterNote = 60 / position.getBpm().orFallback(60); // 0.5 in 120
         double diff = getPpqDiff(divisionLevel); // ratio of 0.5? (yes)
-        double diffInSeconds = diff / secPerQuarterNote;
+        double diffInSeconds = diff * secPerQuarterNote;
         int result = round(diffInSeconds * 1000);
         return result;
     }

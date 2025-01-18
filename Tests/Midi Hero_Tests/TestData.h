@@ -115,3 +115,10 @@ inline std::vector<MidiData> readCsvFile(int resourceId, const wchar_t* resource
 
     return midiDataList;
 }
+
+inline std::vector<TimedMidiMessage> getTestData(int identifier, int bpm = 120, int sampleRate = 44100)
+{
+    auto midiData = readCsvFile(identifier, L"CSV");
+    auto model = transformToModel(midiData, bpm, sampleRate);
+    return model;
+}
