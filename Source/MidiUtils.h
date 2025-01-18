@@ -106,6 +106,13 @@ private:
 class MidiListModel
 {
 public:
+    MidiListModel() = default;
+
+    explicit MidiListModel(const std::vector<TimedMidiMessage>& messages)
+        : messages(messages)
+    {
+    }
+
     template <typename It>
     void addMessages(It begin, It end)
     {
@@ -124,6 +131,8 @@ public:
     void addMessage(const TimedMidiMessage& message)
     {
         messages.push_back(message);
+
+        NullCheckedInvocation::invoke(onChange);
     }
 
     void clear()
@@ -146,6 +155,45 @@ public:
         return messages.cend();
     }
 
+    template <typename Predicate>
+    std::vector<TimedMidiMessage> filterMessages(Predicate predicate)
+    {
+        std::vector<TimedMidiMessage> notes;
+        copy_if(
+            messages.begin(),
+            messages.end(),
+            std::back_inserter(notes),
+            predicate
+        );
+        return notes;
+    }
+
+    struct Scoring
+    {
+        int notes;
+        double score;
+        double total;
+
+        Scoring() = default;
+
+        Scoring(int notes, double score, double total)
+            : notes(notes),
+              score(score),
+              total(total)
+        {
+        }
+    };
+
+    Scoring score(int divisionLevel)
+    {
+        auto notes = filterMessages([&](const TimedMidiMessage& msg) { return msg.message.isNoteOn(); });
+        std::vector<double> scores;
+        std::transform(notes.begin(), notes.end(), std::back_inserter(scores), [divisionLevel](const TimedMidiMessage& m) { return m.getScore(divisionLevel); });
+        double score = std::accumulate(scores.begin(), scores.end(), 0.0);
+        double totalScore = round(score / notes.size() * 100) / 100;
+        return Scoring(notes.size(), score, totalScore);
+    }
+
     std::function<void()> onChange;
 
 private:
@@ -163,6 +211,8 @@ public:
     {
         addAndMakeVisible(table);
 
+        filteredMessages = messages.filterMessages([](TimedMidiMessage& m) { return m.message.isNoteOn(); });
+
         table.setModel(this);
         //table.setClickingTogglesRowSelection(false);
         
@@ -171,15 +221,17 @@ public:
                 auto header = std::make_unique<TableHeaderComponent>();
                 header->addColumn("Message", messageColumn, 200, 30, -1, TableHeaderComponent::notSortable);
                 header->addColumn("Bar", barColumn, 100, 30, -1, TableHeaderComponent::notSortable);
-                header->addColumn("Timestamp", timeColumn, 100, 30, -1, TableHeaderComponent::notSortable);
-                header->addColumn("PPQ", ppqColumn, 100, 30, -1, TableHeaderComponent::notSortable);
-                header->addColumn("Adjusted", adjustedColumn, 100, 30, -1, TableHeaderComponent::notSortable);
-                header->addColumn("Channel", channelColumn, 100, 30, -1, TableHeaderComponent::notSortable);
+                header->addColumn("Time", adjustedColumn, 100, 30, -1, TableHeaderComponent::notSortable);
                 header->addColumn("Data", dataColumn, 200, 30, -1, TableHeaderComponent::notSortable);
+                header->addColumn("Score", scoreColumn, 200, -1, TableHeaderComponent::notSortable);
                 return header;
             }());
 
-        messages.onChange = [&] { table.updateContent(); };
+        messages.onChange = [&]
+        {
+            filteredMessages = messages.filterMessages([](TimedMidiMessage& m) { return m.message.isNoteOn(); });
+            table.updateContent();
+        };
     }
 
     ~MidiTable() override { messages.onChange = nullptr; }
@@ -232,10 +284,11 @@ private:
         ppqColumn,
         adjustedColumn,
         channelColumn,
-        dataColumn
+        dataColumn,
+        scoreColumn
     };
 
-    int getNumRows() override { return (int)messages.size(); }
+    int getNumRows() override { return (int)filteredMessages.size(); }
 
     void paintRowBackground(Graphics&, int, int, int, bool) override {}
     void paintCell(Graphics&, int, int, int, int, bool)     override {}
@@ -247,8 +300,8 @@ private:
     {
         delete existingComponentToUpdate;
 
-        const auto index = (int)messages.size() - 1 - rowNumber;
-        const auto message = messages[(size_t)index];
+        const auto index = (int)filteredMessages.size() - 1 - rowNumber;
+        const auto message = filteredMessages[(size_t)index];
 
 
         return new Label({}, [&]
@@ -262,6 +315,7 @@ private:
                 case adjustedColumn: return String(message.getAdjustedPpqPosition());
                 case channelColumn:  return String(message.message.getChannel());
                 case dataColumn:     return getDataString(message.message);
+                case scoreColumn:    return String(message.getScoreName(4)); // TODO: Configurable division level
                 default:             break;
                 }
 
@@ -271,5 +325,6 @@ private:
     }
 
     MidiListModel& messages;
+    std::vector<TimedMidiMessage> filteredMessages;
     TableListBox table;
 };

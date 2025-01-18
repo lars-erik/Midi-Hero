@@ -100,14 +100,9 @@ TEST_CASE("Note calculations for off play")
 TEST_CASE("Off score is 60%")
 {
     constexpr int DivisionLevel = 4;
-    auto model = getTestData(IDR_OFF_CSV_FILE);
-    auto notes = filterMessages(model, [&](const TimedMidiMessage& msg) { return msg.message.isNoteOn(); });
+    auto model = MidiListModel(getTestData(IDR_OFF_CSV_FILE));
 
-    vector<double> scores;
-    transform(notes.begin(), notes.end(), back_inserter(scores), [](const TimedMidiMessage& m) { return m.getScore(DivisionLevel); });
-    double score = accumulate(scores.begin(), scores.end(), 0.0);
-    double totalScore = round(score / notes.size() * 100) / 100;
+    auto score = model.score(DivisionLevel);
 
-    INFO("Has score " << score << " out of " << notes.size() << " yielding total score " << totalScore);
-    REQUIRE(approx(totalScore, .6));
+    REQUIRE(approx(score.total, .6));
 }

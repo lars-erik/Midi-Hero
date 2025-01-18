@@ -151,7 +151,7 @@ void MidiHeroAudioProcessor::process(AudioBuffer<Element>& audio, MidiBuffer& mi
             if (value.getIsPlaying() != isPlaying)
             {
                 isPlaying = value.getIsPlaying();
-                queue.push(MidiMessage(isPlaying ? 0xfa : 0xfc, 0, 0, timeAtProcess), value, sampleRate);
+                queue.push(MidiMessage(isPlaying ? 0xfa : 0xfc, 0, 0, 0), value, sampleRate);
             }
         }
     }
