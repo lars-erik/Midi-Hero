@@ -13,4 +13,5 @@
 #endif
 #endif
 
-#define IDR_CSV_FILE 101
+#define IDR_QUANTIZED_CSV_FILE 101
+#define IDR_OFF_CSV_FILE 102

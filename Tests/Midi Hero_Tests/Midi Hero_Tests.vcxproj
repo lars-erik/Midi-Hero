@@ -144,7 +144,8 @@
     <ClInclude Include="TestUtils.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="TestData.csv" />
+    <None Include="Off.csv" />
+    <None Include="Quantized.csv" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Midi Hero_Tests.rc" />

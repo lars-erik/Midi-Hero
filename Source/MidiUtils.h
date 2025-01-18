@@ -28,6 +28,26 @@ struct TimedMidiMessage
         return result;
     }
 
+    double getIntendedPpqPosition(int divisionLevel) const {
+        double step = 1.0 / divisionLevel; // Grid step size
+        double nearest = std::round(getAdjustedPpqPosition() / step) * step;
+        return nearest;
+    }
+
+    double getPpqDiff(int divisionLevel) const
+    {
+        return getAdjustedPpqPosition() - getIntendedPpqPosition(divisionLevel);
+    }
+
+    int getPpqDiffInMs(int divisionLevel) const
+    {
+        double secPerQuarterNote = 60 / position.getBpm().orFallback(60); // 0.5 in 120
+        double diff = getPpqDiff(divisionLevel); // ratio of 0.5? (yes)
+        double diffInSeconds = diff / secPerQuarterNote;
+        int result = round(diffInSeconds * 1000);
+        return result;
+    }
+
 private:
     static double roundToDecimals(double value, int decimals) {
         double scale = std::pow(10.0, decimals);

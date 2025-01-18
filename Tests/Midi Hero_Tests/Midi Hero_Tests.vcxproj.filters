@@ -37,7 +37,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="TestData.csv">
+    <None Include="Quantized.csv">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Off.csv">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
