@@ -9,15 +9,11 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-#include <sstream>
-#include <iomanip>
-#include <string>
-
 //==============================================================================
 MidiHeroAudioProcessorEditor::MidiHeroAudioProcessorEditor (MidiHeroAudioProcessor& p)
     : AudioProcessorEditor (&p),
     audioProcessor (p),
-    logPage(p)
+    tabs(p, TabbedButtonBar::TabsAtTop)
     //table(p.model)
 {
     setResizable(true, true);
@@ -30,7 +26,7 @@ MidiHeroAudioProcessorEditor::MidiHeroAudioProcessorEditor (MidiHeroAudioProcess
     lastUIWidth.addListener(this);
     lastUIHeight.addListener(this);
 
-    addAndMakeVisible(logPage);
+    addAndMakeVisible(tabs);
 }
 
 MidiHeroAudioProcessorEditor::~MidiHeroAudioProcessorEditor() = default;
@@ -47,7 +43,7 @@ void MidiHeroAudioProcessorEditor::resized()
 {
     auto bounds = getLocalBounds();
 
-    logPage.setBounds(bounds);
+    tabs.setBounds(bounds);
 
     lastUIWidth = getWidth();
     lastUIHeight = getHeight();

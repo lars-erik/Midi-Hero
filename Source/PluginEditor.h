@@ -10,7 +10,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "LogTableComponent.h"
+#include "TabsComponent.h"
 
 //==============================================================================
 /**
@@ -33,7 +33,7 @@ private:
     // access the processor object that created it.
     MidiHeroAudioProcessor& audioProcessor;
 
-    LogTableComponent logPage;
+    TabsComponent tabs;
 
     /*
     MidiTable table;
