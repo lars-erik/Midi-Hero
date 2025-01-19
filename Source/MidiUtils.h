@@ -53,8 +53,8 @@ struct TimedMidiMessage
         const int diff = abs(getPpqDiffInMs(divisionLevel));
         if (diff < 10) return 1;
         if (diff < 20) return .75;
-        if (diff < 30) return .5;
-        if (diff < 40) return .25;
+        if (diff < 40) return .5;
+        if (diff < 80) return .25;
         return 0;
     }
 
@@ -63,9 +63,9 @@ struct TimedMidiMessage
         const int diff = abs(getPpqDiffInMs(divisionLevel));
         if (diff < 10) return "Perfect";
         if (diff < 20) return "Good";
-        if (diff < 30) return "Off";
-        if (diff < 40) return "Bad";
-        return "Audible";
+        if (diff < 40) return "Off";
+        if (diff < 80) return "Bad";
+        return "Awful";
     }
 
 private:
