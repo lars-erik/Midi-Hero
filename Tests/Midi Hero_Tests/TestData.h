@@ -21,17 +21,23 @@ struct MidiData {
 inline std::vector<TimedMidiMessage> transformToModel(std::vector<MidiData>& data, double bpm, double sampleRate)
 {
     std::vector<TimedMidiMessage> messages;
+
+    AudioPlayHead::TimeSignature timeSignature;
+    timeSignature.numerator = 4;
+    timeSignature.denominator = 4;
+
     std::transform(
         data.begin(), 
         data.end(), 
         std::back_inserter(messages),
-        [sampleRate, bpm](const MidiData& data)
+        [sampleRate, bpm, timeSignature](const MidiData& data)
         {
             auto position = AudioPlayHead::PositionInfo();
             position.setBpm(bpm);
             position.setPpqPosition(data.ppqPosition);
             position.setPpqPositionOfLastBarStart(data.barPpqPosition);
             position.setTimeInSeconds(data.timeInSeconds);
+            position.setTimeSignature(timeSignature);
             return TimedMidiMessage(
                 MidiMessage(data.byte1, data.byte2, data.byte3, data.timeStamp),
                 position,

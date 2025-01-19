@@ -2,8 +2,36 @@
 
 #include <iterator>
 #include <cmath>
+#include <string>
 
 using namespace juce;
+
+inline std::string formatPPQ(double ppqValue, AudioPlayHead::TimeSignature& signature) {
+    // Calculate the number of quarter notes in a bar
+    double beatsPerBar = static_cast<double>(signature.numerator);
+    double sixteensPerQuarter = 16.0 / signature.denominator;
+
+    // Calculate bar, quarter, and 32nd note positions
+    int bar = static_cast<int>(std::floor(ppqValue / beatsPerBar)) + 1;
+    double barPosition = std::fmod(ppqValue, beatsPerBar);
+    int quarter = static_cast<int>(std::floor(barPosition)) + 1;
+    double fractionalQuarter = barPosition - std::floor(barPosition);
+    int sixteenth = static_cast<int>(std::round(fractionalQuarter * sixteensPerQuarter)) + 1;
+
+    // Ensure thirtySecond is within valid range
+    if (sixteenth > static_cast<int>(sixteensPerQuarter)) {
+        sixteenth = 1;
+        quarter++;
+        if (quarter > signature.numerator) {
+            quarter = 1;
+            bar++;
+        }
+    }
+
+    // Format the output as bar.quarter.thirtysecond
+    return std::to_string(bar) + "." + std::to_string(quarter) + "." + std::to_string(sixteenth);
+}
+
 
 struct TimedMidiMessage
 {
@@ -20,7 +48,7 @@ struct TimedMidiMessage
     {
     }
 
-    double getAdjustedPpqPosition() const
+    double getPosition() const
     {
         double samplesPerPpq = sampleRate * 60 / position.getBpm().orFallback(60);
         double adjustedPpqPosition = message.getTimeStamp() / samplesPerPpq + position.getPpqPosition().orFallback(0);
@@ -28,15 +56,25 @@ struct TimedMidiMessage
         return result;
     }
 
-    double getIntendedPpqPosition(int divisionLevel) const {
+    std::string getPositionFormatted(int divisionLevel) const
+    {
+        return formatPPQ(getPosition(), *position.getTimeSignature());
+    }
+
+    double getIntendedPosition(int divisionLevel) const {
         double step = 1.0 / divisionLevel; // Grid step size
-        double nearest = std::round(getAdjustedPpqPosition() / step) * step;
+        double nearest = std::round(getPosition() / step) * step;
         return nearest;
+    }
+
+    std::string getIntendedPositionFormatted(int divisionLevel) const
+    {
+        return formatPPQ(getIntendedPosition(divisionLevel), *position.getTimeSignature());
     }
 
     double getPpqDiff(int divisionLevel) const
     {
-        return getAdjustedPpqPosition() - getIntendedPpqPosition(divisionLevel);
+        return getPosition() - getIntendedPosition(divisionLevel);
     }
 
     int getPpqDiffInMs(int divisionLevel) const
@@ -62,10 +100,10 @@ struct TimedMidiMessage
     {
         const int diff = abs(getPpqDiffInMs(divisionLevel));
         if (diff < 10) return "Perfect";
-        if (diff < 20) return "Good";
-        if (diff < 40) return "Off";
-        if (diff < 80) return "Bad";
-        return "Awful";
+        if (diff < 20) return "Great";
+        if (diff < 40) return "Good";
+        if (diff < 80) return "Off";
+        return "Bad";
     }
 
 private:
@@ -219,11 +257,15 @@ public:
         table.setHeader([&]
             {
                 auto header = std::make_unique<TableHeaderComponent>();
-                header->addColumn("Message", messageColumn, 200, 30, -1, TableHeaderComponent::notSortable);
-                header->addColumn("Bar", barColumn, 100, 30, -1, TableHeaderComponent::notSortable);
-                header->addColumn("Time", adjustedColumn, 100, 30, -1, TableHeaderComponent::notSortable);
+                header->addColumn("Message", messageColumn, 100, 30, -1, TableHeaderComponent::notSortable);
+                header->addColumn("Bar", barColumn, 50, 30, -1, TableHeaderComponent::notSortable);
+                header->addColumn("PPQ", ppqColumn, 80, 30, -1, TableHeaderComponent::notSortable);
+                header->addColumn("Position", adjustedColumn, 80, 30, -1, TableHeaderComponent::notSortable);
+                header->addColumn("MS Diff", diffColumn, 100, 60, -1, TableHeaderComponent::notSortable);
+                header->addColumn("Int. PPQ", intendedPpqColumn, 80, 30, -1, TableHeaderComponent::notSortable);
+                header->addColumn("Intended", intendedColumn, 80, 30, -1, TableHeaderComponent::notSortable);
+                header->addColumn("Score", scoreColumn, 100, -1, TableHeaderComponent::notSortable);
                 header->addColumn("Data", dataColumn, 200, 30, -1, TableHeaderComponent::notSortable);
-                header->addColumn("Score", scoreColumn, 200, -1, TableHeaderComponent::notSortable);
                 return header;
             }());
 
@@ -279,13 +321,15 @@ private:
     enum
     {
         messageColumn = 1,
-        timeColumn,
         barColumn,
         ppqColumn,
         adjustedColumn,
+        diffColumn,
+        intendedPpqColumn,
+        intendedColumn,
+        scoreColumn,
         channelColumn,
         dataColumn,
-        scoreColumn
     };
 
     int getNumRows() override { return (int)filteredMessages.size(); }
@@ -303,20 +347,24 @@ private:
         const auto index = (int)filteredMessages.size() - 1 - rowNumber;
         const auto message = filteredMessages[(size_t)index];
 
+        // TODO: Configurable division level
+        int divisionLevel = 4;
 
         return new Label({}, [&]
             {
                 switch (columnId)
                 {
-                case messageColumn:  return getEventString(message.message);
-                case timeColumn:     return String(message.message.getTimeStamp());
-                case barColumn:      return String(message.position.getPpqPositionOfLastBarStart().orFallback(0));
-                case ppqColumn:      return String(message.position.getPpqPosition().orFallback(0));
-                case adjustedColumn: return String(message.getAdjustedPpqPosition());
-                case channelColumn:  return String(message.message.getChannel());
-                case dataColumn:     return getDataString(message.message);
-                case scoreColumn:    return String(message.getScoreName(4)); // TODO: Configurable division level
-                default:             break;
+                case messageColumn:     return getEventString(message.message);
+                case barColumn:         return String(message.position.getPpqPositionOfLastBarStart().orFallback(0));
+                case ppqColumn:         return String(message.position.getPpqPosition().orFallback(0));
+                case adjustedColumn:    return String(message.getPositionFormatted(divisionLevel));
+                case intendedPpqColumn: return String(message.getIntendedPosition(divisionLevel));
+                case intendedColumn:    return String(message.getIntendedPositionFormatted(divisionLevel));
+                case diffColumn:        return String(message.getPpqDiffInMs(divisionLevel));
+                case channelColumn:     return String(message.message.getChannel());
+                case dataColumn:        return getDataString(message.message);
+                case scoreColumn:       return String(message.getScoreName(divisionLevel)); 
+                default:                break;
                 }
 
                 jassertfalse;
