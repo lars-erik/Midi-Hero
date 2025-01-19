@@ -8,7 +8,7 @@
 using namespace juce;
 
 class LogTableComponent :
-    public Component
+    public Component    
 {
 public:
     LogTableComponent(MidiHeroAudioProcessor&);
@@ -18,7 +18,6 @@ public:
     void resized() override;
 
 private:
-    //void valueChanged(Value&) override;
     void copyToClip() const;
 
     MidiHeroAudioProcessor& audioProcessor;

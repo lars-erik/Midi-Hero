@@ -163,21 +163,21 @@ public:
         messages.erase(messages.begin(), std::next(messages.begin(), numToRemove));
         messages.insert(messages.end(), std::prev(end, numToAdd), end);
 
-        NullCheckedInvocation::invoke(onChange);
+        count.setValue(static_cast<long>(messages.size()));
     }
 
     void addMessage(const TimedMidiMessage& message)
     {
         messages.push_back(message);
 
-        NullCheckedInvocation::invoke(onChange);
+        count.setValue(static_cast<long>(messages.size()));
     }
 
     void clear()
     {
         messages.clear();
 
-        NullCheckedInvocation::invoke(onChange);
+        count.setValue(static_cast<long>(messages.size()));
     }
 
     const TimedMidiMessage& operator[] (size_t ind) const { return messages[ind]; }
@@ -232,16 +232,29 @@ public:
         return Scoring(notes.size(), score, totalScore);
     }
 
-    std::function<void()> onChange;
+    //std::function<void()> onChange;
+
+    void addListener(Value::Listener* listener)
+    {
+        count.addListener(listener);
+    }
+
+    void removeListener(Value::Listener* listener)
+    {
+        count.removeListener(listener);
+    }
 
 private:
     static constexpr auto numToStore = 1000;
     std::vector<TimedMidiMessage> messages;
+
+    Value count;
 };
 
 //==============================================================================
 class MidiTable final : public Component,
-    private TableListBoxModel
+    private TableListBoxModel,
+    private Value::Listener
 {
 public:
     MidiTable(MidiListModel& m)
@@ -269,14 +282,19 @@ public:
                 return header;
             }());
 
-        messages.onChange = [&]
-        {
-            filteredMessages = messages.filterMessages([](TimedMidiMessage& m) { return m.message.isNoteOn(); });
-            table.updateContent();
-        };
+        messages.addListener(this);
     }
 
-    ~MidiTable() override { messages.onChange = nullptr; }
+    ~MidiTable() override
+    {
+        messages.removeListener(this);
+    }
+
+    void valueChanged(Value& v) override
+    {
+        filteredMessages = messages.filterMessages([](TimedMidiMessage& m) { return m.message.isNoteOn(); });
+        table.updateContent();
+    }
 
     void resized() override { table.setBounds(getLocalBounds()); }
 

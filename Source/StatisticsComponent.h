@@ -5,18 +5,22 @@
 using namespace juce;
 
 class StatisticsComponent :
-    public Component
+    public Component,
+    private Value::Listener
 {
 public:
     StatisticsComponent(MidiHeroAudioProcessor&);
+    ~StatisticsComponent();
 
-    //void paint(juce::Graphics&) override;
+    void paint(juce::Graphics&) override;
     void resized() override;
 
 private:
+    void valueChanged(Value&);
+
     MidiHeroAudioProcessor& audioProcessor;
 
-    Label label { "hello", "Hello world!" };
+    Label label { "statistics", "Statistics" };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StatisticsComponent)
 };
