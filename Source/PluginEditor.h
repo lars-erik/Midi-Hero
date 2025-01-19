@@ -10,12 +10,13 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "LogTableComponent.h"
 
 //==============================================================================
 /**
 */
 class MidiHeroAudioProcessorEditor  : public juce::AudioProcessorEditor,
-                                      private Value::Listener
+    private Value::Listener
 {
 public:
     MidiHeroAudioProcessorEditor (MidiHeroAudioProcessor&);
@@ -27,15 +28,18 @@ public:
 
 private:
     void valueChanged(Value&) override;
-    void copyToClip();
 
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     MidiHeroAudioProcessor& audioProcessor;
 
+    LogTableComponent logPage;
+
+    /*
     MidiTable table;
     TextButton clearButton{ "Clear" };
     TextButton copyButton{ "Copy" };
+    */
 
     Value lastUIWidth, lastUIHeight;
 
