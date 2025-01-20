@@ -1,6 +1,6 @@
-#include "RealtimeJudgementComponent.h"
+#include "JudgementLabel.h"
 
-RealtimeJudgementComponent::RealtimeJudgementComponent()
+JudgementLabel::JudgementLabel()
 {
     heroLabel.setFont(font);
     heroLabel.setAlpha(0);
@@ -9,18 +9,23 @@ RealtimeJudgementComponent::RealtimeJudgementComponent()
     addAndMakeVisible(heroLabel);
 }
 
-void RealtimeJudgementComponent::resized()
+void JudgementLabel::resized()
 {
     auto width = TextLayout::getStringWidth(font, heroLabel.getText());
     heroLabel.centreWithSize(roundToInt(width), roundToInt(font.getHeight()));
     centerBounds = heroLabel.getBounds();
 }
 
-void RealtimeJudgementComponent::mouseUp(const MouseEvent& mouse_event)
+void JudgementLabel::start()
 {
     allOfIt.start();
     updater.addAnimator(allOfIt, [this]
         {
             updater.removeAnimator(allOfIt);
         });
+}
+
+void JudgementLabel::mouseUp(const MouseEvent& mouse_event)
+{
+    start();
 }

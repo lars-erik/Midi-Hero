@@ -2,13 +2,14 @@
 #include "JuceHeader.h"
 using namespace juce;
 
-class RealtimeJudgementComponent :
+class JudgementLabel :
     public Component
 {
 public:
-    RealtimeJudgementComponent();
+    JudgementLabel();
 
     void resized() override;
+    void start();
 
     void mouseUp(const MouseEvent&) override;
 
@@ -81,6 +82,6 @@ private:
 
     VBlankAnimatorUpdater updater{ this };
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RealtimeJudgementComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(JudgementLabel)
 };
 
