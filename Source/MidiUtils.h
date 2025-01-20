@@ -216,6 +216,18 @@ public:
 
     struct Scoring
     {
+        inline static std::vector<std::string> keys = {
+            "Perfect", "Great", "Good", "Off", "Bad"
+        };
+
+        inline static std::unordered_map<std::string, Colour> colors = {
+            {"Perfect", Colours::green },
+            {"Great", Colours::lightgreen },
+            {"Good", Colours::greenyellow },
+            {"Off", Colours::orange },
+            {"Bad", Colours::red }
+        };
+
         int notes;
         double score;
         double total;
@@ -248,10 +260,36 @@ public:
         return Scoring(notes.size(), score, totalScore);
     }
 
+    std::vector<TimedMidiMessage> getNotes()
+    {
+        return filterMessages([&](const TimedMidiMessage& msg) { return msg.message.isNoteOn(); });
+    }
+
     Scoring score(int divisionLevel)
     {
-        auto notes = filterMessages([&](const TimedMidiMessage& msg) { return msg.message.isNoteOn(); });
+        auto notes = getNotes();
         return score(notes, divisionLevel);
+    }
+
+    std::map<std::string, int> getScoreCounts(int divisionLevel)
+    {
+        auto notes = getNotes();
+        const auto total = notes.size();
+
+        std::map<std::string, int> scores = {
+            {"Perfect", 0 },
+            {"Great", 0 },
+            {"Good", 0 },
+            {"Off", 0 },
+            {"Bad", 0 }
+        };
+
+        for (TimedMidiMessage& m : notes)
+        {
+            scores[m.getScoreName(divisionLevel)]++;
+        }
+
+        return scores;
     }
 
     //std::function<void()> onChange;
@@ -285,7 +323,7 @@ public:
     {
         addAndMakeVisible(table);
 
-        filteredMessages = messages.filterMessages([](TimedMidiMessage& m) { return m.message.isNoteOn(); });
+        filteredMessages = messages.getNotes();
 
         table.setModel(this);
         //table.setClickingTogglesRowSelection(false);
@@ -315,7 +353,7 @@ public:
 
     void valueChanged(Value& v) override
     {
-        filteredMessages = messages.filterMessages([](TimedMidiMessage& m) { return m.message.isNoteOn(); });
+        filteredMessages = messages.getNotes();
         table.updateContent();
     }
 
@@ -385,8 +423,8 @@ private:
     {
         delete existingComponentToUpdate;
 
-        const auto index = (int)filteredMessages.size() - 1 - rowNumber;
-        const auto message = filteredMessages[(size_t)index];
+        const auto index = filteredMessages.size() - 1 - rowNumber;
+        const auto message = filteredMessages[static_cast<int64>(index)];
 
         // TODO: Configurable division level
         int divisionLevel = 4;
