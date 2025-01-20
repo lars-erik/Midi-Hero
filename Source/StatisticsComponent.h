@@ -10,13 +10,13 @@ class StatisticsComponent :
 {
 public:
     StatisticsComponent(MidiHeroAudioProcessor&);
-    ~StatisticsComponent();
+    ~StatisticsComponent() override;
 
     void paint(juce::Graphics&) override;
     void resized() override;
 
 private:
-    void valueChanged(Value&);
+    void valueChanged(Value&) override;
 
     MidiHeroAudioProcessor& audioProcessor;
 

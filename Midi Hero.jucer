@@ -7,17 +7,33 @@
               pluginVST3Category="Analyzer">
   <MAINGROUP id="bXvcrT" name="Midi Hero">
     <GROUP id="{3F409F78-A580-1CD8-A090-CC8194903C63}" name="Source">
+      <FILE id="APzR1v" name="LogTableComponent.cpp" compile="1" resource="0"
+            file="Source/LogTableComponent.cpp"/>
+      <FILE id="wlqveu" name="LogTableComponent.h" compile="0" resource="0"
+            file="Source/LogTableComponent.h"/>
       <FILE id="LgRwby" name="MidiUtils.h" compile="0" resource="0" file="Source/MidiUtils.h"/>
+      <FILE id="rI2DSO" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="uEhsOP" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
       <FILE id="jEneW8" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="x3meqr" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
-      <FILE id="rI2DSO" name="PluginEditor.cpp" compile="1" resource="0"
-            file="Source/PluginEditor.cpp"/>
-      <FILE id="uEhsOP" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="ZupSqF" name="RealtimeJudgementComponent.cpp" compile="1"
+            resource="0" file="Source/RealtimeJudgementComponent.cpp"/>
+      <FILE id="P4TPfK" name="RealtimeJudgementComponent.h" compile="0" resource="0"
+            file="Source/RealtimeJudgementComponent.h"/>
+      <FILE id="ZFSOXH" name="StatisticsComponent.cpp" compile="1" resource="0"
+            file="Source/StatisticsComponent.cpp"/>
+      <FILE id="du7QuD" name="StatisticsComponent.h" compile="0" resource="0"
+            file="Source/StatisticsComponent.h"/>
+      <FILE id="XPUAEu" name="TabsComponent.cpp" compile="1" resource="0"
+            file="Source/TabsComponent.cpp"/>
+      <FILE id="oF3YMD" name="TabsComponent.h" compile="0" resource="0" file="Source/TabsComponent.h"/>
     </GROUP>
   </MAINGROUP>
   <MODULES>
+    <MODULE id="juce_animation" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
@@ -52,6 +68,7 @@
         <MODULEPATH id="juce_graphics" path="../../../tools/JUCE/modules"/>
         <MODULEPATH id="juce_gui_basics" path="../../../tools/JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../../tools/JUCE/modules"/>
+        <MODULEPATH id="juce_animation" path="../../../tools/JUCE/modules"/>
       </MODULEPATHS>
     </VS2022>
   </EXPORTFORMATS>
