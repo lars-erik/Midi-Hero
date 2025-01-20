@@ -9,6 +9,7 @@ public:
     JudgementLabel();
 
     void resized() override;
+    void setText(const std::string& text);
     void start();
 
     void mouseUp(const MouseEvent&) override;

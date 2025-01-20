@@ -163,6 +163,9 @@ public:
         messages.erase(messages.begin(), std::next(messages.begin(), numToRemove));
         messages.insert(messages.end(), std::prev(end, numToAdd), end);
 
+        newNotes.clear();
+        copy_if(begin, end, std::back_inserter(newNotes), [](TimedMidiMessage& m) { return m.message.isNoteOn(); });
+
         count.setValue(static_cast<long>(messages.size()));
     }
 
@@ -206,6 +209,11 @@ public:
         return notes;
     }
 
+    std::vector<TimedMidiMessage> getNewNotes()
+    {
+        return newNotes;
+    }
+
     struct Scoring
     {
         int notes;
@@ -220,16 +228,30 @@ public:
               total(total)
         {
         }
+
+        std::string getScoreName() const
+        {
+            if (total >= .9) return "Perfect";
+            if (total >= .8) return "Great";
+            if (total >= .6) return "Good";
+            if (total >= .4) return "Off";
+            return "Bad";
+        }
     };
 
-    Scoring score(int divisionLevel)
+    static Scoring score(std::vector<TimedMidiMessage> notes, int divisionLevel)
     {
-        auto notes = filterMessages([&](const TimedMidiMessage& msg) { return msg.message.isNoteOn(); });
         std::vector<double> scores;
         std::transform(notes.begin(), notes.end(), std::back_inserter(scores), [divisionLevel](const TimedMidiMessage& m) { return m.getScore(divisionLevel); });
         double score = std::accumulate(scores.begin(), scores.end(), 0.0);
         double totalScore = round(score / notes.size() * 100) / 100;
         return Scoring(notes.size(), score, totalScore);
+    }
+
+    Scoring score(int divisionLevel)
+    {
+        auto notes = filterMessages([&](const TimedMidiMessage& msg) { return msg.message.isNoteOn(); });
+        return score(notes, divisionLevel);
     }
 
     //std::function<void()> onChange;
@@ -247,6 +269,7 @@ public:
 private:
     static constexpr auto numToStore = 1000;
     std::vector<TimedMidiMessage> messages;
+    std::vector<TimedMidiMessage> newNotes;
 
     Value count;
 };

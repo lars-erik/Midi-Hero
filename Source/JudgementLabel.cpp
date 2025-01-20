@@ -16,6 +16,12 @@ void JudgementLabel::resized()
     centerBounds = heroLabel.getBounds();
 }
 
+void JudgementLabel::setText(const std::string& text)
+{
+    heroLabel.setText(String(text), NotificationType::dontSendNotification);
+    resized();
+}
+
 void JudgementLabel::start()
 {
     allOfIt.start();
