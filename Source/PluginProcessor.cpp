@@ -21,7 +21,8 @@ MidiHeroAudioProcessor::MidiHeroAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
+    settings(state)
 #endif
 {
     state.addChild({ "uiState", { { "width",  600 }, { "height", 300 } }, {} }, -1, nullptr);
@@ -191,6 +192,7 @@ void MidiHeroAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     if (auto xmlState = state.createXml())
         copyXmlToBinary(*xmlState, destData);
 
+    DBG("Serialized\n\n" << state.toXmlString());
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
@@ -199,8 +201,12 @@ void MidiHeroAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 void MidiHeroAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     if (auto xmlState = getXmlFromBinary(data, sizeInBytes))
+    {
         state = ValueTree::fromXml(*xmlState);
+        settings.reinitialize(state);
+    }
 
+    DBG(String("Deserialized\n\n") << state.toXmlString());
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
 }

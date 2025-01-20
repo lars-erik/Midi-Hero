@@ -9,6 +9,8 @@
 #pragma once
 
 #include <JuceHeader.h>
+
+#include "MidiHeroSettings.h"
 #include "MidiUtils.h"
 
 using namespace juce;
@@ -67,6 +69,7 @@ public:
 
     MidiListModel model;
     ValueTree state{ "state" };
+    MidiHeroSettings settings;
 
 private:
     MidiQueue queue;
