@@ -90,8 +90,8 @@ struct TimedMidiMessage
     {
         const int diff = abs(getPpqDiffInMs(divisionLevel));
         if (diff < 10) return 1;
-        if (diff < 20) return .75;
-        if (diff < 40) return .5;
+        if (diff < 20) return .9;
+        if (diff < 40) return .6;
         if (diff < 80) return .25;
         return 0;
     }
@@ -166,21 +166,21 @@ public:
         newNotes.clear();
         copy_if(begin, end, std::back_inserter(newNotes), [](TimedMidiMessage& m) { return m.message.isNoteOn(); });
 
-        count.setValue(static_cast<long>(messages.size()));
+        count.setValue(static_cast<int64>(messages.size()));
     }
 
     void addMessage(const TimedMidiMessage& message)
     {
         messages.push_back(message);
 
-        count.setValue(static_cast<long>(messages.size()));
+        count.setValue(static_cast<int64>(messages.size()));
     }
 
     void clear()
     {
         messages.clear();
 
-        count.setValue(static_cast<long>(messages.size()));
+        count.setValue(static_cast<int64>(messages.size()));
     }
 
     const TimedMidiMessage& operator[] (size_t ind) const { return messages[ind]; }
@@ -234,7 +234,7 @@ public:
             if (total >= .9) return "Perfect";
             if (total >= .8) return "Great";
             if (total >= .6) return "Good";
-            if (total >= .4) return "Off";
+            if (total >= .25) return "Off";
             return "Bad";
         }
     };

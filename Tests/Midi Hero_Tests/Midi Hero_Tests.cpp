@@ -103,13 +103,13 @@ TEST_CASE("Note calculations for off play")
     ApprovalTests::Approvals::verify(report);
 }
 
-TEST_CASE("Off score is 60%")
+TEST_CASE("Off score is 76%")
 {
     constexpr int DivisionLevel = 4;
     auto model = MidiListModel(getTestData(IDR_OFF_CSV_FILE));
 
     auto score = model.score(DivisionLevel);
 
-    INFO("Testing appx " << score.total << " ~ " << .67);
-    REQUIRE(approx(score.total, .67));
+    INFO("Testing appx " << score.total << " ~ " << .76);
+    REQUIRE(approx(score.total, .76));
 }
