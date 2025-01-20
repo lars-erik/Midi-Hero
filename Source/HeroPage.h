@@ -25,6 +25,8 @@ private:
     OwnedArray<JudgementLabel> labels;
     int currentLabel = 0;
 
+    OwnedArray<Component> children;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(HeroPage)
 };
 
