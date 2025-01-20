@@ -11,6 +11,7 @@ HeroPage::HeroPage(MidiHeroAudioProcessor& processor) :
         labels.add(label);
     }
 
+    // TODO: Make division level selection component
     int selectedDivisionLevel = audioProcessor.settings.getDivisionLevel();
 
     const std::string buttonLabels[] = {
