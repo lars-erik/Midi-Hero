@@ -10,23 +10,21 @@ public:
 
     void resized() override;
     void setText(const std::string& text);
+    void setColour(Colour colour);
     void start();
 
-    void mouseUp(const MouseEvent&) override;
-
-    //void paint(Graphics&) override;
 private:
     Label heroLabel { "hero", "Perfect" };
-    Font font{ FontOptions(72) };
+    Font font{ FontOptions(96, Font::FontStyleFlags::bold) };
 
     Rectangle<int> centerBounds;
 
     Animator waitABit = ValueAnimatorBuilder()
-        .withDurationMs(200.f)
+        .withDurationMs(50.f)
         .build();
 
     Animator slideInAnimator = ValueAnimatorBuilder()
-        .withDurationMs(150.f)
+        .withDurationMs(50.f)
         .withEasing(Easings::createEaseOut())
         .withOnStartReturningValueChangedCallback(
             [this]
@@ -51,12 +49,12 @@ private:
         .build();
 
     Animator slideOutAnimator = ValueAnimatorBuilder()
-        .withDurationMs(150.f)
+        .withDurationMs(400.f)
         .withEasing(Easings::createEaseIn())
         .withOnStartReturningValueChangedCallback(
             [this]
             {
-                auto limits = makeAnimationLimits(0.f, -50.f);
+                auto limits = makeAnimationLimits(0.f, -150.f);
 
                 return [this, limits](auto value)
                 {
@@ -77,7 +75,7 @@ private:
 
     Animator allOfIt = AnimatorSetBuilder([] {})
         .followedBy(slideInAnimator)
-        .followedBy(waitABit)
+        //.followedBy(waitABit)
         .followedBy(slideOutAnimator)
         .build();
 

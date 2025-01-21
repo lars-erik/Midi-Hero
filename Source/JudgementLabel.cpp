@@ -5,6 +5,7 @@ JudgementLabel::JudgementLabel()
     heroLabel.setFont(font);
     heroLabel.setAlpha(0);
     heroLabel.setInterceptsMouseClicks(false, false);
+    setInterceptsMouseClicks(false, false);
 
     addAndMakeVisible(heroLabel);
 }
@@ -22,6 +23,11 @@ void JudgementLabel::setText(const std::string& text)
     resized();
 }
 
+void JudgementLabel::setColour(Colour colour)
+{
+    heroLabel.setColour(Label::textColourId, colour);
+}
+
 void JudgementLabel::start()
 {
     allOfIt.start();
@@ -29,9 +35,4 @@ void JudgementLabel::start()
         {
             updater.removeAnimator(allOfIt);
         });
-}
-
-void JudgementLabel::mouseUp(const MouseEvent& mouse_event)
-{
-    start();
 }

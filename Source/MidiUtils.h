@@ -226,14 +226,6 @@ public:
             "Perfect", "Great", "Good", "Off", "Bad"
         };
 
-        inline static std::unordered_map<std::string, Colour> colors = {
-            {"Perfect", Colours::green },
-            {"Great", Colours::lightgreen },
-            {"Good", Colours::greenyellow },
-            {"Off", Colours::orange },
-            {"Bad", Colours::red }
-        };
-
         int notes;
         double score;
         double total;
@@ -254,6 +246,19 @@ public:
             if (total >= .6) return "Good";
             if (total >= .25) return "Off";
             return "Bad";
+        }
+
+        static Colour getColour(const std::string& scoreName)
+        {
+            static const std::unordered_map<std::string, Colour> colors = {
+                {"Perfect", Colours::green },
+                {"Great", Colours::lightgreen },
+                {"Good", Colours::greenyellow },
+                {"Off", Colours::orange },
+                {"Bad", Colours::red }
+            };
+
+            return colors.at(scoreName);
         }
     };
 

@@ -25,6 +25,9 @@ MidiHeroAudioProcessor::MidiHeroAudioProcessor()
     settings(state)
 #endif
 {
+    // TODO: Use some other random generator?
+    std::srand(std::time(nullptr));  // NOLINT(cert-msc51-cpp, clang-diagnostic-shorten-64-to-32)
+
     state.addChild({ "uiState", { { "width",  600 }, { "height", 300 } }, {} }, -1, nullptr);
     startTimerHz(60);
 }

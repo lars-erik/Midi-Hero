@@ -36,7 +36,7 @@ void StatisticsComponent::paint(Graphics& g)
         g.drawText(String(key + ": "), 25, y, 80, 30, Justification::centredLeft);
 
         const int width = static_cast<int>(static_cast<double>(scores[key]) / total * maxBarWidth);
-        g.setColour(MidiListModel::Scoring::colors[key]);
+        g.setColour(MidiListModel::Scoring::getColour(key));
         g.fillRect(100, y, width, 30);
     }
 }

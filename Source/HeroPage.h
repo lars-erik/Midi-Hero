@@ -17,6 +17,8 @@ public:
 
     void valueChanged(Value& value) override;
 
+    void mouseUp(const MouseEvent&) override;
+
 private:
     const int MaxLabels = 40;
 

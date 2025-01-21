@@ -84,12 +84,28 @@ void HeroPage::valueChanged(Value& value)
 
     auto score = MidiListModel::score(newNotes, audioProcessor.settings.getDivisionLevel());
     auto scoreName = score.getScoreName();
+    const Colour colour = MidiListModel::Scoring::getColour(scoreName);
 
     DBG(newNotes.size() << " new notes, scored " << score.total << " with name " << scoreName);
 
     const int nextLabelIndex = currentLabel++ % MaxLabels;
     JudgementLabel* label = labels[nextLabelIndex];
     label->setText(scoreName);
+    label->setColour(colour);
+    label->start();
+}
+
+void HeroPage::mouseUp(const MouseEvent& mouse_event)
+{
+    const double value = std::rand();  // NOLINT(concurrency-mt-unsafe)
+    const double ratio = value / RAND_MAX;
+    const int it = static_cast<int>(floor(ratio * MidiListModel::Scoring::keys.size()));
+    const std::string scoreName = MidiListModel::Scoring::keys[it];
+    const Colour colour = MidiListModel::Scoring::getColour(scoreName);
+    const int nextLabelIndex = currentLabel++ % MaxLabels;
+    JudgementLabel* label = labels[nextLabelIndex];
+    label->setText(scoreName);
+    label->setColour(colour);
     label->start();
 }
 
