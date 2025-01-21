@@ -4,6 +4,8 @@
 #include <cmath>
 #include <string>
 
+#include "MidiHeroSettings.h";
+
 using namespace juce;
 
 inline std::string formatPPQ(double ppqValue, AudioPlayHead::TimeSignature& signature) {
@@ -41,7 +43,11 @@ struct TimedMidiMessage
 
     TimedMidiMessage() = default;
 
-    TimedMidiMessage(MidiMessage message, const AudioPlayHead::PositionInfo& position, const double sampleRate)
+    TimedMidiMessage(
+        MidiMessage message, 
+        const AudioPlayHead::PositionInfo& position, 
+        const double sampleRate
+    )
         : message(std::move(message)),
           position(position),
           sampleRate(sampleRate)
@@ -318,8 +324,9 @@ class MidiTable final : public Component,
     private Value::Listener
 {
 public:
-    MidiTable(MidiListModel& m)
-        : messages(m)
+    MidiTable(MidiListModel& m, MidiHeroSettings& settings) :
+        messages(m),
+        settings(settings)
     {
         addAndMakeVisible(table);
 
@@ -426,8 +433,7 @@ private:
         const auto index = filteredMessages.size() - 1 - rowNumber;
         const auto message = filteredMessages[static_cast<int64>(index)];
 
-        // TODO: Configurable division level
-        int divisionLevel = 4;
+        const int divisionLevel = settings.getDivisionLevel();
 
         return new Label({}, [&]
             {
@@ -452,6 +458,7 @@ private:
     }
 
     MidiListModel& messages;
+    MidiHeroSettings& settings;
     std::vector<TimedMidiMessage> filteredMessages;
     TableListBox table;
 };

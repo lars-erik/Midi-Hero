@@ -9,7 +9,7 @@ std::string intToHex(int value) {
 LogTableComponent::LogTableComponent(MidiHeroAudioProcessor& audioProcessor) :
     Component("Log table"),
     audioProcessor(audioProcessor),
-    table(audioProcessor.model)
+    table(audioProcessor.model, audioProcessor.settings)
 {
     addAndMakeVisible(table);
     addAndMakeVisible(clearButton);

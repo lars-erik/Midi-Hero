@@ -19,6 +19,7 @@ private:
     void valueChanged(Value&) override;
 
     MidiHeroAudioProcessor& audioProcessor;
+    MidiHeroSettings& settings;
 
     Label label { "statistics", "Statistics" };
 

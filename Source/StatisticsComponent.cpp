@@ -2,7 +2,8 @@
 
 StatisticsComponent::StatisticsComponent(MidiHeroAudioProcessor& p) :
     Component("Statistics"),
-    audioProcessor(p)
+    audioProcessor(p),
+    settings(p.settings)
 {
     label.setBounds(20, 20, 100, 20);
     label.setJustificationType(Justification::Flags::centredLeft);
@@ -18,13 +19,10 @@ StatisticsComponent::~StatisticsComponent()
 
 void StatisticsComponent::paint(Graphics& g)
 {
-    // TODO: Configurable division level
-    const int divisionLevel = 4;
-
     g.fillAll(findColour(ResizableWindow::backgroundColourId));
 
     // TODO: Combine in one struct.
-    auto scores = audioProcessor.model.getScoreCounts(divisionLevel);
+    auto scores = audioProcessor.model.getScoreCounts(settings.getDivisionLevel());
     const auto total = audioProcessor.model.getNotes().size();
 
     const int maxBarWidth = 200;

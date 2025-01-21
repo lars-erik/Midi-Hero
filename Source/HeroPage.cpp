@@ -79,13 +79,10 @@ void HeroPage::resized()
 
 void HeroPage::valueChanged(Value& value)
 {
-    // TODO: Configurable div. level
-    const int divisionLevel = 4;
-
     auto newNotes = audioProcessor.model.getNewNotes();
     if (newNotes.empty()) return;
 
-    auto score = MidiListModel::score(newNotes, divisionLevel);
+    auto score = MidiListModel::score(newNotes, audioProcessor.settings.getDivisionLevel());
     auto scoreName = score.getScoreName();
 
     DBG(newNotes.size() << " new notes, scored " << score.total << " with name " << scoreName);
