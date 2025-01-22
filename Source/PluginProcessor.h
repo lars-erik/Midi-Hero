@@ -8,12 +8,10 @@
 
 #pragma once
 
-#include <JuceHeader.h>
+#include "Global.h"
 
 #include "MidiHeroSettings.h"
 #include "MidiUtils.h"
-
-using namespace juce;
 
 //==============================================================================
 /**
@@ -34,11 +32,10 @@ public:
     bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
    #endif
 
-    template <typename Element>
-    void process(AudioBuffer<Element>& audio, MidiBuffer& midi);
+    void process(const MidiBuffer& midi);
 
-    void processBlock(AudioBuffer<float>& audio, MidiBuffer& midi) override { process(audio, midi); }
-    void processBlock(AudioBuffer<double>& audio, MidiBuffer& midi) override { process(audio, midi); }
+    void processBlock(AudioBuffer<float>&, MidiBuffer& midi) override { process(midi); }
+    void processBlock(AudioBuffer<double>&, MidiBuffer& midi) override { process(midi); }
     
     void timerCallback() override;
 
@@ -53,8 +50,6 @@ public:
     bool producesMidi() const override;
     bool isMidiEffect() const override;
     double getTailLengthSeconds() const override;
-
-    
 
     //==============================================================================
     int getNumPrograms() override;

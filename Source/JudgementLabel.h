@@ -1,6 +1,5 @@
 #pragma once
-#include "JuceHeader.h"
-using namespace juce;
+#include "Global.h"
 
 class JudgementLabel :
     public Component

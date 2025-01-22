@@ -77,7 +77,7 @@ void HeroPage::resized()
     }
 }
 
-void HeroPage::valueChanged(Value& value)
+void HeroPage::valueChanged(Value&)
 {
     auto newNotes = audioProcessor.model.getNewNotes();
     if (newNotes.empty()) return;
@@ -95,7 +95,7 @@ void HeroPage::valueChanged(Value& value)
     label->start();
 }
 
-void HeroPage::mouseUp(const MouseEvent& mouse_event)
+void HeroPage::mouseUp(const MouseEvent&)
 {
     const double value = std::rand();  // NOLINT(concurrency-mt-unsafe)
     const double ratio = value / RAND_MAX;

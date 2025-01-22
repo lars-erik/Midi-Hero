@@ -9,8 +9,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-using namespace juce;
-
 //==============================================================================
 MidiHeroAudioProcessor::MidiHeroAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -26,15 +24,13 @@ MidiHeroAudioProcessor::MidiHeroAudioProcessor()
 #endif
 {
     // TODO: Use some other random generator?
-    std::srand(std::time(nullptr));  // NOLINT(cert-msc51-cpp, clang-diagnostic-shorten-64-to-32)
+    srand(static_cast<int>(time(nullptr)));  // NOLINT(cert-msc51-cpp, clang-diagnostic-shorten-64-to-32)
 
     state.addChild({ "uiState", { { "width",  600 }, { "height", 300 } }, {} }, -1, nullptr);
     startTimerHz(60);
 }
 
-MidiHeroAudioProcessor::~MidiHeroAudioProcessor()
-{
-}
+MidiHeroAudioProcessor::~MidiHeroAudioProcessor() = default;
 
 //==============================================================================
 const juce::String MidiHeroAudioProcessor::getName() const
@@ -85,24 +81,25 @@ int MidiHeroAudioProcessor::getCurrentProgram()
     return 0;
 }
 
-void MidiHeroAudioProcessor::setCurrentProgram (int index)
+void MidiHeroAudioProcessor::setCurrentProgram (int)
 {
 }
 
-const juce::String MidiHeroAudioProcessor::getProgramName (int index)
+const juce::String MidiHeroAudioProcessor::getProgramName (int)
 {
     return "None";
 }
 
-void MidiHeroAudioProcessor::changeProgramName (int index, const juce::String& newName)
+void MidiHeroAudioProcessor::changeProgramName (int, const String&)
 {
 }
 
 //==============================================================================
-void MidiHeroAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void MidiHeroAudioProcessor::prepareToPlay (double, int)
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+    DBG("Prepare to play");
 }
 
 void MidiHeroAudioProcessor::releaseResources()
@@ -137,11 +134,8 @@ bool MidiHeroAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts)
 }
 #endif
 
-template <typename Element>
-void MidiHeroAudioProcessor::process(AudioBuffer<Element>& audio, MidiBuffer& midi)
+void MidiHeroAudioProcessor::process(const MidiBuffer& midi)
 {
-    //audio.clear();
-
     Optional<AudioPlayHead::PositionInfo> posInfo;
     const double sampleRate = getSampleRate();
     if (const AudioPlayHead* currentPlayHead = getPlayHead())

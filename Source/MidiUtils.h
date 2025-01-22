@@ -4,9 +4,8 @@
 #include <cmath>
 #include <string>
 
-#include "MidiHeroSettings.h";
-
-using namespace juce;
+#include "Global.h"
+#include "MidiHeroSettings.h"
 
 inline std::string formatPPQ(double ppqValue, AudioPlayHead::TimeSignature& signature) {
     // Calculate the number of quarter notes in a bar
@@ -43,6 +42,7 @@ struct TimedMidiMessage
 
     TimedMidiMessage() = default;
 
+    // TODO: Pass reference to settings?
     TimedMidiMessage(
         MidiMessage message, 
         const AudioPlayHead::PositionInfo& position, 
@@ -62,37 +62,37 @@ struct TimedMidiMessage
         return result;
     }
 
-    std::string getPositionFormatted(int divisionLevel) const
+    std::string getPositionFormatted() const
     {
         return formatPPQ(getPosition(), *position.getTimeSignature());
     }
 
-    double getIntendedPosition(int divisionLevel) const {
+    double getIntendedPosition(const int divisionLevel) const {
         double step = 1.0 / divisionLevel; // Grid step size
         double nearest = std::round(getPosition() / step) * step;
         return nearest;
     }
 
-    std::string getIntendedPositionFormatted(int divisionLevel) const
+    std::string getIntendedPositionFormatted(const int divisionLevel) const
     {
         return formatPPQ(getIntendedPosition(divisionLevel), *position.getTimeSignature());
     }
 
-    double getPpqDiff(int divisionLevel) const
+    double getPpqDiff(const int divisionLevel) const
     {
         return getPosition() - getIntendedPosition(divisionLevel);
     }
 
-    int getPpqDiffInMs(int divisionLevel) const
+    int getPpqDiffInMs(const int divisionLevel) const
     {
         double secPerQuarterNote = 60 / position.getBpm().orFallback(60); // 0.5 in 120
         double diff = getPpqDiff(divisionLevel); // ratio of 0.5? (yes)
         double diffInSeconds = diff * secPerQuarterNote;
-        int result = round(diffInSeconds * 1000);
+        int result = static_cast<int>(round(diffInSeconds * 1000));
         return result;
     }
 
-    double getScore(int divisionLevel) const
+    double getScore(const int divisionLevel) const
     {
         const int diff = abs(getPpqDiffInMs(divisionLevel));
         if (diff < 10) return 1;
@@ -102,7 +102,7 @@ struct TimedMidiMessage
         return 0;
     }
 
-    std::string getScoreName(int divisionLevel) const
+    std::string getScoreName(const int divisionLevel) const
     {
         const int diff = abs(getPpqDiffInMs(divisionLevel));
         if (diff < 10) return "Perfect";
@@ -113,9 +113,9 @@ struct TimedMidiMessage
     }
 
 private:
-    static double roundToDecimals(double value, int decimals) {
-        double scale = std::pow(10.0, decimals);
-        return std::round(value * scale) / scale;
+    static double roundToDecimals(const double value, const int decimals) {
+        double scale = pow(10.0, decimals);
+        return round(value * scale) / scale;
     }
 
 };
@@ -226,13 +226,13 @@ public:
             "Perfect", "Great", "Good", "Off", "Bad"
         };
 
-        int notes;
+        long notes;
         double score;
         double total;
 
         Scoring() = default;
 
-        Scoring(int notes, double score, double total)
+        Scoring(long notes, double score, double total)
             : notes(notes),
               score(score),
               total(total)
@@ -264,11 +264,12 @@ public:
 
     static Scoring score(std::vector<TimedMidiMessage> notes, int divisionLevel)
     {
-        std::vector<double> scores;
-        std::transform(notes.begin(), notes.end(), std::back_inserter(scores), [divisionLevel](const TimedMidiMessage& m) { return m.getScore(divisionLevel); });
-        double score = std::accumulate(scores.begin(), scores.end(), 0.0);
-        double totalScore = round(score / notes.size() * 100) / 100;
-        return Scoring(notes.size(), score, totalScore);
+        vector<double> scores;
+        transform(notes.begin(), notes.end(), back_inserter(scores), [divisionLevel](const TimedMidiMessage& m) { return m.getScore(divisionLevel); });
+        const long totalNotes = static_cast<long>(notes.size());
+        const double score = std::accumulate(scores.begin(), scores.end(), 0.0);
+        const double totalScore = round(score / totalNotes * 100) / 100;
+        return {totalNotes, score, totalScore};
     }
 
     std::vector<TimedMidiMessage> getNotes()
@@ -276,16 +277,15 @@ public:
         return filterMessages([&](const TimedMidiMessage& msg) { return msg.message.isNoteOn(); });
     }
 
-    Scoring score(int divisionLevel)
+    Scoring score(const int divisionLevel)
     {
         auto notes = getNotes();
         return score(notes, divisionLevel);
     }
 
-    std::map<std::string, int> getScoreCounts(int divisionLevel)
+    std::map<std::string, int> getScoreCounts(const int divisionLevel)
     {
         auto notes = getNotes();
-        const auto total = notes.size();
 
         std::map<std::string, int> scores = {
             {"Perfect", 0 },
@@ -302,8 +302,6 @@ public:
 
         return scores;
     }
-
-    //std::function<void()> onChange;
 
     void addListener(Value::Listener* listener)
     {
@@ -363,7 +361,7 @@ public:
         messages.removeListener(this);
     }
 
-    void valueChanged(Value& v) override
+    void valueChanged(Value&) override
     {
         filteredMessages = messages.getNotes();
         table.updateContent();
@@ -447,7 +445,7 @@ private:
                 case messageColumn:     return getEventString(message.message);
                 case barColumn:         return String(message.position.getPpqPositionOfLastBarStart().orFallback(0));
                 case ppqColumn:         return String(message.position.getPpqPosition().orFallback(0));
-                case adjustedColumn:    return String(message.getPositionFormatted(divisionLevel));
+                case adjustedColumn:    return String(message.getPositionFormatted());
                 case intendedPpqColumn: return String(message.getIntendedPosition(divisionLevel));
                 case intendedColumn:    return String(message.getIntendedPositionFormatted(divisionLevel));
                 case diffColumn:        return String(message.getPpqDiffInMs(divisionLevel));

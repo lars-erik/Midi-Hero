@@ -1,9 +1,7 @@
 #pragma once
-#include "JuceHeader.h"
+#include "Global.h"
 #include "JudgementLabel.h"
 #include "PluginProcessor.h"
-
-using namespace juce;
 
 class HeroPage :
     public Component,

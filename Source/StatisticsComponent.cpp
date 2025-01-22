@@ -45,7 +45,7 @@ void StatisticsComponent::resized()
 {
 }
 
-void StatisticsComponent::valueChanged(Value& v)
+void StatisticsComponent::valueChanged(Value&)
 {
     repaint();
 }

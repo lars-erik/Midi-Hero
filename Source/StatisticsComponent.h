@@ -1,8 +1,6 @@
 #pragma once
-#include "JuceHeader.h"
+#include "Global.h"
 #include "PluginProcessor.h"
-
-using namespace juce;
 
 class StatisticsComponent :
     public Component,

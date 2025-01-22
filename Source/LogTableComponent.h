@@ -1,11 +1,9 @@
 #pragma once
 
-#include <JuceHeader.h>
+#include "Global.h"
 
 #include "MidiUtils.h"
 #include "PluginProcessor.h"
-
-using namespace juce;
 
 class LogTableComponent :
     public Component    

@@ -7,6 +7,15 @@
               pluginVST3Category="Analyzer">
   <MAINGROUP id="bXvcrT" name="Midi Hero">
     <GROUP id="{3F409F78-A580-1CD8-A090-CC8194903C63}" name="Source">
+      <FILE id="UZNINA" name="Global.h" compile="0" resource="0" file="Source/Global.h"/>
+      <FILE id="Ykw1U5" name="HeroPage.cpp" compile="1" resource="0" file="Source/HeroPage.cpp"/>
+      <FILE id="EmyVEw" name="HeroPage.h" compile="0" resource="0" file="Source/HeroPage.h"/>
+      <FILE id="eiIH9f" name="JudgementLabel.cpp" compile="1" resource="0"
+            file="Source/JudgementLabel.cpp"/>
+      <FILE id="WKyXge" name="JudgementLabel.h" compile="0" resource="0"
+            file="Source/JudgementLabel.h"/>
+      <FILE id="ORC3Bd" name="MidiHeroSettings.h" compile="0" resource="0"
+            file="Source/MidiHeroSettings.h"/>
       <FILE id="APzR1v" name="LogTableComponent.cpp" compile="1" resource="0"
             file="Source/LogTableComponent.cpp"/>
       <FILE id="wlqveu" name="LogTableComponent.h" compile="0" resource="0"
@@ -19,10 +28,6 @@
             file="Source/PluginProcessor.cpp"/>
       <FILE id="x3meqr" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
-      <FILE id="ZupSqF" name="RealtimeJudgementComponent.cpp" compile="1"
-            resource="0" file="Source/RealtimeJudgementComponent.cpp"/>
-      <FILE id="P4TPfK" name="RealtimeJudgementComponent.h" compile="0" resource="0"
-            file="Source/RealtimeJudgementComponent.h"/>
       <FILE id="ZFSOXH" name="StatisticsComponent.cpp" compile="1" resource="0"
             file="Source/StatisticsComponent.cpp"/>
       <FILE id="du7QuD" name="StatisticsComponent.h" compile="0" resource="0"
@@ -36,11 +41,9 @@
     <MODULE id="juce_animation" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
-    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
             useGlobalPath="1"/>
     <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
-    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
@@ -58,10 +61,8 @@
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="../../../tools/JUCE/modules"/>
         <MODULEPATH id="juce_audio_devices" path="../../../tools/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../../../tools/JUCE/modules"/>
         <MODULEPATH id="juce_audio_plugin_client" path="../../../tools/JUCE/modules"/>
         <MODULEPATH id="juce_audio_processors" path="../../../tools/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../../../tools/JUCE/modules"/>
         <MODULEPATH id="juce_core" path="../../../tools/JUCE/modules"/>
         <MODULEPATH id="juce_data_structures" path="../../../tools/JUCE/modules"/>
         <MODULEPATH id="juce_events" path="../../../tools/JUCE/modules"/>
