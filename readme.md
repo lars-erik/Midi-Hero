@@ -17,6 +17,9 @@ Scores each note as:
 
 Shows statistics after play stops.
 
+Works with MIDI controller input.  
+Should work for non-midi instruments with effects like "Audio to MIDI".
+
 ### How to install
 
 Drop the .vst3 file in your common VST3 folder.
