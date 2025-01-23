@@ -15,21 +15,22 @@
               file="Source/TimedMidiMessage.h"/>
       </GROUP>
       <GROUP id="{B326E267-0E6D-96EA-53D2-8DD56C0F9E3A}" name="GUI">
+        <FILE id="RsOet0" name="DivisionLevelComponent.h" compile="0" resource="0"
+              file="Source/DivisionLevelComponent.h"/>
         <FILE id="Ykw1U5" name="HeroPage.cpp" compile="1" resource="0" file="Source/HeroPage.cpp"/>
         <FILE id="EmyVEw" name="HeroPage.h" compile="0" resource="0" file="Source/HeroPage.h"/>
         <FILE id="eiIH9f" name="JudgementLabel.cpp" compile="1" resource="0"
               file="Source/JudgementLabel.cpp"/>
         <FILE id="WKyXge" name="JudgementLabel.h" compile="0" resource="0"
               file="Source/JudgementLabel.h"/>
-        <FILE id="APzR1v" name="LogTableComponent.cpp" compile="1" resource="0"
-              file="Source/LogTableComponent.cpp"/>
-        <FILE id="wlqveu" name="LogTableComponent.h" compile="0" resource="0"
-              file="Source/LogTableComponent.h"/>
+        <FILE id="nbpfIC" name="LogTablePage.cpp" compile="1" resource="0"
+              file="Source/LogTablePage.cpp"/>
+        <FILE id="f3nvIO" name="LogTablePage.h" compile="0" resource="0" file="Source/LogTablePage.h"/>
         <FILE id="T9t7sX" name="MidiTable.h" compile="0" resource="0" file="Source/MidiTable.h"/>
-        <FILE id="ZFSOXH" name="StatisticsComponent.cpp" compile="1" resource="0"
-              file="Source/StatisticsComponent.cpp"/>
-        <FILE id="du7QuD" name="StatisticsComponent.h" compile="0" resource="0"
-              file="Source/StatisticsComponent.h"/>
+        <FILE id="WZ8kE3" name="StatisticsPage.cpp" compile="1" resource="0"
+              file="Source/StatisticsPage.cpp"/>
+        <FILE id="rItqHk" name="StatisticsPage.h" compile="0" resource="0"
+              file="Source/StatisticsPage.h"/>
         <FILE id="XPUAEu" name="TabsComponent.cpp" compile="1" resource="0"
               file="Source/TabsComponent.cpp"/>
         <FILE id="oF3YMD" name="TabsComponent.h" compile="0" resource="0" file="Source/TabsComponent.h"/>
