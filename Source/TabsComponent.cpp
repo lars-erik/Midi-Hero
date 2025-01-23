@@ -20,7 +20,14 @@ TabsComponent::TabsComponent(
     processor.model.observeIsPlaying(&isPlayingObserver, [&](const bool& v) {
         DBG("Is playing: " << to_string(v));
 
-        this->setCurrentTabIndex(v ? 0 : 1, true);
+        if (!v && processor.model.getNoteCount() > 0)
+        {
+            this->setCurrentTabIndex(1, true);
+        }
+        if (v && processor.model.getNoteCount() == 0)
+        {
+            this->setCurrentTabIndex(0, true);
+        }
     });
 }
 

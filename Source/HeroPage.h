@@ -23,6 +23,12 @@ private:
     MidiHeroAudioProcessor& audioProcessor;
 
     Observer<int> noteCountObserver;
+    Observer<bool> isPlayingObserver;
+
+    const string HAVE_NOTES_TEXT = "Well played!\nGo to the statistics page to view your statistics.\nOr start the playhead again to get a new score.";
+    const string NO_NOTES_TEXT = "Start the playhead and play some notes to get your first score!";
+
+    Label pausedLabel = { "paused", NO_NOTES_TEXT };
 
     OwnedArray<JudgementLabel> labels;
     int currentLabel = 0;

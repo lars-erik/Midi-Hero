@@ -2,52 +2,38 @@
 
 StatisticsPage::StatisticsPage(MidiHeroAudioProcessor& p) :
     Component("Statistics"),
-    audioProcessor(p),
-    settings(p.settings),
     scoreCounts(p.model, p.settings),
+    totalScore(p.model, p.settings),
     divisionLevelSelector(p.settings)
 {
-    label.setBounds(20, 20, 100, 20);
-    label.setJustificationType(Justification::Flags::centredLeft);
-    addAndMakeVisible(label);
+    auto font = Font(FontOptions(24, Font::FontStyleFlags::bold));
 
-    scoreLabel.setBounds(300, 50, 400, 100);
-    scoreLabel.setJustificationType(Justification::Flags::centred);
-    scoreLabel.setFont(Font(FontOptions(128, Font::FontStyleFlags::bold)));
-    addAndMakeVisible(scoreLabel);
+    int headerWidth = getWidth() / 2;
+    statsHeader.setBounds(0, 20, headerWidth, 40);
+    statsHeader.setFont(font);
+    statsHeader.setJustificationType(Justification::Flags::centred);
+    addAndMakeVisible(statsHeader);
 
-    scoreNameLabel.setBounds(300, 175, 400, 100);
-    scoreNameLabel.setJustificationType(Justification::Flags::centred);
-    scoreNameLabel.setFont(Font(FontOptions(76, Font::FontStyleFlags::bold)));
-    addAndMakeVisible(scoreNameLabel);
+    scoreHeader.setBounds(getWidth() / 2, 20, headerWidth, 40);
+    scoreHeader.setFont(font);
+    scoreHeader.setJustificationType(Justification::Flags::centred);
+    addAndMakeVisible(scoreHeader);
 
     addAndMakeVisible(scoreCounts);
+    addAndMakeVisible(totalScore);
 
     addAndMakeVisible(divisionLevelSelector);
 
-    p.model.observeNoteCount(&noteCountObserver, [&](int) { repaint(); });
-}
-
-StatisticsPage::~StatisticsPage()
-{
-    audioProcessor.model.stopObserveNoteCount(&noteCountObserver);
-}
-
-
-void StatisticsPage::paint(Graphics& g)
-{
-    g.fillAll(findColour(ResizableWindow::backgroundColourId));
-
-    const auto score = audioProcessor.model.getScore(settings.getDivisionLevel());
-    String scoreString(isnan(score.total) ? "N/A" : to_string(static_cast<int>(round(score.total * 100))));
-    scoreLabel.setText(scoreString << "%", dontSendNotification);
-    scoreNameLabel.setText(score.getScoreName(), dontSendNotification);
-    scoreNameLabel.setColour(Label::textColourId, score.getColour());
 }
 
 void StatisticsPage::resized()
 {
-    scoreCounts.setBounds(25, 60, getWidth() / 2 - 37, getHeight() - 110);
+    int headerWidth = getWidth() / 2;
+    statsHeader.setBounds(0, 20, headerWidth, 40);
+    scoreHeader.setBounds(getWidth() / 2, 20, headerWidth, 40);
+
+    scoreCounts.setBounds(25, 70, getWidth() / 2 - 37, getHeight() - 120);
+    totalScore.setBounds(getWidth() / 2 + 12, 70, getWidth() / 2 - 37, getHeight() - 120);
 
     divisionLevelSelector.positionAtBottom();
 }

@@ -3,30 +3,25 @@
 #include "PluginProcessor.h"
 #include "DivisionLevelComponent.h"
 #include "ScoreCountsComponent.h"
+#include "TotalScoreComponent.h"
 
 class StatisticsPage :
     public Component
 {
 public:
     StatisticsPage(MidiHeroAudioProcessor&);
-    ~StatisticsPage() override;
+    ~StatisticsPage() override = default;
 
-    void paint(juce::Graphics&) override;
     void resized() override;
 
 private:
-
-    MidiHeroAudioProcessor& audioProcessor;
-    MidiHeroSettings& settings;
-
     ScoreCountsComponent scoreCounts;
+    TotalScoreComponent totalScore;
+
     DivisionLevelComponent divisionLevelSelector;
 
-    Observer<int> noteCountObserver;
-
-    Label label { "statistics", "Statistics" };
-    Label scoreLabel { "score", "N/A" };
-    Label scoreNameLabel { "score", "N/A" };
+    Label statsHeader { "statistics", "Statistics" };
+    Label scoreHeader { "score", "Score" };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StatisticsPage)
 };

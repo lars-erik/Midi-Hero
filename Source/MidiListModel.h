@@ -7,11 +7,15 @@
 class MidiListModel
 {
 public:
-    MidiListModel() = default;
+    MidiListModel()
+    {
+        NoteCount.setValue(0);
+    };
 
     explicit MidiListModel(const std::vector<TimedMidiMessage>& messages)
         : messages(messages)
     {
+        NoteCount.setValue(0);
     }
 
     template <typename It>
@@ -50,12 +54,14 @@ public:
             if (hasStartStop && isStart)
             {
                 messages.clear();
+                NoteCount.setValue(0);
             }
 
             IsPlaying.setValue(isStart);
         }
 
-        NoteCount.setValue(static_cast<int>(messages.size()));
+        int newCount = static_cast<int>(newNotes.size()) + static_cast<int>(NoteCount.getValue());
+        NoteCount.setValue(newCount);
     }
 
     void clear()
