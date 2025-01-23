@@ -26,7 +26,7 @@ Drop the .vst3 file in your common VST3 folder.
 
 ### How to use (Ableton)
 
-- Add plugin to individual chain in instrument, or route midi to an instrument-less track.  
+- Add plugin to individual chain in instrument rack, or route midi to an instrument-less track.  
 - Open the plugin editor.  
 - Start the playhead.  
 - Watch scored notes in realtime
