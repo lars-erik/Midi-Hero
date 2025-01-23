@@ -32,8 +32,8 @@ void StatisticsPage::resized()
     statsHeader.setBounds(0, 20, headerWidth, 40);
     scoreHeader.setBounds(getWidth() / 2, 20, headerWidth, 40);
 
-    scoreCounts.setBounds(25, 70, getWidth() / 2 - 37, getHeight() - 120);
-    totalScore.setBounds(getWidth() / 2 + 12, 70, getWidth() / 2 - 37, getHeight() - 120);
+    scoreCounts.setBounds(25, 80, getWidth() / 2 - 37, getHeight() - 130);
+    totalScore.setBounds(getWidth() / 2 + 12, 80, getWidth() / 2 - 37, getHeight() - 130);
 
     divisionLevelSelector.positionAtBottom();
 }
