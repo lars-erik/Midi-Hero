@@ -1,9 +1,47 @@
 ## Midi Hero
 
-A work in progress. Currently does not do what it's supposed to.
+### Overview
 
-**The goal:**
+A work in progress... 
 
-A VST3 plugin that scores MIDI timing against the BPM and grid.
+Logs midi on messages and times them against the grid.  
+Scores each note as:  
 
-Midi Hero! 🤓
+| Milliseconds | Score |
+| --- | --- |
+| < 10 | Perfect |
+| < 20 | Great |
+| < 40 | Good |
+| < 80 | Off |
+| >= 80 | Bad |
+
+Shows statistics after play stops.
+
+### How to install
+
+Drop the .vst3 file in your common VST3 folder.
+
+### How to use (Ableton)
+
+- Add plugin to individual chain in instrument, or route midi to an instrument-less track.  
+- Open the plugin editor.  
+- Start the playhead.  
+- Watch scored notes in realtime
+- Stop the playhead
+- View your statistics
+
+The plugin-in automatically switches between "Hero" and "Statistics" as the playhead starts and stops.
+
+### Roadmap
+
+This is a hobby project and may never get another release.  
+However, these are the planned features:
+
+- Prettier UI (flexbox, fonts, colors, general layout)
+- Settings tab
+  - Setting to disable auto-switch between "Hero" and "Statistics"
+  - Settings for millisecond levels
+  - Settings for score percentages
+  - Setting for "slack" (i.e. scale the millisecond levels)
+- Division level setting on more pages
+- Using a midi file as "target" instead of the "grid"
