@@ -1,4 +1,5 @@
 #pragma once
+#include "DivisionLevelComponent.h"
 #include "Global.h"
 #include "JudgementLabel.h"
 #include "PluginProcessor.h"
@@ -25,7 +26,7 @@ private:
     OwnedArray<JudgementLabel> labels;
     int currentLabel = 0;
 
-    OwnedArray<Component> children;
+    DivisionLevelComponent divisionLevelSelector;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(HeroPage)
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Global.h"
+#include "Observer.h"
 
 class MidiHeroSettings
 {
@@ -18,15 +19,7 @@ public:
         initialize();
     }
 
-    int getDivisionLevel() const
-    {
-        return divisionLevel.getValue();
-    }
-
-    void setDivisionLevel(const int value)
-    {
-        divisionLevel.setValue(value);
-    }
+    OBSERVABLE(int, DivisionLevel)
 
 private:
     void initialize()
@@ -37,12 +30,10 @@ private:
         }
 
         settingsState = state.getChildWithName("settingsState");
-        divisionLevel.referTo(settingsState.getPropertyAsValue("divisionLevel", nullptr));
+        DivisionLevel.referTo(settingsState.getPropertyAsValue("divisionLevel", nullptr));
     }
 
     ValueTree& state;
     ValueTree settingsState;
-
-    Value divisionLevel;
 };
 

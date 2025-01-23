@@ -3,7 +3,8 @@
 StatisticsComponent::StatisticsComponent(MidiHeroAudioProcessor& p) :
     Component("Statistics"),
     audioProcessor(p),
-    settings(p.settings)
+    settings(p.settings),
+    divisionLevelSelector(p.settings)
 {
     label.setBounds(20, 20, 100, 20);
     label.setJustificationType(Justification::Flags::centredLeft);
@@ -18,6 +19,8 @@ StatisticsComponent::StatisticsComponent(MidiHeroAudioProcessor& p) :
     scoreNameLabel.setJustificationType(Justification::Flags::centred);
     scoreNameLabel.setFont(Font(FontOptions(76, Font::FontStyleFlags::bold)));
     addAndMakeVisible(scoreNameLabel);
+
+    addAndMakeVisible(divisionLevelSelector);
 
     p.model.addListener(this);
 }
@@ -61,6 +64,7 @@ void StatisticsComponent::paint(Graphics& g)
 
 void StatisticsComponent::resized()
 {
+    divisionLevelSelector.positionAtBottom();
 }
 
 void StatisticsComponent::valueChanged(Value&)

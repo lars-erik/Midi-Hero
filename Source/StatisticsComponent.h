@@ -1,6 +1,7 @@
 #pragma once
 #include "Global.h"
 #include "PluginProcessor.h"
+#include "DivisionLevelComponent.h"
 
 class StatisticsComponent :
     public Component,
@@ -18,6 +19,8 @@ private:
 
     MidiHeroAudioProcessor& audioProcessor;
     MidiHeroSettings& settings;
+
+    DivisionLevelComponent divisionLevelSelector;
 
     Label label { "statistics", "Statistics" };
     Label scoreLabel { "score", "N/A" };
