@@ -14,7 +14,12 @@ HeroPage::HeroPage(MidiHeroAudioProcessor& processor) :
 
     addAndMakeVisible(divisionLevelSelector);
 
-    processor.model.addListener(this);
+    processor.model.observeNoteCount(&noteCountObserver, [&](int) { scoreNewNotes(); });
+}
+
+HeroPage::~HeroPage()
+{
+    audioProcessor.model.stopObserveNoteCount(&noteCountObserver);
 }
 
 void HeroPage::resized()
@@ -27,7 +32,7 @@ void HeroPage::resized()
     divisionLevelSelector.positionAtBottom();
 }
 
-void HeroPage::valueChanged(Value&)
+void HeroPage::scoreNewNotes()
 {
     auto newNotes = audioProcessor.model.getNewNotes();
     if (newNotes.empty()) return;

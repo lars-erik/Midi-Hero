@@ -55,14 +55,14 @@ public:
             IsPlaying.setValue(isStart);
         }
 
-        count.setValue(static_cast<int64>(messages.size()));
+        NoteCount.setValue(static_cast<int>(messages.size()));
     }
 
     void clear()
     {
         messages.clear();
 
-        count.setValue(static_cast<int64>(messages.size()));
+        NoteCount.setValue(static_cast<int>(messages.size()));
     }
 
     const TimedMidiMessage& operator[] (size_t ind) const { return messages[ind]; }
@@ -184,15 +184,7 @@ public:
         return scores;
     }
 
-    void addListener(Value::Listener* listener)
-    {
-        count.addListener(listener);
-    }
-
-    void removeListener(Value::Listener* listener)
-    {
-        count.removeListener(listener);
-    }
+    READONLY_OBSERVABLE(int, NoteCount)
 
     READONLY_OBSERVABLE(bool, IsPlaying)
 
@@ -200,6 +192,4 @@ private:
     static constexpr auto numToStore = 1000;
     std::vector<TimedMidiMessage> messages;
     std::vector<TimedMidiMessage> newNotes;
-
-    Value count;
 };

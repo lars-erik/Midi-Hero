@@ -1,9 +1,10 @@
-#include "StatisticsComponent.h"
+#include "StatisticsPage.h"
 
 StatisticsPage::StatisticsPage(MidiHeroAudioProcessor& p) :
     Component("Statistics"),
     audioProcessor(p),
     settings(p.settings),
+    scoreCounts(p.model, p.settings),
     divisionLevelSelector(p.settings)
 {
     label.setBounds(20, 20, 100, 20);
@@ -20,15 +21,18 @@ StatisticsPage::StatisticsPage(MidiHeroAudioProcessor& p) :
     scoreNameLabel.setFont(Font(FontOptions(76, Font::FontStyleFlags::bold)));
     addAndMakeVisible(scoreNameLabel);
 
+    addAndMakeVisible(scoreCounts);
+
     addAndMakeVisible(divisionLevelSelector);
 
-    p.model.addListener(this);
+    p.model.observeNoteCount(&noteCountObserver, [&](int) { repaint(); });
 }
 
 StatisticsPage::~StatisticsPage()
 {
-    audioProcessor.model.removeListener(this);
+    audioProcessor.model.stopObserveNoteCount(&noteCountObserver);
 }
+
 
 void StatisticsPage::paint(Graphics& g)
 {
@@ -39,35 +43,11 @@ void StatisticsPage::paint(Graphics& g)
     scoreLabel.setText(scoreString << "%", dontSendNotification);
     scoreNameLabel.setText(score.getScoreName(), dontSendNotification);
     scoreNameLabel.setColour(Label::textColourId, score.getColour());
-
-    // TODO: Combine in one struct.
-    auto scores = audioProcessor.model.getScoreCounts(settings.getDivisionLevel());
-    const auto total = score.notes;
-
-    const int maxBarWidth = 250;
-
-    int y = 10;
-    for(const std::string key : MidiListModel::Scoring::keys)
-    {
-        y += 40;
-
-        g.setColour(findColour(Label::textColourId));
-        g.drawText(String(key + ": "), 25, y, 80, 30, Justification::centredLeft);
-
-        const int width = static_cast<int>(static_cast<double>(scores[key]) / total * maxBarWidth);
-        g.setColour(MidiListModel::Scoring::getColour(key));
-        g.fillRect(100, y, width, 30);
-    }
-
-
 }
 
 void StatisticsPage::resized()
 {
-    divisionLevelSelector.positionAtBottom();
-}
+    scoreCounts.setBounds(25, 60, getWidth() / 2 - 37, getHeight() - 110);
 
-void StatisticsPage::valueChanged(Value&)
-{
-    repaint();
+    divisionLevelSelector.positionAtBottom();
 }

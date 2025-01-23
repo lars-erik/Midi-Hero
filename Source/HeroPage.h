@@ -5,23 +5,24 @@
 #include "PluginProcessor.h"
 
 class HeroPage :
-    public Component,
-    private Value::Listener
+    public Component
 {
 public:
     HeroPage(MidiHeroAudioProcessor&);
-    ~HeroPage() override = default;
+    ~HeroPage() override;
 
     void resized() override;
-
-    void valueChanged(Value& value) override;
 
     void mouseUp(const MouseEvent&) override;
 
 private:
+    void scoreNewNotes();
+
     const int MaxLabels = 40;
 
     MidiHeroAudioProcessor& audioProcessor;
+
+    Observer<int> noteCountObserver;
 
     OwnedArray<JudgementLabel> labels;
     int currentLabel = 0;

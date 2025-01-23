@@ -8,9 +8,11 @@ class TabsComponent :
 {
 public:
     TabsComponent(MidiHeroAudioProcessor& , TabbedButtonBar::Orientation);
+    ~TabsComponent() override;
 
 private:
     Observer<bool> isPlayingObserver;
+    MidiHeroAudioProcessor& processor;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TabsComponent)
 };

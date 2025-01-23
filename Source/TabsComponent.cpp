@@ -2,13 +2,14 @@
 
 #include "HeroPage.h"
 #include "LogTablePage.h"
-#include "StatisticsComponent.h"
+#include "StatisticsPage.h"
 
 TabsComponent::TabsComponent(
     MidiHeroAudioProcessor& processor,
     TabbedButtonBar::Orientation orientation
 )
-    : TabbedComponent(orientation)
+    : TabbedComponent(orientation),
+    processor(processor)
 {
     auto colour = findColour(ResizableWindow::backgroundColourId);
 
@@ -21,4 +22,9 @@ TabsComponent::TabsComponent(
 
         this->setCurrentTabIndex(v ? 0 : 1, true);
     });
+}
+
+TabsComponent::~TabsComponent()
+{
+    processor.model.stopObserveIsPlaying(&isPlayingObserver);
 }

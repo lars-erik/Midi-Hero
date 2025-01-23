@@ -7,8 +7,7 @@
 
 //==============================================================================
 class MidiTable final : public Component,
-    private TableListBoxModel,
-    private Value::Listener
+    private TableListBoxModel
 {
 public:
     MidiTable(MidiListModel& m, MidiHeroSettings& settings) :
@@ -20,7 +19,6 @@ public:
         filteredMessages = messages.getNotes();
 
         table.setModel(this);
-        //table.setClickingTogglesRowSelection(false);
         
         table.setHeader([&]
             {
@@ -37,19 +35,13 @@ public:
                 return header;
             }());
 
-        messages.addListener(this);
+        messages.observeNoteCount(&noteCountObserver, [&](int) { updateTable(); });
     }
 
     ~MidiTable() override
     {
-        messages.removeListener(this);
-    }
-
-    void valueChanged(Value&) override
-    {
-        filteredMessages = messages.getNotes();
-        table.updateContent();
-    }
+        messages.stopObserveNoteCount(&noteCountObserver);
+    };
 
     void resized() override { table.setBounds(getLocalBounds()); }
 
@@ -91,6 +83,12 @@ public:
     }
 
 private:
+    void updateTable()
+    {
+        filteredMessages = messages.getNotes();
+        table.updateContent();
+    }
+
     enum
     {
         messageColumn = 1,
@@ -148,4 +146,6 @@ private:
     MidiHeroSettings& settings;
     std::vector<TimedMidiMessage> filteredMessages;
     TableListBox table;
+
+    Observer<int> noteCountObserver;
 };

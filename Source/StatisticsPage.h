@@ -2,10 +2,10 @@
 #include "Global.h"
 #include "PluginProcessor.h"
 #include "DivisionLevelComponent.h"
+#include "ScoreCountsComponent.h"
 
 class StatisticsPage :
-    public Component,
-    private Value::Listener
+    public Component
 {
 public:
     StatisticsPage(MidiHeroAudioProcessor&);
@@ -15,12 +15,14 @@ public:
     void resized() override;
 
 private:
-    void valueChanged(Value&) override;
 
     MidiHeroAudioProcessor& audioProcessor;
     MidiHeroSettings& settings;
 
+    ScoreCountsComponent scoreCounts;
     DivisionLevelComponent divisionLevelSelector;
+
+    Observer<int> noteCountObserver;
 
     Label label { "statistics", "Statistics" };
     Label scoreLabel { "score", "N/A" };
