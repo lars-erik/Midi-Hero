@@ -1,4 +1,4 @@
-#include "LogTableComponent.h"
+#include "LogTablePage.h"
 
 std::string intToHex(int value) {
     std::ostringstream oss;
@@ -6,7 +6,7 @@ std::string intToHex(int value) {
     return oss.str();
 }
 
-LogTableComponent::LogTableComponent(MidiHeroAudioProcessor& audioProcessor) :
+LogTablePage::LogTablePage(MidiHeroAudioProcessor& audioProcessor) :
     Component("Log table"),
     audioProcessor(audioProcessor),
     table(audioProcessor.model, audioProcessor.settings)
@@ -19,11 +19,11 @@ LogTableComponent::LogTableComponent(MidiHeroAudioProcessor& audioProcessor) :
     copyButton.onClick = [&]() { copyToClip(); };
 }
 
-LogTableComponent::~LogTableComponent()
+LogTablePage::~LogTablePage()
 {
 }
 
-void LogTableComponent::copyToClip() const
+void LogTablePage::copyToClip() const
 {
     std::ostringstream str;
     str << "TimeInSeconds;PpqPosition;BarPpqPosition;Byte1;Byte2;Byte3;TimeStamp\r\n";
@@ -60,14 +60,14 @@ void LogTableComponent::copyToClip() const
 }
 
 //==============================================================================
-void LogTableComponent::paint(juce::Graphics& g)
+void LogTablePage::paint(juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
 
 }
 
-void LogTableComponent::resized()
+void LogTablePage::resized()
 {
     auto bounds = getLocalBounds();
 

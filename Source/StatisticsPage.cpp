@@ -1,6 +1,6 @@
 #include "StatisticsComponent.h"
 
-StatisticsComponent::StatisticsComponent(MidiHeroAudioProcessor& p) :
+StatisticsPage::StatisticsPage(MidiHeroAudioProcessor& p) :
     Component("Statistics"),
     audioProcessor(p),
     settings(p.settings),
@@ -25,12 +25,12 @@ StatisticsComponent::StatisticsComponent(MidiHeroAudioProcessor& p) :
     p.model.addListener(this);
 }
 
-StatisticsComponent::~StatisticsComponent()
+StatisticsPage::~StatisticsPage()
 {
     audioProcessor.model.removeListener(this);
 }
 
-void StatisticsComponent::paint(Graphics& g)
+void StatisticsPage::paint(Graphics& g)
 {
     g.fillAll(findColour(ResizableWindow::backgroundColourId));
 
@@ -62,12 +62,12 @@ void StatisticsComponent::paint(Graphics& g)
 
 }
 
-void StatisticsComponent::resized()
+void StatisticsPage::resized()
 {
     divisionLevelSelector.positionAtBottom();
 }
 
-void StatisticsComponent::valueChanged(Value&)
+void StatisticsPage::valueChanged(Value&)
 {
     repaint();
 }

@@ -3,13 +3,13 @@
 #include "PluginProcessor.h"
 #include "DivisionLevelComponent.h"
 
-class StatisticsComponent :
+class StatisticsPage :
     public Component,
     private Value::Listener
 {
 public:
-    StatisticsComponent(MidiHeroAudioProcessor&);
-    ~StatisticsComponent() override;
+    StatisticsPage(MidiHeroAudioProcessor&);
+    ~StatisticsPage() override;
 
     void paint(juce::Graphics&) override;
     void resized() override;
@@ -26,6 +26,6 @@ private:
     Label scoreLabel { "score", "N/A" };
     Label scoreNameLabel { "score", "N/A" };
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StatisticsComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StatisticsPage)
 };
 

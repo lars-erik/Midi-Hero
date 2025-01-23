@@ -5,12 +5,12 @@
 #include "PluginProcessor.h"
 #include "MidiTable.h"
 
-class LogTableComponent :
+class LogTablePage :
     public Component    
 {
 public:
-    LogTableComponent(MidiHeroAudioProcessor&);
-    ~LogTableComponent() override;
+    LogTablePage(MidiHeroAudioProcessor&);
+    ~LogTablePage() override;
 
     void paint(juce::Graphics&) override;
     void resized() override;
@@ -23,5 +23,5 @@ private:
     TextButton clearButton{ "Clear" };
     TextButton copyButton{ "Copy" };
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LogTableComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LogTablePage)
 };
