@@ -35,6 +35,8 @@ private:
 
     TabsComponent tabs;
 
+    Observer<bool> isPlayingObserver;
+
     /*
     MidiTable table;
     TextButton clearButton{ "Clear" };

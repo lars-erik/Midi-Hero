@@ -7,20 +7,36 @@
               pluginVST3Category="Analyzer">
   <MAINGROUP id="bXvcrT" name="Midi Hero">
     <GROUP id="{3F409F78-A580-1CD8-A090-CC8194903C63}" name="Source">
+      <GROUP id="{FF468573-4B31-186E-A970-14A3629A67E6}" name="Model">
+        <FILE id="auEqwE" name="MidiListModel.h" compile="0" resource="0" file="Source/MidiListModel.h"/>
+        <FILE id="WvnBK3" name="MidiQueue.h" compile="0" resource="0" file="Source/MidiQueue.h"/>
+        <FILE id="ZPyBjI" name="Observer.h" compile="0" resource="0" file="Source/Observer.h"/>
+        <FILE id="rhVqZk" name="TimedMidiMessage.h" compile="0" resource="0"
+              file="Source/TimedMidiMessage.h"/>
+      </GROUP>
+      <GROUP id="{B326E267-0E6D-96EA-53D2-8DD56C0F9E3A}" name="GUI">
+        <FILE id="Ykw1U5" name="HeroPage.cpp" compile="1" resource="0" file="Source/HeroPage.cpp"/>
+        <FILE id="EmyVEw" name="HeroPage.h" compile="0" resource="0" file="Source/HeroPage.h"/>
+        <FILE id="eiIH9f" name="JudgementLabel.cpp" compile="1" resource="0"
+              file="Source/JudgementLabel.cpp"/>
+        <FILE id="WKyXge" name="JudgementLabel.h" compile="0" resource="0"
+              file="Source/JudgementLabel.h"/>
+        <FILE id="APzR1v" name="LogTableComponent.cpp" compile="1" resource="0"
+              file="Source/LogTableComponent.cpp"/>
+        <FILE id="wlqveu" name="LogTableComponent.h" compile="0" resource="0"
+              file="Source/LogTableComponent.h"/>
+        <FILE id="T9t7sX" name="MidiTable.h" compile="0" resource="0" file="Source/MidiTable.h"/>
+        <FILE id="ZFSOXH" name="StatisticsComponent.cpp" compile="1" resource="0"
+              file="Source/StatisticsComponent.cpp"/>
+        <FILE id="du7QuD" name="StatisticsComponent.h" compile="0" resource="0"
+              file="Source/StatisticsComponent.h"/>
+        <FILE id="XPUAEu" name="TabsComponent.cpp" compile="1" resource="0"
+              file="Source/TabsComponent.cpp"/>
+        <FILE id="oF3YMD" name="TabsComponent.h" compile="0" resource="0" file="Source/TabsComponent.h"/>
+      </GROUP>
       <FILE id="UZNINA" name="Global.h" compile="0" resource="0" file="Source/Global.h"/>
-      <FILE id="Ykw1U5" name="HeroPage.cpp" compile="1" resource="0" file="Source/HeroPage.cpp"/>
-      <FILE id="EmyVEw" name="HeroPage.h" compile="0" resource="0" file="Source/HeroPage.h"/>
-      <FILE id="eiIH9f" name="JudgementLabel.cpp" compile="1" resource="0"
-            file="Source/JudgementLabel.cpp"/>
-      <FILE id="WKyXge" name="JudgementLabel.h" compile="0" resource="0"
-            file="Source/JudgementLabel.h"/>
       <FILE id="ORC3Bd" name="MidiHeroSettings.h" compile="0" resource="0"
             file="Source/MidiHeroSettings.h"/>
-      <FILE id="APzR1v" name="LogTableComponent.cpp" compile="1" resource="0"
-            file="Source/LogTableComponent.cpp"/>
-      <FILE id="wlqveu" name="LogTableComponent.h" compile="0" resource="0"
-            file="Source/LogTableComponent.h"/>
-      <FILE id="LgRwby" name="MidiUtils.h" compile="0" resource="0" file="Source/MidiUtils.h"/>
       <FILE id="rI2DSO" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="uEhsOP" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
@@ -28,22 +44,17 @@
             file="Source/PluginProcessor.cpp"/>
       <FILE id="x3meqr" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
-      <FILE id="ZFSOXH" name="StatisticsComponent.cpp" compile="1" resource="0"
-            file="Source/StatisticsComponent.cpp"/>
-      <FILE id="du7QuD" name="StatisticsComponent.h" compile="0" resource="0"
-            file="Source/StatisticsComponent.h"/>
-      <FILE id="XPUAEu" name="TabsComponent.cpp" compile="1" resource="0"
-            file="Source/TabsComponent.cpp"/>
-      <FILE id="oF3YMD" name="TabsComponent.h" compile="0" resource="0" file="Source/TabsComponent.h"/>
     </GROUP>
   </MAINGROUP>
   <MODULES>
     <MODULE id="juce_animation" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
             useGlobalPath="1"/>
     <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
@@ -70,6 +81,8 @@
         <MODULEPATH id="juce_gui_basics" path="../../../tools/JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../../tools/JUCE/modules"/>
         <MODULEPATH id="juce_animation" path="../../../tools/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../tools/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../tools/JUCE/modules"/>
       </MODULEPATHS>
     </VS2022>
   </EXPORTFORMATS>

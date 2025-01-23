@@ -20,8 +20,8 @@ MidiHeroAudioProcessor::MidiHeroAudioProcessor()
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
                        ),
-    settings(state)
 #endif
+    settings(state)
 {
     // TODO: Use some other random generator?
     srand(static_cast<int>(time(nullptr)));  // NOLINT(cert-msc51-cpp, clang-diagnostic-shorten-64-to-32)

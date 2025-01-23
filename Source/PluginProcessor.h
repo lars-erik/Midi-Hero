@@ -11,7 +11,8 @@
 #include "Global.h"
 
 #include "MidiHeroSettings.h"
-#include "MidiUtils.h"
+#include "MidiListModel.h"
+#include "MidiQueue.h"
 
 //==============================================================================
 /**

@@ -2,8 +2,8 @@
 
 #include "Global.h"
 
-#include "MidiUtils.h"
 #include "PluginProcessor.h"
+#include "MidiTable.h"
 
 class LogTableComponent :
     public Component    

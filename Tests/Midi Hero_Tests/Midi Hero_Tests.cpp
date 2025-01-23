@@ -53,7 +53,7 @@ string buildReport(vector<TimedMidiMessage>& notes, int divisionLevel)
         AudioPlayHead::TimeSignature& timeSignature = *note.position.getTimeSignature();
         printColumn(stream, *note.position.getPpqPositionOfLastBarStart(), 10);
         printColumn(stream, note.getPosition(), 10);
-        printColumn(stream, note.getPositionFormatted(divisionLevel), 10, false);
+        printColumn(stream, note.getPositionFormatted(), 10, false);
         printColumn(stream, note.getPpqDiffInMs(divisionLevel), 10);
         printColumn(stream, note.getIntendedPosition(divisionLevel), 10);
         printColumn(stream, note.getIntendedPositionFormatted(divisionLevel), 10, false);
