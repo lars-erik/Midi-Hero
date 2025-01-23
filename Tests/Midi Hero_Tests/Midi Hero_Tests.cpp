@@ -9,6 +9,8 @@
 
 #include <numeric>
 
+#include "MidiTable.h"
+
 using namespace std;
 
 bool approx(double a, double b, double tolerance = 1e-6) {
@@ -108,7 +110,7 @@ TEST_CASE("Off score is 76%")
     constexpr int DivisionLevel = 4;
     auto model = MidiListModel(getTestData(IDR_OFF_CSV_FILE));
 
-    auto score = model.score(DivisionLevel);
+    auto score = model.getScore(DivisionLevel);
 
     INFO("Testing appx " << score.total << " ~ " << .76);
     REQUIRE(approx(score.total, .76));

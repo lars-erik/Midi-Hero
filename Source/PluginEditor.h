@@ -35,14 +35,6 @@ private:
 
     TabsComponent tabs;
 
-    Observer<bool> isPlayingObserver;
-
-    /*
-    MidiTable table;
-    TextButton clearButton{ "Clear" };
-    TextButton copyButton{ "Copy" };
-    */
-
     Value lastUIWidth, lastUIHeight;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiHeroAudioProcessorEditor)

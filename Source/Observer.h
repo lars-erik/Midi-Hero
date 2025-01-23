@@ -10,6 +10,11 @@ public:
     {
     }
 
+    Observer(const function<void(const Type&)>& fn)
+    {
+        setCallback(fn);
+    }
+
     void setCallback(const function<void(const Type&)>& fn)
     {
         handler = fn;

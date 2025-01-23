@@ -27,9 +27,6 @@ MidiHeroAudioProcessorEditor::MidiHeroAudioProcessorEditor (MidiHeroAudioProcess
 
     addAndMakeVisible(tabs);
 
-    p.model.observeIsPlaying(&isPlayingObserver, [](const bool& v) {
-        DBG("Is playing: " << to_string(v));
-    });
 }
 
 MidiHeroAudioProcessorEditor::~MidiHeroAudioProcessorEditor() = default;

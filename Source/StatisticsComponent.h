@@ -20,6 +20,8 @@ private:
     MidiHeroSettings& settings;
 
     Label label { "statistics", "Statistics" };
+    Label scoreLabel { "score", "N/A" };
+    Label scoreNameLabel { "score", "N/A" };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StatisticsComponent)
 };

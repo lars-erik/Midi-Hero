@@ -46,6 +46,12 @@ public:
         });
         if (hasStartStop)
         {
+            // TODO: If setting & bar 0?
+            if (hasStartStop && isStart)
+            {
+                messages.clear();
+            }
+
             IsPlaying.setValue(isStart);
         }
 
@@ -118,6 +124,11 @@ public:
             return "Bad";
         }
 
+        Colour getColour() const
+        {
+            return getColour(getScoreName());
+        }
+
         static Colour getColour(const std::string& scoreName)
         {
             static const std::unordered_map<std::string, Colour> colors = {
@@ -132,7 +143,7 @@ public:
         }
     };
 
-    static Scoring score(std::vector<TimedMidiMessage> notes, int divisionLevel)
+    static Scoring getScore(std::vector<TimedMidiMessage> notes, int divisionLevel)
     {
         vector<double> scores;
         transform(notes.begin(), notes.end(), back_inserter(scores), [divisionLevel](const TimedMidiMessage& m) { return m.getScore(divisionLevel); });
@@ -147,10 +158,10 @@ public:
         return filterMessages([&](const TimedMidiMessage& msg) { return msg.message.isNoteOn(); });
     }
 
-    Scoring score(const int divisionLevel)
+    Scoring getScore(const int divisionLevel)
     {
         auto notes = getNotes();
-        return score(notes, divisionLevel);
+        return getScore(notes, divisionLevel);
     }
 
     std::map<std::string, int> getScoreCounts(const int divisionLevel)

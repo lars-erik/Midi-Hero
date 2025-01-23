@@ -6,7 +6,8 @@
 #include <sstream>
 #include <iostream>
 
-#include "MidiUtils.h"
+#include "Global.h"
+#include "TimedMidiMessage.h"
 
 struct MidiData {
     double timeInSeconds;
