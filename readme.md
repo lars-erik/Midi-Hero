@@ -20,6 +20,10 @@ Shows statistics after play stops.
 Works with MIDI controller input.  
 Should work for non-midi instruments with effects like "Audio to MIDI".
 
+### Demo
+
+[![Midi Hero Demo](https://img.youtube.com/vi/pKvXAbV4N4w/0.jpg)](https://www.youtube.com/watch?v=pKvXAbV4N4w)
+
 ### How to install
 
 Drop the .vst3 file in your common VST3 folder.

@@ -27,6 +27,8 @@
               file="Source/LogTablePage.cpp"/>
         <FILE id="f3nvIO" name="LogTablePage.h" compile="0" resource="0" file="Source/LogTablePage.h"/>
         <FILE id="T9t7sX" name="MidiTable.h" compile="0" resource="0" file="Source/MidiTable.h"/>
+        <FILE id="I0G6dW" name="ScoreCountsComponent.h" compile="0" resource="0"
+              file="Source/ScoreCountsComponent.h"/>
         <FILE id="WZ8kE3" name="StatisticsPage.cpp" compile="1" resource="0"
               file="Source/StatisticsPage.cpp"/>
         <FILE id="rItqHk" name="StatisticsPage.h" compile="0" resource="0"
@@ -34,6 +36,8 @@
         <FILE id="XPUAEu" name="TabsComponent.cpp" compile="1" resource="0"
               file="Source/TabsComponent.cpp"/>
         <FILE id="oF3YMD" name="TabsComponent.h" compile="0" resource="0" file="Source/TabsComponent.h"/>
+        <FILE id="ZseaQK" name="TotalScoreComponent.h" compile="0" resource="0"
+              file="Source/TotalScoreComponent.h"/>
       </GROUP>
       <FILE id="UZNINA" name="Global.h" compile="0" resource="0" file="Source/Global.h"/>
       <FILE id="ORC3Bd" name="MidiHeroSettings.h" compile="0" resource="0"

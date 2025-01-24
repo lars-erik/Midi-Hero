@@ -25,19 +25,14 @@ public:
         scoreNameLabel.setFont(Font(FontOptions(76, Font::FontStyleFlags::bold)));
         addAndMakeVisible(scoreNameLabel);
 
-        model.observeNoteCount(&noteCountObserver, [&](int)
-        {
-            const auto score = model.getScore(settings.getDivisionLevel());
-            String scoreString(isnan(score.total) ? "" : to_string(static_cast<int>(round(score.total * 100))) + "%");
-            scoreLabel.setText(scoreString, dontSendNotification);
-            scoreNameLabel.setText(score.notes == 0 ? "" : score.getScoreName(), dontSendNotification);
-            scoreNameLabel.setColour(Label::textColourId, score.getColour());
-        });
+        model.observeNoteCount(&noteCountObserver, [&](int) { recalculate(); });
+        settings.observeDivisionLevel(&divisionLevelObserver, [&](int) { recalculate(); });
     }
 
     ~TotalScoreComponent() override
     {
         model.stopObserveNoteCount(&noteCountObserver);
+        settings.stopObserveDivisionLevel(&divisionLevelObserver);
     }
 
     void resized() override
@@ -47,7 +42,17 @@ public:
     }
 
 private:
+    void recalculate()
+    {
+        const auto score = model.getScore(settings.getDivisionLevel());
+        String scoreString(isnan(score.total) ? "" : to_string(static_cast<int>(round(score.total * 100))) + "%");
+        scoreLabel.setText(scoreString, dontSendNotification);
+        scoreNameLabel.setText(score.notes == 0 ? "" : score.getScoreName(), dontSendNotification);
+        scoreNameLabel.setColour(Label::textColourId, score.getColour());
+    }
+
     Observer<int> noteCountObserver;
+    Observer<int> divisionLevelObserver;
 
     MidiListModel& model;
     MidiHeroSettings settings;

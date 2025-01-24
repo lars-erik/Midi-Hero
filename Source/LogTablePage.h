@@ -20,6 +20,7 @@ private:
 
     MidiHeroAudioProcessor& audioProcessor;
     MidiTable table;
+
     TextButton clearButton{ "Clear" };
     TextButton copyButton{ "Copy" };
 

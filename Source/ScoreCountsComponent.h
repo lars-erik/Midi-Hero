@@ -13,7 +13,12 @@ public:
         MidiHeroSettings& settings
     ): model(model), settings(settings)
     {
-        
+        settings.observeDivisionLevel(&divisionLevelObserver, [&](int) { repaint(); });
+    }
+
+    ~ScoreCountsComponent() override
+    {
+        settings.stopObserveDivisionLevel(&divisionLevelObserver);
     }
 
     void paint(Graphics& g) override
@@ -55,4 +60,6 @@ public:
 private:
     MidiListModel& model;
     MidiHeroSettings& settings;
+
+    Observer<int> divisionLevelObserver;
 };

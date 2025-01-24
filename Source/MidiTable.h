@@ -36,11 +36,14 @@ public:
             }());
 
         messages.observeNoteCount(&noteCountObserver, [&](int) { updateTable(); });
+        settings.observeDivisionLevel(&divisionLevelObserver, [&](int) { updateTable(); });
+
     }
 
     ~MidiTable() override
     {
         messages.stopObserveNoteCount(&noteCountObserver);
+        settings.stopObserveDivisionLevel(&divisionLevelObserver);
     };
 
     void resized() override { table.setBounds(getLocalBounds()); }
@@ -148,4 +151,5 @@ private:
     TableListBox table;
 
     Observer<int> noteCountObserver;
+    Observer<int> divisionLevelObserver;
 };
