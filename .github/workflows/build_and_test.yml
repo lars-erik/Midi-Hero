@@ -19,7 +19,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-#        with:
+        with:
+          submodules: true
 #          fetch-depth: 0  # Required for GitVersion to detect history properly
 
 #      - name: Install GitVersion
