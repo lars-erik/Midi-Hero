@@ -1,12 +1,10 @@
-name: Build Midi Hero
+name: Build and Release Midi Hero
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+      - dev
   workflow_dispatch:
 
 jobs:
@@ -16,31 +14,104 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-latest]  # Add 'ubuntu-latest' and 'macos-latest' later when needed
+        os: [windows-latest, ubuntu-latest, macos-latest]
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          submodules: recursive
+          fetch-depth: 0  # Required for GitVersion to detect history properly
 
-      - name: Set Up MSVC Environment (Windows)
-        if: runner.os == 'Windows'
-        uses: ilammy/msvc-dev-cmd@v1
+      - name: Install GitVersion
+        uses: GitTools/actions/gitversion/setup@v0
+        with:
+          version: 5.x
 
-      - name: Install Ninja (Windows)
-        if: runner.os == 'Windows'
-        run: choco install ninja
+      - name: Determine Version
+        id: gitversion
+        uses: GitTools/actions/gitversion/execute@v0
+
+      - name: Cache CMake & JUCE Object Files
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/CMakeCache.txt
+            build/CMakeFiles
+            build/JUCE/CMakeFiles
+          key: ${{ runner.os }}-juce-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-juce-
+
+      - name: Install Ninja
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            choco install ninja
+          elif [ "$RUNNER_OS" == "Linux" ]; then
+            sudo apt-get install ninja-build
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            brew install ninja
+          fi
 
       - name: Configure CMake
-        run: cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+        run: cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DVERSION=${{ steps.gitversion.outputs.SemVer }}
 
       - name: Build Project
         run: cmake --build build --config Release --parallel
 
-      - name: Upload VST3 Plugin (Windows)
-        if: runner.os == 'Windows'
+#      - name: Run Tests
+#        run: ctest --test-dir build --output-on-failure
+
+      - name: Check for Artifact Publish Trigger
+        id: check_artifact
+        run: |
+          if [[ "${{ github.event.head_commit.message }}" == *"[publish-artifacts]"* ]]; then
+            echo "UPLOAD_ARTIFACTS=true" >> $GITHUB_ENV
+          else
+            echo "UPLOAD_ARTIFACTS=false" >> $GITHUB_ENV
+          fi
+        shell: bash
+
+      - name: Upload Artifacts (Only If Triggered)
+        if: env.UPLOAD_ARTIFACTS == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: midi-hero-windows-vst3
-          path: build/MidiHero_artefacts/Release/VST3/Midi Hero.vst3/Contents/x86_64-win
+          name: midi-hero-${{ matrix.os }}
+          path: |
+            build/MidiHero_artefacts/Release/VST3/Midi Hero.vst3/
+            build/MidiHero_artefacts/Release/AU/Midi Hero.component/
+
+  release:
+    name: Create GitHub Release
+    if: github.ref == 'refs/heads/main'  # Only run on main branch
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install GitVersion
+        uses: GitTools/actions/gitversion/setup@v0
+        with:
+          version: 5.x
+
+      - name: Determine Version
+        id: gitversion
+        uses: GitTools/actions/gitversion/execute@v0
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.gitversion.outputs.SemVer }}
+          name: "Midi Hero v${{ steps.gitversion.outputs.SemVer }}"
+          body: "Automated release of Midi Hero."
+          draft: false
+          prerelease: false
+          files: artifacts/midi-hero-*/**/*

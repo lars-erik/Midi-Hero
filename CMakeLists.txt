@@ -1,6 +1,13 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(MidiHero VERSION 0.0.4)
+# Allow overriding the version from GitVersion via -DVERSION
+if(NOT DEFINED VERSION)
+    set(VERSION "0.0.4")  # Default fallback
+endif()
+
+project(MidiHero VERSION ${VERSION})
+
+message(STATUS "Building MidiHero version: ${PROJECT_VERSION}")
 
 # Set JUCE path
 set(JUCE_DIR ${CMAKE_SOURCE_DIR}/JUCE)
