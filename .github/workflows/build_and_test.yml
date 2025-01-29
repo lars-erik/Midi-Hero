@@ -43,4 +43,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: midi-hero-windows-vst3
-          path: build/Builds/MidiHero_artefacts/Release/VST3/Midi Hero.vst3/Contents/x86_64-win
+          path: build/MidiHero_artefacts/Release/VST3/Midi Hero.vst3/Contents/x86_64-win
