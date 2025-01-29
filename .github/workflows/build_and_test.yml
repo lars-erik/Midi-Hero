@@ -25,7 +25,7 @@ jobs:
       - name: Install GitVersion
         uses: GitTools/actions/gitversion/setup@v0
         with:
-          versionSpec: 6.*
+          versionSpec: 5.2.0
 
       - name: Determine Version
         id: gitversion
@@ -95,7 +95,7 @@ jobs:
       - name: Install GitVersion
         uses: GitTools/actions/gitversion/setup@v0
         with:
-          versionSpec: 6.*
+          versionSpec: 5.2.0
 
       - name: Determine Version
         id: gitversion
