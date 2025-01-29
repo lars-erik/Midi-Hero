@@ -53,7 +53,7 @@ jobs:
           fi
 
       - name: Configure CMake
-        run: cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DVERSION=0.0.4-beta.1 #${#{ steps.gitversion.outputs.SemVer }}
+        run: cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DVERSION=0.0.4 #${#{ steps.gitversion.outputs.SemVer }}
 
       - name: Build Project
         run: cmake --build build --config Release --parallel
@@ -109,8 +109,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.gitversion.outputs.SemVer }}
-          name: "Midi Hero v${{ steps.gitversion.outputs.SemVer }}"
+          tag_name: v0.0.4 #v${#{ steps.gitversion.outputs.SemVer }}
+          name: "Midi Hero v0.0.4" #${#{ steps.gitversion.outputs.SemVer }}
           body: "Automated release of Midi Hero."
           draft: false
           prerelease: false
