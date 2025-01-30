@@ -51,13 +51,13 @@ jobs:
             build/JUCE/CMakeFiles
           key: ${{ runner.os }}-juce-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-juce-
+            ${{ runner.os }}-juce-${{ github.sha }}
 
       - name: Install JUCE's Linux Deps
         if: runner.os == 'Linux'
         # Thanks to McMartin & co https://forum.juce.com/t/list-of-juce-dependencies-under-linux/15121/44
         run: |
-          sudo apt-get update && sudo apt install libasound2-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.0-dev libglu1-mesa-dev xvfb ninja-build
+          sudo apt-get update && sudo apt install libasound2-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.1-dev libglu1-mesa-dev xvfb ninja-build
           sudo /usr/bin/Xvfb $DISPLAY &
 
       - name: Set up Clang
@@ -76,7 +76,7 @@ jobs:
         run: brew install ninja osxutils
 
       - name: Configure CMake
-        run: cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DVERSION=0.0.4 #${#{ steps.gitversion.outputs.SemVer }}
+        run: cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DVERSION="0.0.4" #${#{ steps.gitversion.outputs.SemVer }}
 
       - name: Build Project
         run: cmake --build build --config Release --parallel
