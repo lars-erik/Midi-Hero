@@ -14,8 +14,18 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
-
+        include:
+        - name: Linux
+          os: ubuntu-22.04
+          pluginval-binary: ./pluginval
+          extra-flags: -G Ninja
+        - name: macOS
+          os: macos-14
+          pluginval-binary: pluginval.app/Contents/MacOS/pluginval
+          extra-flags: -G Ninja -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
+        - name: Windows
+          os: windows-latest
+          pluginval-binary: ./pluginval.exe
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -43,15 +53,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-juce-
 
-      - name: Install Ninja
-        run: |
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            choco install ninja
-          elif [ "$RUNNER_OS" == "Linux" ]; then
-            sudo apt-get install ninja-build
-          elif [ "$RUNNER_OS" == "macOS" ]; then
-            brew install ninja
-          fi
+      - name: Install Ninja (Windows)
+        if: runner.os == 'Windows'
+        run: choco install ninja
+
+      - name: Install macOS Deps
+        if: ${{ matrix.name == 'macOS' }}
+        run: brew install ninja osxutils
 
       - name: Configure CMake
         run: cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DVERSION=0.0.4 #${#{ steps.gitversion.outputs.SemVer }}
