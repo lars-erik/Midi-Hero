@@ -23,6 +23,8 @@ juce_add_plugin(MidiHero
     PLUGIN_CODE "MHr0"
     FORMATS VST3 AU Standalone
     PRODUCT_NAME "Midi Hero"
+    NEEDS_WEB_BROWSER 0
+    NEEDS_WEBVIEW2 0
 )
 
 # Link JUCE modules
