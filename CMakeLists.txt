@@ -25,6 +25,13 @@ juce_add_plugin(MidiHero
     PRODUCT_NAME "Midi Hero"
 )
 
+target_compile_definitions(MidiHero
+    INTERFACE
+    # JUCE_WEB_BROWSER and JUCE_USE_CURL off by default
+    JUCE_WEB_BROWSER=0  # If you set this to 1, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
+    JUCE_USE_CURL=0     # If you set this to 1, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
+)
+
 # Link JUCE modules
 target_link_libraries(MidiHero PRIVATE
     juce::juce_animation

@@ -15,10 +15,10 @@ jobs:
     strategy:
       matrix:
         include:
-#        - name: Linux
-#          os: ubuntu-22.04
-#          pluginval-binary: ./pluginval
-#          extra-flags: -G Ninja
+        - name: Linux
+          os: ubuntu-22.04
+          pluginval-binary: ./pluginval
+          extra-flags: -G Ninja
         - name: macOS
           os: macos-14
           pluginval-binary: pluginval.app/Contents/MacOS/pluginval
