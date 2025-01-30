@@ -64,6 +64,9 @@ jobs:
         if: runner.os == 'Linux'
         uses: egor-tensin/setup-clang@v1
 
+      # Setup MSVC toolchain and developer command prompt (Windows)
+      - uses: ilammy/msvc-dev-cmd@v1
+
       - name: Install Ninja (Windows)
         if: runner.os == 'Windows'
         run: choco install ninja
