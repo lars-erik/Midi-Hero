@@ -93,6 +93,12 @@ jobs:
             echo "UPLOAD_ARTIFACTS=false" >> $GITHUB_ENV
           fi
         shell: bash
+        
+      - name: List artifacts anyway
+        id: list_artifacts
+        run: |
+          ls build/MidiHero_artefacts/Release/
+        shell: bash
 
       - name: Upload Artifacts (Only If Triggered)
         if: env.UPLOAD_ARTIFACTS == 'true'
