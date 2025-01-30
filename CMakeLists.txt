@@ -1,6 +1,13 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(MidiHero VERSION 0.0.4)
+# Allow overriding the version from GitVersion via -DVERSION
+if(NOT DEFINED VERSION)
+    set(VERSION "0.0.4")  # Default fallback
+endif()
+
+project(MidiHero VERSION ${VERSION})
+
+message(STATUS "Building MidiHero version: ${PROJECT_VERSION}")
 
 # Set JUCE path
 set(JUCE_DIR ${CMAKE_SOURCE_DIR}/JUCE)
@@ -14,8 +21,15 @@ juce_add_plugin(MidiHero
     PLUGIN_NAME "Midi Hero"
     PLUGIN_MANUFACTURER_CODE "AaCo"
     PLUGIN_CODE "MHr0"
-    FORMATS VST3 AU Standalone
+    FORMATS VST3 AU AUv3 Standalone
     PRODUCT_NAME "Midi Hero"
+)
+
+target_compile_definitions(MidiHero
+    INTERFACE
+    # JUCE_WEB_BROWSER and JUCE_USE_CURL off by default
+    JUCE_WEB_BROWSER=0  # If you set this to 1, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
+    JUCE_USE_CURL=0     # If you set this to 1, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
 )
 
 # Link JUCE modules
@@ -32,7 +46,6 @@ target_link_libraries(MidiHero PRIVATE
     juce::juce_events
     juce::juce_graphics
     juce::juce_gui_basics
-    juce::juce_gui_extra
 )
 
 juce_generate_juce_header(MidiHero)
