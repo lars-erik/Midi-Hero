@@ -18,7 +18,7 @@ jobs:
         - name: Linux
           os: ubuntu-22.04
           pluginval-binary: ./pluginval
-          extra-flags: -G Ninja
+          extra-flags: -G Ninja -DJUCE_WEB_BROWSER=0
         - name: macOS
           os: macos-14
           pluginval-binary: pluginval.app/Contents/MacOS/pluginval
