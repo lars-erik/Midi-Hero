@@ -11,8 +11,6 @@ message(STATUS "Building MidiHero version: ${PROJECT_VERSION}")
 
 # Set JUCE path
 set(JUCE_DIR ${CMAKE_SOURCE_DIR}/JUCE)
-set(JUCE_GUI_EXTRA OFF CACHE BOOL "" FORCE)
-set(JUCE_MODULES_DISABLED "juce_gui_extra")
 
 # Add JUCE
 add_subdirectory(${JUCE_DIR} JUCE)
