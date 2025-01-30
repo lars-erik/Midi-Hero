@@ -21,7 +21,7 @@ juce_add_plugin(MidiHero
     PLUGIN_NAME "Midi Hero"
     PLUGIN_MANUFACTURER_CODE "AaCo"
     PLUGIN_CODE "MHr0"
-    FORMATS VST3 AU Standalone
+    FORMATS VST3 AU AUv3 Standalone
     PRODUCT_NAME "Midi Hero"
 )
 
