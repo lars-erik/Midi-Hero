@@ -39,7 +39,6 @@ target_link_libraries(MidiHero PRIVATE
     juce::juce_events
     juce::juce_graphics
     juce::juce_gui_basics
-    juce::juce_gui_extra
 )
 
 juce_generate_juce_header(MidiHero)
