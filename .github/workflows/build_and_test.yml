@@ -7,6 +7,9 @@ on:
       - dev
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 env:
   VERSION: "0.0.6"
 
@@ -100,7 +103,7 @@ jobs:
       - name: List artifacts anyway
         id: list_artifacts
         run: |
-          ls build/MidiHero_artefacts/Release/
+          find ./build/MidiHero_artefacts -print0 | xargs -0 ls -ld
         shell: bash
 
       - name: Upload Artifacts (Only If Triggered)
