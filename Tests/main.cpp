@@ -1,8 +1,7 @@
-#include <catch_amalgamated.hpp>
+#include <catch2/catch_session.hpp>
 
-#define APPROVALS_CATCH_EXISTING_MAIN
-#define APPROVALS_CATCH2_V3_AMALGAMATED
-#include <ApprovalTests.v.10.13.0.hpp>
+#define APPROVALS_CATCH2_V3
+#include <ApprovalTests/ApprovalTests.hpp>
 
 int main(int argc, char* argv[]) {
     // your setup ...

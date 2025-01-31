@@ -1,6 +1,13 @@
 // ReSharper disable CppClangTidyClangDiagnosticHeaderHygiene
 #pragma once
 
+#include "JuceHeader.h"
+
+using namespace juce;
+using namespace std;
+
+
+
 #define READONLY_OBSERVABLE(type, name) \
 private:\
     Value name;\
@@ -46,8 +53,3 @@ public:\
        name.removeListener(observer);\
    }\
 
-
-#include <JuceHeader.h>
-
-using namespace juce;
-using namespace std;

@@ -1,15 +1,17 @@
 #define JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED 1
 #include "JuceHeader.h"
 
-#include <ApprovalTests.v.10.13.0.hpp>
+#include <ApprovalTests/Approvals.h>
 
-#include "catch_amalgamated.hpp"
+#include "catch2/catch_all.hpp"
 #include "resource.h"
 #include "TestData.h"
 
 #include <numeric>
 
 #include "MidiTable.h"
+
+#include "CsvFiles.h"
 
 using namespace std;
 
@@ -71,7 +73,7 @@ string buildReport(vector<TimedMidiMessage>& notes, int divisionLevel)
 TEST_CASE("Note calculations for quantized play")
 {
     constexpr int DivisionLevel = 8;
-    auto model = getTestData(IDR_QUANTIZED_CSV_FILE);
+    auto model = getTestData(quantizedCsv);
     auto notes = filterMessages(model, [&](const TimedMidiMessage& msg) { return msg.message.isNoteOn(); });
 
     string report = buildReport(notes, DivisionLevel);
@@ -82,7 +84,7 @@ TEST_CASE("Note calculations for quantized play")
 TEST_CASE("Quantized score is 100%")
 {
     constexpr int DivisionLevel = 8;
-    auto model = getTestData(IDR_QUANTIZED_CSV_FILE);
+    auto model = getTestData(quantizedCsv);
     auto notes = filterMessages(model, [&](const TimedMidiMessage& msg) { return msg.message.isNoteOn(); });
 
     vector<double> scores;
@@ -97,7 +99,7 @@ TEST_CASE("Note calculations for off play")
 {
     constexpr int DivisionLevel = 4;
 
-    auto model = getTestData(IDR_OFF_CSV_FILE);
+    auto model = getTestData(offCsv);
     auto notes = filterMessages(model, [&](const TimedMidiMessage& msg) { return msg.message.isNoteOn(); });
 
     string report = buildReport(notes, DivisionLevel);
@@ -108,7 +110,7 @@ TEST_CASE("Note calculations for off play")
 TEST_CASE("Off score is 76%")
 {
     constexpr int DivisionLevel = 4;
-    auto model = MidiListModel(getTestData(IDR_OFF_CSV_FILE));
+    auto model = MidiListModel(getTestData(offCsv));
 
     auto score = model.getScore(DivisionLevel);
 

@@ -1,8 +1,14 @@
 cmake_minimum_required(VERSION 3.15)
 
+# This tells cmake we have goodies in the /cmake folder
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
+
+# Modern concise way to add dependencies to your project
+include (CPM)
+
 # Allow overriding the version from GitVersion via -DVERSION
 if(NOT DEFINED VERSION)
-    set(VERSION "0.0.6")  # Default fallback
+    set(VERSION "0.0.7")  # Default fallback
 endif()
 
 project(MidiHero VERSION ${VERSION})
@@ -26,7 +32,11 @@ juce_add_plugin(MidiHero
     PRODUCT_NAME "Midi Hero"
 )
 
-target_compile_definitions(MidiHero
+# This lets us use our code in both the JUCE targets and our Test target
+# Without running into ODR violations
+add_library(SharedCode INTERFACE)
+
+target_compile_definitions(SharedCode
     INTERFACE
     # JUCE_WEB_BROWSER and JUCE_USE_CURL off by default
     JUCE_WEB_BROWSER=0  # If you set this to 1, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
@@ -34,7 +44,8 @@ target_compile_definitions(MidiHero
 )
 
 # Link JUCE modules
-target_link_libraries(MidiHero PRIVATE
+target_link_libraries(SharedCode 
+    INTERFACE
     juce::juce_animation
     juce::juce_audio_basics
     juce::juce_audio_devices
@@ -49,10 +60,12 @@ target_link_libraries(MidiHero PRIVATE
     juce::juce_gui_basics
 )
 
+target_link_libraries(MidiHero PRIVATE SharedCode)
+
 juce_generate_juce_header(MidiHero)
 
 # Set build options
-set_target_properties(MidiHero PROPERTIES
+set_target_properties(SharedCode PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
@@ -91,8 +104,12 @@ set(GLOBAL_FILES
     Source/PluginProcessor.h
 )
 
-target_sources(MidiHero PRIVATE ${MODEL_FILES} ${GUI_FILES} ${GLOBAL_FILES})
+target_sources(SharedCode INTERFACE ${MODEL_FILES} ${GUI_FILES} ${GLOBAL_FILES})
 
 source_group("Source Files\\Model" FILES ${MODEL_FILES})
 source_group("Source Files\\GUI" FILES ${GUI_FILES})
 source_group("Source Files\\Plugin" FILES ${GLOBAL_FILES})
+
+include(Tests)
+
+

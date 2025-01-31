@@ -1,10 +1,8 @@
 #pragma once
 
-#include <windows.h>
 #include <string>
 #include <vector>
 #include <sstream>
-#include <iostream>
 
 #include "Global.h"
 #include "TimedMidiMessage.h"
@@ -50,36 +48,10 @@ inline std::vector<TimedMidiMessage> transformToModel(std::vector<MidiData>& dat
     return messages;
 }
 
-inline std::string loadCsvFromResource(int resourceId, const wchar_t* resourceType) {
-    // Find the resource in the executable
-    HRSRC resourceHandle = FindResource(nullptr, MAKEINTRESOURCE(resourceId), resourceType);
-    if (!resourceHandle) {
-        throw std::runtime_error("Resource not found");
-    }
-
-    // Load the resource
-    HGLOBAL resourceData = LoadResource(nullptr, resourceHandle);
-    if (!resourceData) {
-        throw std::runtime_error("Failed to load resource");
-    }
-
-    // Get a pointer to the resource data
-    DWORD resourceSize = SizeofResource(nullptr, resourceHandle);
-    const char* resourcePointer = static_cast<const char*>(LockResource(resourceData));
-
-    if (!resourcePointer) {
-        throw std::runtime_error("Failed to lock resource");
-    }
-
-    // Return the resource content as a string
-    return std::string(resourcePointer, resourceSize);
-}
-
-inline std::vector<MidiData> readCsvFile(int resourceId, const wchar_t* resourceType) {
+inline std::vector<MidiData> readCsvFile(const string& csvData) {
     std::vector<MidiData> midiDataList;
 
-    std::string data = loadCsvFromResource(resourceId, resourceType);
-    std::istringstream dataStream(data);
+    std::istringstream dataStream(csvData);
     std::string line;
     bool isHeader = true;
 
@@ -123,9 +95,9 @@ inline std::vector<MidiData> readCsvFile(int resourceId, const wchar_t* resource
     return midiDataList;
 }
 
-inline std::vector<TimedMidiMessage> getTestData(int identifier, int bpm = 120, int sampleRate = 44100)
+inline std::vector<TimedMidiMessage> getTestData(const string& csvData, int bpm = 120, int sampleRate = 44100)
 {
-    auto midiData = readCsvFile(identifier, L"CSV");
+    auto midiData = readCsvFile(csvData);
     auto model = transformToModel(midiData, bpm, sampleRate);
     return model;
 }
