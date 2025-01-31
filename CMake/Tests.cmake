@@ -44,13 +44,14 @@ CPMAddPackage("gh:catchorg/Catch2@3.8.0")
 CPMAddPackage("gh:approvals/ApprovalTests.cpp@.10.13.0")
 
 # Setup the test executable, again C++20 please
-add_executable(Tests ${TestFiles})
+#add_executable(Tests ${TestFiles})
+juce_add_console_app(Tests)
+target_sources(Tests PRIVATE ${TestFiles})
 
 target_compile_features(Tests PRIVATE cxx_std_20)
 
 # Our test executable also wants to know about our plugin code...
-target_include_directories(Tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/source)
-target_include_directories(Tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/builds/MidiHero_artefacts/JuceLibraryCode)
+target_include_directories(Tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Source)
 
 target_include_directories(Tests PRIVATE
     ${CMAKE_BINARY_DIR}/MidiHero_artefacts/JuceLibraryCode
@@ -81,6 +82,8 @@ endif ()
 # https://github.com/catchorg/Catch2/blob/devel/docs/cmake-integration.md
 # We have to manually provide the source directory here for now
 include(${Catch2_SOURCE_DIR}/extras/Catch.cmake)
+
+juce_generate_juce_header(Tests)
 
 # ${DISCOVERY_MODE} set to "PRE_TEST" for MacOS arm64 / Xcode development
 # fixes error when Xcode attempts to run test executable
