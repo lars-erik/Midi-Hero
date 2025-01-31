@@ -7,6 +7,9 @@ on:
       - dev
   workflow_dispatch:
 
+env:
+  VERSION: "0.0.6"
+
 jobs:
   build:
     name: Build on ${{ matrix.os }}
@@ -136,11 +139,16 @@ jobs:
         with:
           path: artifacts/
 
+      - name: Create and push tag
+        run: |
+          git tag v${{ env.VERSION }}
+          git push origin v${{ env.VERSION }}
+        
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v0.0.5 #v${#{ steps.gitversion.outputs.SemVer }}
-          name: "Midi Hero v0.0.5" #${#{ steps.gitversion.outputs.SemVer }}
+          tag_name: v${{ env.VERSION }} #v${#{ steps.gitversion.outputs.SemVer }}
+          name: "Midi Hero v${{ env.VERSION }}" #${#{ steps.gitversion.outputs.SemVer }}
           body: "Automated release of Midi Hero."
           draft: false
           prerelease: false

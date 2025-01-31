@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 
 # Allow overriding the version from GitVersion via -DVERSION
 if(NOT DEFINED VERSION)
-    set(VERSION "0.0.5")  # Default fallback
+    set(VERSION "0.0.6")  # Default fallback
 endif()
 
 project(MidiHero VERSION ${VERSION})
