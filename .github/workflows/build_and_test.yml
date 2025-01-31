@@ -144,4 +144,4 @@ jobs:
           body: "Automated release of Midi Hero."
           draft: false
           prerelease: false
-          files: artifacts/midi-hero-*/**/*
+          files: artifacts/**/*
