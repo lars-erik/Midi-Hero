@@ -19,7 +19,7 @@ file(GLOB_RECURSE TestFiles CONFIGURE_DEPENDS
     )
 
 # Organize the test source in the Tests/ folder in Xcode
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/tests PREFIX "" FILES ${TestFiles})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/Tests PREFIX "" FILES ${TestFiles})
 
 
 # Workaround for CLion
