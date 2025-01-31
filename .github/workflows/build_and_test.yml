@@ -101,7 +101,7 @@ jobs:
         shell: bash
 
       - name: Upload Artifacts (Only If Triggered)
-        if: env.UPLOAD_ARTIFACTS == 'true'
+        if: (env.UPLOAD_ARTIFACTS == 'true') || (github.ref == 'refs/heads/main')
         uses: actions/upload-artifact@v4
         with:
           name: midi-hero-${{ matrix.os }}
