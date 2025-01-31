@@ -87,8 +87,8 @@ jobs:
       - name: Build Project
         run: cmake --build build --config Release --parallel
 
-#      - name: Run Tests
-#        run: ctest --test-dir build --output-on-failure
+      - name: Run Tests
+        run: ctest --test-dir build --output-on-failure
 
       - name: Check for Artifact Publish Trigger
         id: check_artifact

@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include <sstream>
-#include <iostream>
 
 #include "Global.h"
 #include "TimedMidiMessage.h"
@@ -50,7 +49,7 @@ inline std::vector<TimedMidiMessage> transformToModel(std::vector<MidiData>& dat
     return messages;
 }
 
-inline std::string loadCsvFromResource(int resourceId, const wchar_t* resourceType) {
+inline std::string loadCsvFromResource(int resourceId, const LPCSTR resourceType) {
     // Find the resource in the executable
     HRSRC resourceHandle = FindResource(nullptr, MAKEINTRESOURCE(resourceId), resourceType);
     if (!resourceHandle) {
@@ -75,7 +74,7 @@ inline std::string loadCsvFromResource(int resourceId, const wchar_t* resourceTy
     return std::string(resourcePointer, resourceSize);
 }
 
-inline std::vector<MidiData> readCsvFile(int resourceId, const wchar_t* resourceType) {
+inline std::vector<MidiData> readCsvFile(int resourceId, const LPCSTR resourceType) {
     std::vector<MidiData> midiDataList;
 
     std::string data = loadCsvFromResource(resourceId, resourceType);
@@ -125,7 +124,7 @@ inline std::vector<MidiData> readCsvFile(int resourceId, const wchar_t* resource
 
 inline std::vector<TimedMidiMessage> getTestData(int identifier, int bpm = 120, int sampleRate = 44100)
 {
-    auto midiData = readCsvFile(identifier, L"CSV");
+    auto midiData = readCsvFile(identifier, "CSV");
     auto model = transformToModel(midiData, bpm, sampleRate);
     return model;
 }
