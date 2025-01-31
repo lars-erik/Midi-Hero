@@ -42,6 +42,10 @@ target_compile_features(Tests PRIVATE cxx_std_20)
 target_include_directories(Tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/source)
 target_include_directories(Tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/builds/MidiHero_artefacts/JuceLibraryCode)
 
+target_include_directories(Tests PRIVATE
+    ${CMAKE_BINARY_DIR}/MidiHero_artefacts/JuceLibraryCode
+)
+
 # Copy over compile definitions from our plugin target so it has all the JUCEy goodness
 target_compile_definitions(Tests PRIVATE $<TARGET_PROPERTY:${PROJECT_NAME},COMPILE_DEFINITIONS>)
 
