@@ -18,6 +18,7 @@ add_subdirectory(${JUCE_DIR} JUCE)
 # Define plugin target
 juce_add_plugin(MidiHero
     COMPANY_NAME "Aabech Consulting"
+    BUNDLE_ID "com.AabechConsulting.MidiHero"
     PLUGIN_NAME "Midi Hero"
     PLUGIN_MANUFACTURER_CODE "AaCo"
     PLUGIN_CODE "MHr0"
@@ -92,6 +93,6 @@ set(GLOBAL_FILES
 
 target_sources(MidiHero PRIVATE ${MODEL_FILES} ${GUI_FILES} ${GLOBAL_FILES})
 
-source_group("Model" FILES ${MODEL_FILES})
-source_group("GUI" FILES ${GUI_FILES})
-
+source_group("Source Files\\Model" FILES ${MODEL_FILES})
+source_group("Source Files\\GUI" FILES ${GUI_FILES})
+source_group("Source Files\\Plugin" FILES ${GLOBAL_FILES})
