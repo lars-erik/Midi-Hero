@@ -14,13 +14,23 @@ set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
 file(GLOB_RECURSE TestFiles CONFIGURE_DEPENDS 
     "${CMAKE_CURRENT_SOURCE_DIR}/Tests/*.cpp" 
     "${CMAKE_CURRENT_SOURCE_DIR}/Tests/*.h" 
-    "${CMAKE_CURRENT_SOURCE_DIR}/Tests/*.rc"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Tests/*.csv"
     )
+
+include(EmbedCsv)
+set(FILES_AND_NAMES
+    "${CMAKE_CURRENT_SOURCE_DIR}/Tests/Off.csv|offCsv"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Tests/Quantized.csv|quantizedCsv"
+)
+
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Resources)
+embed_csv(
+    "${CMAKE_BINARY_DIR}/Resources/CsvFiles.h"
+    ${FILES_AND_NAMES}
+)
+include_directories("${CMAKE_BINARY_DIR}/Resources")
 
 # Organize the test source in the Tests/ folder in Xcode
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/Tests PREFIX "" FILES ${TestFiles})
-
 
 # Workaround for CLion
 # See https://www.jetbrains.com/help/clion/catch-tests-support.html#long-testnames-bug
