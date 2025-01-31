@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 env:
-  VERSION: "0.0.6"
+  VERSION: "0.0.7"
 
 jobs:
   build:
@@ -82,7 +82,7 @@ jobs:
         run: brew install ninja osxutils
 
       - name: Configure CMake
-        run: cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DVERSION="0.0.4" #${#{ steps.gitversion.outputs.SemVer }}
+        run: cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DVERSION="${{env.VERSION}}" #${#{ steps.gitversion.outputs.SemVer }}
 
       - name: Build Project
         run: cmake --build build --config Release --parallel

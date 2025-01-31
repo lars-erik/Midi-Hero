@@ -8,7 +8,7 @@ include (CPM)
 
 # Allow overriding the version from GitVersion via -DVERSION
 if(NOT DEFINED VERSION)
-    set(VERSION "0.0.6")  # Default fallback
+    set(VERSION "0.0.7")  # Default fallback
 endif()
 
 project(MidiHero VERSION ${VERSION})
