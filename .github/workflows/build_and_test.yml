@@ -114,7 +114,6 @@ jobs:
           path: |
             build/MidiHero_artefacts/Release/VST3/Midi Hero.vst3/
             build/MidiHero_artefacts/Release/AU/Midi Hero.component/
-            build/MidiHero_artefacts/Release/AUv3/Midi Hero.component/
 
   release:
     name: Create GitHub Release
@@ -149,6 +148,7 @@ jobs:
         
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
+        continue-on-error: true
         with:
           tag_name: v${{ env.VERSION }} #v${#{ steps.gitversion.outputs.SemVer }}
           name: "Midi Hero v${{ env.VERSION }}" #${#{ steps.gitversion.outputs.SemVer }}

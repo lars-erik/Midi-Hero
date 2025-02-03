@@ -29,8 +29,8 @@ void LogTablePage::copyToClip() const
     str << "TimeInSeconds;PpqPosition;BarPpqPosition;Byte1;Byte2;Byte3;TimeStamp\r\n";
     for (const auto& msg : audioProcessor.model)
     {
-        const uint8* rawData = msg.message.getRawData();
-        const int rawSize = msg.message.getRawDataSize();
+        const uint8* rawData = msg->message.getRawData();
+        const int rawSize = msg->message.getRawDataSize();
         if (rawData == nullptr || rawSize < 1) {
             throw std::runtime_error("Invalid MIDI message: raw data is null or too small.");
         }
@@ -39,11 +39,11 @@ void LogTablePage::copyToClip() const
         const uint8 byte2 = (rawSize > 1) ? rawData[1] : 0; // Safely get byte2 if it exists
         const uint8 byte3 = (rawSize > 2) ? rawData[2] : 0; // Safely get byte3 if it exists
 
-        str << msg.position.getTimeInSeconds().orFallback(0)
+        str << msg->position->getTimeInSeconds().orFallback(0)
             << ";"
-            << msg.position.getPpqPosition().orFallback(0)
+            << msg->position->getPpqPosition().orFallback(0)
             << ";"
-            << msg.position.getPpqPositionOfLastBarStart().orFallback(0)
+            << msg->position->getPpqPositionOfLastBarStart().orFallback(0)
             << ";"
             << intToHex(byte1)
             << ";"
@@ -51,7 +51,7 @@ void LogTablePage::copyToClip() const
             << ";"
             << intToHex(byte3)
             << ";"
-            << msg.message.getTimeStamp()
+            << msg->message.getTimeStamp()
             << "\r\n";
     }
 

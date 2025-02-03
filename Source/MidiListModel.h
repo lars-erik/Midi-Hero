@@ -1,5 +1,6 @@
 #pragma once
 #include "Global.h"
+#include "MidiQueue.h"
 #include "Observer.h"
 #include "TimedMidiMessage.h"
 
@@ -12,12 +13,57 @@ public:
         NoteCount.setValue(0);
     };
 
-    explicit MidiListModel(const std::vector<TimedMidiMessage>& messages)
+    explicit MidiListModel(const std::vector<shared_ptr<TimedMidiMessage>>& messages)
         : messages(messages)
     {
         NoteCount.setValue(0);
     }
 
+    void addMessages(MidiQueue& queue)
+    {
+        const auto numNewMessages = (int)queue.size();
+        const auto numToAdd = juce::jmin(numToStore, numNewMessages);
+        const auto numToRemove = jmax(0, (int)messages.size() + numToAdd - numToStore);
+        messages.erase(messages.begin(), std::next(messages.begin(), numToRemove));
+        queue.pop(back_inserter(messages));
+        auto end = messages.end();
+        auto begin = end - numToAdd;
+
+        newNotes.clear();
+        copy_if(begin, end, std::back_inserter(newNotes), [](const shared_ptr<TimedMidiMessage> m) { return m->message.isNoteOn(); });
+        
+        bool hasStartStop = false;
+        bool isStart = false;
+        for_each(begin, end, [&hasStartStop, &isStart](const shared_ptr<TimedMidiMessage> msg)
+            {
+                if (msg->message.isMidiStart())
+                {
+                    hasStartStop = true;
+                    isStart = true;
+                }
+                if (msg->message.isMidiStop())
+                {
+                    hasStartStop = true;
+                    isStart = false;
+                }
+            });
+        if (hasStartStop)
+        {
+            // TODO: If setting & bar 0?
+            if (hasStartStop && isStart)
+            {
+                messages.clear();
+                NoteCount.setValue(0);
+            }
+
+            IsPlaying.setValue(isStart);
+        }
+
+        int newCount = static_cast<int>(newNotes.size()) + static_cast<int>(NoteCount.getValue());
+        NoteCount.setValue(newCount);
+    }
+
+    /*
     template <typename It>
     void addMessages(It begin, It end)
     {
@@ -63,6 +109,7 @@ public:
         int newCount = static_cast<int>(newNotes.size()) + static_cast<int>(NoteCount.getValue());
         NoteCount.setValue(newCount);
     }
+    */
 
     void clear()
     {
@@ -71,23 +118,23 @@ public:
         NoteCount.setValue(static_cast<int>(messages.size()));
     }
 
-    const TimedMidiMessage& operator[] (size_t ind) const { return messages[ind]; }
+    const TimedMidiMessage& operator[] (size_t ind) const { return *messages[ind]; }
 
     size_t size() const { return messages.size(); }
 
     // Provide const iterators for read-only access
-    std::vector<TimedMidiMessage>::const_iterator begin() const {
+    std::vector<shared_ptr<TimedMidiMessage>>::const_iterator begin() const {
         return messages.cbegin();
     }
 
-    std::vector<TimedMidiMessage>::const_iterator end() const {
+    std::vector<shared_ptr<TimedMidiMessage>>::const_iterator end() const {
         return messages.cend();
     }
 
     template <typename Predicate>
-    std::vector<TimedMidiMessage> filterMessages(Predicate predicate)
+    std::vector<shared_ptr<TimedMidiMessage>> filterMessages(Predicate predicate)
     {
-        std::vector<TimedMidiMessage> notes;
+        std::vector<shared_ptr<TimedMidiMessage>> notes;
         copy_if(
             messages.begin(),
             messages.end(),
@@ -97,7 +144,7 @@ public:
         return notes;
     }
 
-    std::vector<TimedMidiMessage> getNewNotes()
+    std::vector<shared_ptr<TimedMidiMessage>> getNewNotes()
     {
         return newNotes;
     }
@@ -149,19 +196,19 @@ public:
         }
     };
 
-    static Scoring getScore(std::vector<TimedMidiMessage> notes, int divisionLevel)
+    static Scoring getScore(std::vector<shared_ptr<TimedMidiMessage>> notes, int divisionLevel)
     {
         vector<double> scores;
-        transform(notes.begin(), notes.end(), back_inserter(scores), [divisionLevel](const TimedMidiMessage& m) { return m.getScore(divisionLevel); });
+        transform(notes.begin(), notes.end(), back_inserter(scores), [divisionLevel](const shared_ptr<TimedMidiMessage> m) { return m->getScore(divisionLevel); });
         const long totalNotes = static_cast<long>(notes.size());
         const double score = std::accumulate(scores.begin(), scores.end(), 0.0);
         const double totalScore = round(score / totalNotes * 100) / 100;
         return { totalNotes, score, totalScore };
     }
 
-    std::vector<TimedMidiMessage> getNotes()
+    std::vector<shared_ptr<TimedMidiMessage>> getNotes()
     {
-        return filterMessages([&](const TimedMidiMessage& msg) { return msg.message.isNoteOn(); });
+        return filterMessages([&](const shared_ptr<TimedMidiMessage>& msg) { return msg->message.isNoteOn(); });
     }
 
     Scoring getScore(const int divisionLevel)
@@ -182,9 +229,9 @@ public:
             {"Bad", 0 }
         };
 
-        for (TimedMidiMessage& m : notes)
+        for (shared_ptr<TimedMidiMessage> m : notes)
         {
-            scores[m.getScoreName(divisionLevel)]++;
+            scores[m->getScoreName(divisionLevel)]++;
         }
 
         return scores;
@@ -196,6 +243,6 @@ public:
 
 private:
     static constexpr auto numToStore = 1000;
-    std::vector<TimedMidiMessage> messages;
-    std::vector<TimedMidiMessage> newNotes;
+    std::vector<shared_ptr<TimedMidiMessage>> messages;
+    std::vector<shared_ptr<TimedMidiMessage>> newNotes;
 };
