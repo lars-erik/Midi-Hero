@@ -60,6 +60,9 @@ target_include_directories(Tests PRIVATE
 # Copy over compile definitions from our plugin target so it has all the JUCEy goodness
 target_compile_definitions(Tests PRIVATE $<TARGET_PROPERTY:${PROJECT_NAME},COMPILE_DEFINITIONS>)
 
+# Add a UNIT_TEST def so we can do things in tests only
+target_compile_definitions(Tests PRIVATE UNIT_TESTS)
+
 # And give tests access to our shared code
 target_link_libraries(Tests PRIVATE SharedCode Catch2::Catch2)
 target_link_libraries(Tests PRIVATE SharedCode ApprovalTests)

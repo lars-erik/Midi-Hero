@@ -1,21 +1,63 @@
 #pragma once
 #include "Global.h"
 
+#ifdef UNIT_TESTS
+struct CtorLogger
+{
+    CtorLogger() {
+        cout << "Default ctor" << endl;
+    };
+
+    ~CtorLogger() {
+        cout << "Default dtor" << endl;
+    };
+
+    CtorLogger(const CtorLogger& other)
+    {
+        cout << "Copy ctor" << endl;
+    }
+
+    CtorLogger(CtorLogger&& other) noexcept
+    {
+        cout << "Move ctor" << endl;
+    }
+
+    CtorLogger& operator=(const CtorLogger& other)
+    {
+        cout << "Copy assign" << endl;
+        if (this == &other)
+            return *this;
+        return *this;
+    }
+
+    CtorLogger& operator=(CtorLogger&& other) noexcept
+    {
+        cout << "Move assign" << endl;
+        if (this == &other)
+            return *this;
+        return *this;
+    }
+};
+#endif
+
 struct TimedMidiMessage
+#ifdef UNIT_TESTS
+    : CtorLogger
+#endif
 {
     MidiMessage message;
-    AudioPlayHead::PositionInfo position;
+    shared_ptr<AudioPlayHead::PositionInfo> position;
     double sampleRate;
 
     TimedMidiMessage() = default;
 
     // TODO: Pass reference to settings?
     TimedMidiMessage(
-        MidiMessage message,
-        const AudioPlayHead::PositionInfo& position,
+        const MidiMessage&& message,
+        const shared_ptr<AudioPlayHead::PositionInfo>& position,
         const double sampleRate
-    )
-        : message(std::move(message)),
+    ) :
+        message(std::move(message)),
         position(position),
         sampleRate(sampleRate)
     {
@@ -23,15 +65,15 @@ struct TimedMidiMessage
 
     double getPosition() const
     {
-        double samplesPerPpq = sampleRate * 60 / position.getBpm().orFallback(60);
-        double adjustedPpqPosition = message.getTimeStamp() / samplesPerPpq + position.getPpqPosition().orFallback(0);
+        double samplesPerPpq = sampleRate * 60 / position->getBpm().orFallback(60);
+        double adjustedPpqPosition = message.getTimeStamp() / samplesPerPpq + position->getPpqPosition().orFallback(0);
         double result = roundToDecimals(adjustedPpqPosition, 3);
         return result;
     }
 
     std::string getPositionFormatted() const
     {
-        return formatPPQ(getPosition(), *position.getTimeSignature());
+        return formatPPQ(getPosition(), *position->getTimeSignature());
     }
 
     double getIntendedPosition(const int divisionLevel) const {
@@ -42,7 +84,7 @@ struct TimedMidiMessage
 
     std::string getIntendedPositionFormatted(const int divisionLevel) const
     {
-        return formatPPQ(getIntendedPosition(divisionLevel), *position.getTimeSignature());
+        return formatPPQ(getIntendedPosition(divisionLevel), *position->getTimeSignature());
     }
 
     double getPpqDiff(const int divisionLevel) const
@@ -52,7 +94,7 @@ struct TimedMidiMessage
 
     int getPpqDiffInMs(const int divisionLevel) const
     {
-        double secPerQuarterNote = 60 / position.getBpm().orFallback(60); // 0.5 in 120
+        double secPerQuarterNote = 60 / position->getBpm().orFallback(60); // 0.5 in 120
         double diff = getPpqDiff(divisionLevel); // ratio of 0.5? (yes)
         double diffInSeconds = diff * secPerQuarterNote;
         int result = static_cast<int>(round(diffInSeconds * 1000));

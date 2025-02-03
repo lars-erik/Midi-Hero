@@ -23,6 +23,8 @@ class MidiHeroAudioProcessor  : public juce::AudioProcessor,
 public:
     //==============================================================================
     MidiHeroAudioProcessor();
+    // Here for tests
+    MidiHeroAudioProcessor(bool startTimer, int queueSize);
     ~MidiHeroAudioProcessor() override;
 
     //==============================================================================
@@ -62,6 +64,8 @@ public:
     //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
+
+    bool hasQueuedItems() const;
 
     MidiListModel model;
     ValueTree state{ "state" };

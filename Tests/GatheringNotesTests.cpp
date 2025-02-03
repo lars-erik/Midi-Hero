@@ -32,7 +32,7 @@ TEST_CASE("Buffer gets transfered to model on timer")
 {
     cout << "Start of testcase" << endl;
 
-    MidiHeroAudioProcessor p{false, 6};
+    MidiHeroAudioProcessor p{false, 32};
     MidiBuffer b;
     DummyPlayHead ph{120};
     
@@ -48,23 +48,24 @@ TEST_CASE("Buffer gets transfered to model on timer")
         b.addEvent(MidiMessage(0x80, 0x48, 0x7f, 0), 70);
         b.addEvent(MidiMessage(0x80, 0x48, 0x7f, 0), 80);
         p.process(b);
-        p.timerCallback();
+        while(p.hasQueuedItems())
+            p.timerCallback();
     };
 
     SECTION("unless not playing")
     {
-        cout << "Unless not ..." << endl;
         bufferAndProcess();
         REQUIRE(p.model.getNoteCount() == 0);
+        REQUIRE(p.model.size() == 0);
     }
 
     SECTION("when playing")
     {
-        cout << "when playing starting" << endl;
         ph.getMutablePosition().setIsPlaying(true);
-        cout << "BEFORE BUFFER" << endl;
+        p.process(b);
+        p.timerCallback();
         bufferAndProcess();
-        cout << "AFTER PROCESS" << endl;
         REQUIRE(p.model.getNoteCount() == 3);
+        REQUIRE(p.model.size() == 6);
     }
 }

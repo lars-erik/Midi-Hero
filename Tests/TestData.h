@@ -17,9 +17,9 @@ struct MidiData {
     double timeStamp;
 };
 
-inline std::vector<TimedMidiMessage> transformToModel(std::vector<MidiData>& data, double bpm, double sampleRate)
+inline std::vector<shared_ptr<TimedMidiMessage>> transformToModel(std::vector<MidiData>& data, double bpm, double sampleRate)
 {
-    std::vector<TimedMidiMessage> messages;
+    std::vector<shared_ptr<TimedMidiMessage>> messages;
 
     AudioPlayHead::TimeSignature timeSignature;
     timeSignature.numerator = 4;
@@ -37,9 +37,12 @@ inline std::vector<TimedMidiMessage> transformToModel(std::vector<MidiData>& dat
             position.setPpqPositionOfLastBarStart(data.barPpqPosition);
             position.setTimeInSeconds(data.timeInSeconds);
             position.setTimeSignature(timeSignature);
-            return TimedMidiMessage(
+
+            auto posPtr = make_shared<AudioPlayHead::PositionInfo>(position);
+
+            return make_shared<TimedMidiMessage>(
                 MidiMessage(data.byte1, data.byte2, data.byte3, data.timeStamp),
-                position,
+                posPtr,
                 sampleRate
             );
         }
@@ -95,7 +98,7 @@ inline std::vector<MidiData> readCsvFile(const string& csvData) {
     return midiDataList;
 }
 
-inline std::vector<TimedMidiMessage> getTestData(const string& csvData, int bpm = 120, int sampleRate = 44100)
+inline std::vector<shared_ptr<TimedMidiMessage>> getTestData(const string& csvData, int bpm = 120, int sampleRate = 44100)
 {
     auto midiData = readCsvFile(csvData);
     auto model = transformToModel(midiData, bpm, sampleRate);

@@ -127,16 +127,16 @@ private:
             {
                 switch (columnId)
                 {
-                case messageColumn:     return getEventString(message.message);
-                case barColumn:         return String(message.position.getPpqPositionOfLastBarStart().orFallback(0));
-                case ppqColumn:         return String(message.position.getPpqPosition().orFallback(0));
-                case adjustedColumn:    return String(message.getPositionFormatted());
-                case intendedPpqColumn: return String(message.getIntendedPosition(divisionLevel));
-                case intendedColumn:    return String(message.getIntendedPositionFormatted(divisionLevel));
-                case diffColumn:        return String(message.getPpqDiffInMs(divisionLevel));
-                case channelColumn:     return String(message.message.getChannel());
-                case dataColumn:        return getDataString(message.message);
-                case scoreColumn:       return String(message.getScoreName(divisionLevel)); 
+                case messageColumn:     return getEventString(message->message);
+                case barColumn:         return String(message->position->getPpqPositionOfLastBarStart().orFallback(0));
+                case ppqColumn:         return String(message->position->getPpqPosition().orFallback(0));
+                case adjustedColumn:    return String(message->getPositionFormatted());
+                case intendedPpqColumn: return String(message->getIntendedPosition(divisionLevel));
+                case intendedColumn:    return String(message->getIntendedPositionFormatted(divisionLevel));
+                case diffColumn:        return String(message->getPpqDiffInMs(divisionLevel));
+                case channelColumn:     return String(message->message.getChannel());
+                case dataColumn:        return getDataString(message->message);
+                case scoreColumn:       return String(message->getScoreName(divisionLevel));
                 default:                break;
                 }
 
@@ -147,7 +147,7 @@ private:
 
     MidiListModel& messages;
     MidiHeroSettings& settings;
-    std::vector<TimedMidiMessage> filteredMessages;
+    std::vector<shared_ptr<TimedMidiMessage>> filteredMessages;
     TableListBox table;
 
     Observer<int> noteCountObserver;

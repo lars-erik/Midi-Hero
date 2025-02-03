@@ -10,24 +10,37 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-MidiHeroAudioProcessor::MidiHeroAudioProcessor()
+
+MidiHeroAudioProcessor::MidiHeroAudioProcessor(bool startTimer, int queueSize)
 #ifndef JucePlugin_PreferredChannelConfigurations
-     : AudioProcessor (getBusesLayout()
-                     #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
-                      #endif
-                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
-                     #endif
-                       ),
+    : AudioProcessor(getBusesLayout()
+#if ! JucePlugin_IsMidiEffect
+#if ! JucePlugin_IsSynth
+        .withInput("Input", juce::AudioChannelSet::stereo(), true)
 #endif
-    settings(state)
+        .withOutput("Output", juce::AudioChannelSet::stereo(), true)
+#endif
+    ),
+#endif
+    settings(state),
+    queue(queueSize)
 {
     // TODO: Use some other random generator?
     srand(static_cast<int>(time(nullptr)));  // NOLINT(cert-msc51-cpp, clang-diagnostic-shorten-64-to-32)
 
     state.addChild({ "uiState", { { "width",  600 }, { "height", 300 } }, {} }, -1, nullptr);
-    startTimerHz(60);
+
+    isPlaying = false;
+
+    if (startTimer)
+    {
+        startTimerHz(60);
+    }
+}
+
+MidiHeroAudioProcessor::MidiHeroAudioProcessor()
+    : MidiHeroAudioProcessor(true, 1 << 14)
+{
 }
 
 MidiHeroAudioProcessor::~MidiHeroAudioProcessor() = default;
@@ -137,6 +150,7 @@ bool MidiHeroAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts)
 void MidiHeroAudioProcessor::process(const MidiBuffer& midi)
 {
     Optional<AudioPlayHead::PositionInfo> posInfo;
+    shared_ptr<AudioPlayHead::PositionInfo> posInfoPtr;
     const double sampleRate = getSampleRate();
     if (const AudioPlayHead* currentPlayHead = getPlayHead())
     {
@@ -144,32 +158,38 @@ void MidiHeroAudioProcessor::process(const MidiBuffer& midi)
         if (posInfo)
         {
             const AudioPlayHead::PositionInfo value = *posInfo;
-            timeAtProcess = *value.getTimeInSeconds();
+            posInfoPtr = make_shared<AudioPlayHead::PositionInfo>(value);
 
             if (value.getIsPlaying() != isPlaying)
             {
                 isPlaying = value.getIsPlaying();
-                queue.push(MidiMessage(isPlaying ? 0xfa : 0xfc, 0, 0, 0), value, sampleRate);
+                auto msg = MidiMessage(isPlaying ? 0xfa : 0xfc, 0, 0, 0);
+                queue.push(msg, posInfoPtr, sampleRate);
             }
         }
     }
 
-    if (posInfo)
+    if (posInfo && isPlaying)
     {
-        queue.push(midi, *posInfo, sampleRate);
+        queue.push(midi, posInfoPtr, sampleRate);
     }
-    else
-    {
-        queue.push(midi, AudioPlayHead::PositionInfo(), sampleRate);
-    }
-
 }
+
+bool MidiHeroAudioProcessor::hasQueuedItems() const
+{
+    return queue.size() > 0;
+}
+
 
 void MidiHeroAudioProcessor::timerCallback() 
 {
+    /*
     std::vector<TimedMidiMessage> messages;
     queue.pop(std::back_inserter(messages));
     model.addMessages(messages.begin(), messages.end());
+    */
+
+    model.addMessages(queue);
 }
 
 //==============================================================================
