@@ -2,21 +2,26 @@
 #include "Global.h"
 #include "MidiQueue.h"
 #include "Observer.h"
+#include "MidiHeroSettings.h"
 #include "TimedMidiMessage.h"
 
 // Stores the last N messages. Safe to access from the message thread only.
 class MidiListModel
+#ifdef UNIT_TESTS
+    : CtorLogger
+#endif
 {
 public:
-    MidiListModel()
+    explicit MidiListModel(const std::vector<shared_ptr<TimedMidiMessage>>& messages, const shared_ptr<MidiHeroSettings>& settings) : 
+        messages(messages),
+        settings(settings)
     {
         NoteCount.setValue(0);
-    };
+    }
 
-    explicit MidiListModel(const std::vector<shared_ptr<TimedMidiMessage>>& messages)
-        : messages(messages)
+    MidiListModel(const shared_ptr<MidiHeroSettings>& settings)
+        : MidiListModel(vector<shared_ptr<TimedMidiMessage>>(0), settings)
     {
-        NoteCount.setValue(0);
     }
 
     void addMessages(MidiQueue& queue)
@@ -245,4 +250,6 @@ private:
     static constexpr auto numToStore = 1000;
     std::vector<shared_ptr<TimedMidiMessage>> messages;
     std::vector<shared_ptr<TimedMidiMessage>> newNotes;
+
+    shared_ptr<MidiHeroSettings> settings;
 };

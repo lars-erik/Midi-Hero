@@ -1,48 +1,9 @@
 #pragma once
 #include "Global.h"
 
-#ifdef UNIT_TESTS
-struct CtorLogger
-{
-    CtorLogger() {
-        cout << "Default ctor" << endl;
-    };
-
-    ~CtorLogger() {
-        cout << "Default dtor" << endl;
-    };
-
-    CtorLogger(const CtorLogger& other)
-    {
-        cout << "Copy ctor" << endl;
-    }
-
-    CtorLogger(CtorLogger&& other) noexcept
-    {
-        cout << "Move ctor" << endl;
-    }
-
-    CtorLogger& operator=(const CtorLogger& other)
-    {
-        cout << "Copy assign" << endl;
-        if (this == &other)
-            return *this;
-        return *this;
-    }
-
-    CtorLogger& operator=(CtorLogger&& other) noexcept
-    {
-        cout << "Move assign" << endl;
-        if (this == &other)
-            return *this;
-        return *this;
-    }
-};
-#endif
-
 struct TimedMidiMessage
 #ifdef UNIT_TESTS
-    : CtorLogger
+    // : CtorLogger
 #endif
 {
     MidiMessage message;

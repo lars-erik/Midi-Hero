@@ -7,10 +7,10 @@ class DivisionLevelComponent :
     public Component
 {
 public:
-    DivisionLevelComponent(MidiHeroSettings& s) :
+    DivisionLevelComponent(const shared_ptr<MidiHeroSettings>& s) :
         settings(s)
     {
-        int selectedDivisionLevel = settings.getDivisionLevel();
+        int selectedDivisionLevel = settings->getDivisionLevel();
 
         for (int i = 0; i < std::size(buttonLabels); i++)
         {
@@ -28,7 +28,7 @@ public:
             {
                 if (btn->getToggleState())
                 {
-                    settings.setDivisionLevel(buttonValues[i]);
+                    settings->setDivisionLevel(buttonValues[i]);
                 }
             };
 
@@ -36,7 +36,7 @@ public:
             addAndMakeVisible(btn);
         }
 
-        settings.observeDivisionLevel(&settingObserver, [&](int newDivisionLevel)
+        settings->observeDivisionLevel(&settingObserver, [&](int newDivisionLevel)
         {
             for(int i = 0; i<5; i++)
             {
@@ -63,7 +63,7 @@ public:
     }
 
 private:
-    MidiHeroSettings& settings;
+    const shared_ptr<MidiHeroSettings> settings;
     Observer<int> settingObserver;
 
     OwnedArray<TextButton> buttons;

@@ -5,7 +5,12 @@
 #include <sstream>
 
 #include "Global.h"
+#include "MidiListModel.h"
 #include "TimedMidiMessage.h"
+
+// Leave here to include in tests using TestData
+#include "CsvFiles.h"
+#include "TestUtils.h"
 
 struct MidiData {
     double timeInSeconds;
@@ -16,40 +21,6 @@ struct MidiData {
     int byte3;
     double timeStamp;
 };
-
-inline std::vector<shared_ptr<TimedMidiMessage>> transformToModel(std::vector<MidiData>& data, double bpm, double sampleRate)
-{
-    std::vector<shared_ptr<TimedMidiMessage>> messages;
-
-    AudioPlayHead::TimeSignature timeSignature;
-    timeSignature.numerator = 4;
-    timeSignature.denominator = 4;
-
-    std::transform(
-        data.begin(), 
-        data.end(), 
-        std::back_inserter(messages),
-        [sampleRate, bpm, timeSignature](const MidiData& data)
-        {
-            auto position = AudioPlayHead::PositionInfo();
-            position.setBpm(bpm);
-            position.setPpqPosition(data.ppqPosition);
-            position.setPpqPositionOfLastBarStart(data.barPpqPosition);
-            position.setTimeInSeconds(data.timeInSeconds);
-            position.setTimeSignature(timeSignature);
-
-            auto posPtr = make_shared<AudioPlayHead::PositionInfo>(position);
-
-            return make_shared<TimedMidiMessage>(
-                MidiMessage(data.byte1, data.byte2, data.byte3, data.timeStamp),
-                posPtr,
-                sampleRate
-            );
-        }
-    );
-
-    return messages;
-}
 
 inline std::vector<MidiData> readCsvFile(const string& csvData) {
     std::vector<MidiData> midiDataList;
@@ -98,9 +69,43 @@ inline std::vector<MidiData> readCsvFile(const string& csvData) {
     return midiDataList;
 }
 
-inline std::vector<shared_ptr<TimedMidiMessage>> getTestData(const string& csvData, int bpm = 120, int sampleRate = 44100)
+inline std::vector<shared_ptr<TimedMidiMessage>> transformToModel(std::vector<MidiData>& data, double bpm, double sampleRate)
+{
+    std::vector<shared_ptr<TimedMidiMessage>> messages;
+
+    AudioPlayHead::TimeSignature timeSignature;
+    timeSignature.numerator = 4;
+    timeSignature.denominator = 4;
+
+    std::transform(
+        data.begin(), 
+        data.end(), 
+        std::back_inserter(messages),
+        [sampleRate, bpm, timeSignature](const MidiData& data)
+        {
+            auto position = AudioPlayHead::PositionInfo();
+            position.setBpm(bpm);
+            position.setPpqPosition(data.ppqPosition);
+            position.setPpqPositionOfLastBarStart(data.barPpqPosition);
+            position.setTimeInSeconds(data.timeInSeconds);
+            position.setTimeSignature(timeSignature);
+
+            auto posPtr = make_shared<AudioPlayHead::PositionInfo>(position);
+
+            return make_shared<TimedMidiMessage>(
+                MidiMessage(data.byte1, data.byte2, data.byte3, data.timeStamp),
+                posPtr,
+                sampleRate
+            );
+        }
+    );
+
+    return messages;
+}
+
+inline MidiListModel getTestData(const string& csvData, int bpm = 120, int sampleRate = 44100)
 {
     auto midiData = readCsvFile(csvData);
     auto model = transformToModel(midiData, bpm, sampleRate);
-    return model;
+    return MidiListModel(model, createDefaultSettings());
 }

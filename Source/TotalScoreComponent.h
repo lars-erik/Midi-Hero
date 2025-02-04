@@ -10,7 +10,7 @@ class TotalScoreComponent :
 public:
     TotalScoreComponent(
         MidiListModel& model,
-        MidiHeroSettings& settings
+        shared_ptr<MidiHeroSettings> const& settings
     ) :
         model(model),
         settings(settings)
@@ -26,13 +26,13 @@ public:
         addAndMakeVisible(scoreNameLabel);
 
         model.observeNoteCount(&noteCountObserver, [&](int) { recalculate(); });
-        settings.observeDivisionLevel(&divisionLevelObserver, [&](int) { recalculate(); });
+        settings->observeDivisionLevel(&divisionLevelObserver, [&](int) { recalculate(); });
     }
 
     ~TotalScoreComponent() override
     {
         model.stopObserveNoteCount(&noteCountObserver);
-        settings.stopObserveDivisionLevel(&divisionLevelObserver);
+        settings->stopObserveDivisionLevel(&divisionLevelObserver);
     }
 
     void resized() override
@@ -44,7 +44,7 @@ public:
 private:
     void recalculate()
     {
-        const auto score = model.getScore(settings.getDivisionLevel());
+        const auto score = model.getScore(settings->getDivisionLevel());
         String scoreString(isnan(score.total) ? "" : to_string(static_cast<int>(round(score.total * 100))) + "%");
         scoreLabel.setText(scoreString, dontSendNotification);
         scoreNameLabel.setText(score.notes == 0 ? "" : score.getScoreName(), dontSendNotification);
@@ -55,7 +55,7 @@ private:
     Observer<int> divisionLevelObserver;
 
     MidiListModel& model;
-    MidiHeroSettings settings;
+    shared_ptr<MidiHeroSettings> const settings;
 
     Label scoreLabel{ "score", "N/A" };
     Label scoreNameLabel{ "scoreName", "N/A" };

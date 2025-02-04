@@ -5,16 +5,19 @@
 #include <ApprovalTests/Approvals.h>
 
 #include "PluginProcessor.h"
+#include "TestUtils.h"
 #include "catch2/catch_all.hpp"
 
 class DummyPlayHead : public AudioPlayHead
 {
 public:
     DummyPlayHead(double bpm)
+        : position(PositionInfoBuilder()
+            .withBpm(bpm)
+            .withTimeInSeconds(0)
+            .withIsPlaying(false)
+            .build())
     {
-        position.setBpm(bpm);
-        position.setTimeInSeconds(0);
-        position.setIsPlaying(false);
     }
 
     ~DummyPlayHead() override = default;

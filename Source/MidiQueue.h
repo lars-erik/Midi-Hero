@@ -1,27 +1,29 @@
 #pragma once
 #include "Global.h"
+#include "MidiHeroSettings.h"
 #include "TimedMidiMessage.h"
 
 class MidiQueue
 {
 public:
-    MidiQueue(int queueSize) :
+    MidiQueue(int queueSize, const shared_ptr<MidiHeroSettings>& settings) :
         fifo(queueSize),
-        messages(queueSize)
+        messages(queueSize),
+        settings(settings)
     { }
-    MidiQueue()
-        : MidiQueue(1 << 14)
+    MidiQueue(const shared_ptr<MidiHeroSettings>& settings)
+        : MidiQueue(1 << 14, settings)
     { }
 
     size_t size() const { return fifo.getNumReady(); }
 
-    void push(const MidiBuffer& buffer, const shared_ptr<AudioPlayHead::PositionInfo> position, const double sampleRate)
+    void push(const MidiBuffer& buffer, const shared_ptr<AudioPlayHead::PositionInfo>& position, const double sampleRate)
     {
         for (const auto metadata : buffer)
             fifo.write(1).forEach([&](int dest) { messages[(size_t)dest] = make_shared<TimedMidiMessage>(metadata.getMessage(), position, sampleRate); });
     }
 
-    void push(MidiMessage& message, const shared_ptr<AudioPlayHead::PositionInfo> position, const double sampleRate)
+    void push(MidiMessage& message, const shared_ptr<AudioPlayHead::PositionInfo>& position, const double sampleRate)
     {
         fifo.write(1).forEach([&](int dest) { messages[(size_t)dest] = make_shared<TimedMidiMessage>(std::move(message), position, sampleRate); });
     }
@@ -35,5 +37,6 @@ public:
 private:
     AbstractFifo fifo;
     vector<shared_ptr<TimedMidiMessage>> messages;
+    const shared_ptr<MidiHeroSettings> settings;
 };
 

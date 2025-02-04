@@ -10,13 +10,13 @@ class MidiTable final : public Component,
     private TableListBoxModel
 {
 public:
-    MidiTable(MidiListModel& m, MidiHeroSettings& settings) :
-        messages(m),
+    MidiTable(MidiListModel& m, shared_ptr<MidiHeroSettings> const& settings) :
+        model(m),
         settings(settings)
     {
         addAndMakeVisible(table);
 
-        filteredMessages = messages.getNotes();
+        filteredMessages = model.getNotes();
 
         table.setModel(this);
         
@@ -35,15 +35,15 @@ public:
                 return header;
             }());
 
-        messages.observeNoteCount(&noteCountObserver, [&](int) { updateTable(); });
-        settings.observeDivisionLevel(&divisionLevelObserver, [&](int) { updateTable(); });
+        model.observeNoteCount(&noteCountObserver, [&](int) { updateTable(); });
+        settings->observeDivisionLevel(&divisionLevelObserver, [&](int) { updateTable(); });
 
     }
 
     ~MidiTable() override
     {
-        messages.stopObserveNoteCount(&noteCountObserver);
-        settings.stopObserveDivisionLevel(&divisionLevelObserver);
+        model.stopObserveNoteCount(&noteCountObserver);
+        settings->stopObserveDivisionLevel(&divisionLevelObserver);
     };
 
     void resized() override { table.setBounds(getLocalBounds()); }
@@ -88,7 +88,7 @@ public:
 private:
     void updateTable()
     {
-        filteredMessages = messages.getNotes();
+        filteredMessages = model.getNotes();
         table.updateContent();
     }
 
@@ -121,7 +121,7 @@ private:
         const auto index = filteredMessages.size() - 1 - rowNumber;
         const auto message = filteredMessages[static_cast<int64>(index)];
 
-        const int divisionLevel = settings.getDivisionLevel();
+        const int divisionLevel = settings->getDivisionLevel();
 
         return new Label({}, [&]
             {
@@ -145,8 +145,8 @@ private:
             }());
     }
 
-    MidiListModel& messages;
-    MidiHeroSettings& settings;
+    MidiListModel& model;
+    const shared_ptr<MidiHeroSettings> settings;
     std::vector<shared_ptr<TimedMidiMessage>> filteredMessages;
     TableListBox table;
 

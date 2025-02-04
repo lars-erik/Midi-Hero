@@ -67,9 +67,9 @@ public:
 
     bool hasQueuedItems() const;
 
-    MidiListModel model;
     ValueTree state{ "state" };
-    MidiHeroSettings settings;
+    shared_ptr<MidiHeroSettings> settings;
+    MidiListModel model;
 
 private:
     MidiQueue queue;

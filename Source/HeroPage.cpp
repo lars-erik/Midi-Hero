@@ -59,7 +59,7 @@ void HeroPage::scoreNewNotes()
     auto newNotes = audioProcessor.model.getNewNotes();
     if (newNotes.empty()) return;
 
-    auto score = MidiListModel::getScore(newNotes, audioProcessor.settings.getDivisionLevel());
+    auto score = MidiListModel::getScore(newNotes, audioProcessor.settings->getDivisionLevel());
     auto scoreName = score.getScoreName();
     const Colour colour = MidiListModel::Scoring::getColour(scoreName);
 

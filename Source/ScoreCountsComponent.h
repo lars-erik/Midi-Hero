@@ -10,22 +10,22 @@ class ScoreCountsComponent :
 public:
     ScoreCountsComponent(
         MidiListModel& model,
-        MidiHeroSettings& settings
+        const shared_ptr<MidiHeroSettings>& settings
     ): model(model), settings(settings)
     {
-        settings.observeDivisionLevel(&divisionLevelObserver, [&](int) { repaint(); });
+        settings->observeDivisionLevel(&divisionLevelObserver, [&](int) { repaint(); });
     }
 
     ~ScoreCountsComponent() override
     {
-        settings.stopObserveDivisionLevel(&divisionLevelObserver);
+        settings->stopObserveDivisionLevel(&divisionLevelObserver);
     }
 
     void paint(Graphics& g) override
     {
         g.fillAll(findColour(ResizableWindow::backgroundColourId));
 
-        int divisionLevel = settings.getDivisionLevel();
+        int divisionLevel = settings->getDivisionLevel();
         const auto score = model.getScore(divisionLevel);
         auto scores = model.getScoreCounts(divisionLevel);
 
@@ -59,7 +59,7 @@ public:
 
 private:
     MidiListModel& model;
-    MidiHeroSettings& settings;
+    const shared_ptr<MidiHeroSettings> settings;
 
     Observer<int> divisionLevelObserver;
 };

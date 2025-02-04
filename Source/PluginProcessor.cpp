@@ -11,6 +11,7 @@
 
 //==============================================================================
 
+// This is the ctor used by tests
 MidiHeroAudioProcessor::MidiHeroAudioProcessor(bool startTimer, int queueSize)
 #ifndef JucePlugin_PreferredChannelConfigurations
     : AudioProcessor(getBusesLayout()
@@ -22,8 +23,9 @@ MidiHeroAudioProcessor::MidiHeroAudioProcessor(bool startTimer, int queueSize)
 #endif
     ),
 #endif
-    settings(state),
-    queue(queueSize)
+    settings(make_shared<MidiHeroSettings>(state)),
+    model(settings),
+    queue(queueSize, settings)
 {
     // TODO: Use some other random generator?
     srand(static_cast<int>(time(nullptr)));  // NOLINT(cert-msc51-cpp, clang-diagnostic-shorten-64-to-32)
@@ -38,6 +40,7 @@ MidiHeroAudioProcessor::MidiHeroAudioProcessor(bool startTimer, int queueSize)
     }
 }
 
+// This is the ctor used by DAWs.
 MidiHeroAudioProcessor::MidiHeroAudioProcessor()
     : MidiHeroAudioProcessor(true, 1 << 14)
 {
@@ -220,7 +223,7 @@ void MidiHeroAudioProcessor::setStateInformation (const void* data, int sizeInBy
     if (auto xmlState = getXmlFromBinary(data, sizeInBytes))
     {
         state = ValueTree::fromXml(*xmlState);
-        settings.reinitialize(state);
+        settings->reinitialize(state);
     }
 
     DBG(String("Deserialized\n\n") << state.toXmlString());
