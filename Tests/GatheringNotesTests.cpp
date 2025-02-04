@@ -30,8 +30,6 @@ public:
 
 TEST_CASE("Buffer gets transfered to model on timer")
 {
-    cout << "Start of testcase" << endl;
-
     MidiHeroAudioProcessor p{false, 32};
     MidiBuffer b;
     DummyPlayHead ph{120};
@@ -41,31 +39,46 @@ TEST_CASE("Buffer gets transfered to model on timer")
 
     auto bufferAndProcess = [&]()
     {
-        b.addEvent(MidiMessage(0x90, 0x48, 0x7f, 0), 0);
-        b.addEvent(MidiMessage(0x90, 0x4c, 0x7f, 0), 10);
-        b.addEvent(MidiMessage(0x90, 0x4f, 0x7f, 0), 20);
-        b.addEvent(MidiMessage(0x80, 0x48, 0x7f, 0), 60);
-        b.addEvent(MidiMessage(0x80, 0x48, 0x7f, 0), 70);
-        b.addEvent(MidiMessage(0x80, 0x48, 0x7f, 0), 80);
+        b.clear();
+        b.addEvent(MidiMessage(0x90, 0x48, 0x7f, 0), 01); // C on
+        b.addEvent(MidiMessage(0x90, 0x4c, 0x7f, 0), 10); // E on
+        b.addEvent(MidiMessage(0x80, 0x48, 0x7f, 0), 13); // C off
+        b.addEvent(MidiMessage(0x90, 0x4f, 0x7f, 0), 20); // G on
+        b.addEvent(MidiMessage(0x80, 0x4c, 0x7f, 0), 70); // E off
+        b.addEvent(MidiMessage(0x80, 0x4f, 0x7f, 0), 80); // G off
         p.process(b);
         while(p.hasQueuedItems())
             p.timerCallback();
     };
 
-    SECTION("unless not playing")
+    const auto unless = "unless not playing";
+    SECTION(unless)
     {
+        cout << Catch::getResultCapture().getCurrentTestName() << " " << unless << endl;
+
         bufferAndProcess();
         REQUIRE(p.model.getNoteCount() == 0);
         REQUIRE(p.model.size() == 0);
     }
 
-    SECTION("when playing")
+    const auto whenPlaying = "when playing";
+    SECTION(whenPlaying)
     {
+        cout << Catch::getResultCapture().getCurrentTestName() << " " << whenPlaying << endl;
         ph.getMutablePosition().setIsPlaying(true);
         p.process(b);
         p.timerCallback();
+
         bufferAndProcess();
         REQUIRE(p.model.getNoteCount() == 3);
         REQUIRE(p.model.size() == 6);
+
+        bufferAndProcess();
+        REQUIRE(p.model.getNoteCount() == 6);
+
+        ph.getMutablePosition().setIsPlaying(false);
+        bufferAndProcess();
+
+        REQUIRE(p.model.getNoteCount() == 6);
     }
 }
