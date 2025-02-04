@@ -20,7 +20,6 @@ public:
     {
     }
 
-    ~DummyPlayHead() override = default;
     PositionInfo& getMutablePosition() { return position; }
     Optional<PositionInfo> getPosition() const override { return position; };
     bool canControlTransport() override { return true; };
@@ -31,29 +30,36 @@ public:
     PositionInfo position;
 };
 
-TEST_CASE("Buffer gets transfered to model on timer")
-{
-    MidiHeroAudioProcessor p{false, 32};
-    MidiBuffer b;
-    DummyPlayHead ph{120};
-    
-    p.setRateAndBufferSizeDetails(48'000, 1024);
-    p.setPlayHead(&ph);
+struct ProcessorFixture {
+    ProcessorFixture() :
+        p(false, 32),
+        ph(120)
+    {
+        p.setRateAndBufferSizeDetails(48'000, 1024);
+        p.setPlayHead(&ph);
+    }
 
-    auto bufferAndProcess = [&]()
+    MidiHeroAudioProcessor p;
+    MidiBuffer b;
+    DummyPlayHead ph;
+
+    void bufferAndProcess()
     {
         b.clear();
-        b.addEvent(MidiMessage(0x90, 0x48, 0x7f, 0), 01); // C on
-        b.addEvent(MidiMessage(0x90, 0x4c, 0x7f, 0), 10); // E on
-        b.addEvent(MidiMessage(0x80, 0x48, 0x7f, 0), 13); // C off
-        b.addEvent(MidiMessage(0x90, 0x4f, 0x7f, 0), 20); // G on
-        b.addEvent(MidiMessage(0x80, 0x4c, 0x7f, 0), 70); // E off
-        b.addEvent(MidiMessage(0x80, 0x4f, 0x7f, 0), 80); // G off
+        b.addEvent(MidiMessage::noteOn (1, 0x48, 1.0f), 01); // C on
+        b.addEvent(MidiMessage::noteOn (1, 0x4c, 1.0f), 10); // E on
+        b.addEvent(MidiMessage::noteOff(1, 0x48, 1.0f), 13); // C off
+        b.addEvent(MidiMessage::noteOn (1, 0x4f, 1.0f), 20); // G on
+        b.addEvent(MidiMessage::noteOff(1, 0x4c, 1.0f), 70); // E off
+        b.addEvent(MidiMessage::noteOff(1, 0x4f, 1.0f), 80); // G off
         p.process(b);
-        while(p.hasQueuedItems())
+        while (p.hasQueuedItems())
             p.timerCallback();
     };
+};
 
+TEST_CASE_METHOD(ProcessorFixture, "Buffer gets transfered to model on timer")
+{
     const auto unless = "unless not playing";
     SECTION(unless)
     {

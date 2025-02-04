@@ -14,11 +14,16 @@ public:
      */
 
     class TimingSettings
+#ifdef UNIT_TESTS
+        : CtorLogger
+#endif
     {
     public:
         explicit TimingSettings(ValueTree& state)
             : state(state)
         {
+            cout << "TimingSettings ctor " << this << endl;
+
             initialize();
         }
 
@@ -28,10 +33,10 @@ public:
             initialize();
         }
 
-        int getScaledPerfectMs() { return scaled(getPerfectMs()); }
-        int getScaledGreatMs() { return scaled(getGreatMs()); }
-        int getScaledGoodMs() { return scaled(getGoodMs()); }
-        int getScaledOffMs() { return scaled(getOffMs()); }
+        int getScaledPerfectMs() const { return scaled(getPerfectMs()); }
+        int getScaledGreatMs() const { return scaled(getGreatMs()); }
+        int getScaledGoodMs() const { return scaled(getGoodMs()); }
+        int getScaledOffMs() const { return scaled(getOffMs()); }
 
         OBSERVABLE(int, PerfectMs);
         OBSERVABLE(int, GreatMs);
@@ -41,7 +46,7 @@ public:
         OBSERVABLE(float, Scale);
 
     private:
-        int scaled(int value)
+        int scaled(int value) const
         {
             return static_cast<int>(floor(getScale() * static_cast<float>(value)));
         }
@@ -81,6 +86,8 @@ public:
         state(state),
         timing(state)
     {
+        cout << "MidiHeroSettings ctor " << this << endl;
+
         initialize();
     }
 
@@ -92,7 +99,7 @@ public:
         initialize();
     }
 
-    TimingSettings const& getTiming() { return timing; }
+    TimingSettings& getTiming() { return timing; }
 
     OBSERVABLE(int, DivisionLevel)
 

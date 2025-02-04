@@ -57,7 +57,7 @@ inline shared_ptr<MidiHeroSettings> createDefaultSettings()
     return settings;
 }
 
-inline string buildReport(vector<shared_ptr<TimedMidiMessage>>& notes, int divisionLevel)
+inline string buildReport(vector<shared_ptr<TimedMidiMessage>> const& notes, int const divisionLevel)
 {
     ostringstream stream;
 

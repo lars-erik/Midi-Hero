@@ -16,12 +16,15 @@ public:
         messages(messages),
         settings(settings)
     {
+        cout << "In MidiListModel ctor for " << this << " with settings " << settings << endl;
+
         NoteCount.setValue(0);
     }
 
     MidiListModel(const shared_ptr<MidiHeroSettings>& settings)
         : MidiListModel(vector<shared_ptr<TimedMidiMessage>>(0), settings)
     {
+        cout << "In MidiListModel small ctor for " << this << " with settings " << settings << endl;
     }
 
     void addMessages(MidiQueue& queue)
@@ -242,14 +245,16 @@ public:
         return scores;
     }
 
+    shared_ptr<MidiHeroSettings> const& getSettings() const { return settings; }
+
     READONLY_OBSERVABLE(int, NoteCount)
 
     READONLY_OBSERVABLE(bool, IsPlaying)
 
 private:
+    shared_ptr<MidiHeroSettings> settings;
+
     static constexpr auto numToStore = 1000;
     std::vector<shared_ptr<TimedMidiMessage>> messages;
     std::vector<shared_ptr<TimedMidiMessage>> newNotes;
-
-    shared_ptr<MidiHeroSettings> settings;
 };

@@ -10,50 +10,65 @@
 #include "TestData.h"
 #include "TestUtils.h"
 
-TEST_CASE("Note calculations for quantized play")
+using namespace Catch::Matchers;
+
+struct StatisticsFixture
 {
-    constexpr int DivisionLevel = 8;
-    auto model = getTestData(quantizedCsv);
-    auto notes = model.getNotes();
+    MidiListModel model;
+    vector<shared_ptr<TimedMidiMessage>> notes;
 
-    string report = buildReport(notes, DivisionLevel);
+    StatisticsFixture(int divisionLevel, const string& csvData) :
+        model(getTestData(csvData)),
+        notes(model.getNotes())
+    {
+        model.getSettings()->setDivisionLevel(divisionLevel);
+    }
 
-    ApprovalTests::Approvals::verify(report);
+    string buildReport() const
+    {
+        int divisionLevel = model.getSettings()->getDivisionLevel();
+        return ::buildReport(notes, divisionLevel);
+    }
+};
+
+struct QuantizedFixture : StatisticsFixture
+{
+    QuantizedFixture() : StatisticsFixture(8, quantizedCsv) { }
+};
+
+TEST_CASE_METHOD(QuantizedFixture, "Quantized scoring")
+{
+    SECTION("reports")
+    {
+        string report = buildReport();
+        ApprovalTests::Approvals::verify(report);
+    }
+
+    SECTION("has score 100%")
+    {
+        auto score = model.getScore(model.getSettings()->getDivisionLevel());
+        REQUIRE_THAT(score.total, WithinAbs(1, .001f));
+    }
 }
 
-TEST_CASE("Quantized score is 100%")
+struct OffFixture : StatisticsFixture
 {
-    constexpr int DivisionLevel = 8;
-    auto model = getTestData(quantizedCsv);
-    auto notes = model.getNotes();
+    OffFixture() : StatisticsFixture(4, offCsv) {}
+};
 
-    vector<double> scores;
-    transform(notes.begin(), notes.end(), back_inserter(scores), [](const shared_ptr<TimedMidiMessage> m) { return m->getScore(DivisionLevel); });
-    double score = accumulate(scores.begin(), scores.end(), 0.0);
-    double totalScore = score / notes.size();
+TEST_CASE_METHOD(OffFixture, "Off scoring")
+{
 
-    REQUIRE(totalScore == 1);
+    SECTION("reports")
+    {
+        string report = buildReport();
+        ApprovalTests::Approvals::verify(report);
+    }
+
+    SECTION("has unscaled score 76%")
+    {
+        auto score = model.getScore(model.getSettings()->getDivisionLevel());
+        REQUIRE_THAT(score.total, WithinAbs(.76f, .001f));
+    }
 }
 
-TEST_CASE("Note calculations for off play")
-{
-    constexpr int DivisionLevel = 4;
-
-    auto model = getTestData(offCsv);
-    auto notes = model.getNotes();
-
-    string report = buildReport(notes, DivisionLevel);
-
-    ApprovalTests::Approvals::verify(report);
-}
-
-TEST_CASE("Off score is 76%")
-{
-    constexpr int DivisionLevel = 4;
-    auto model = getTestData(offCsv);
-
-    auto score = model.getScore(DivisionLevel);
-
-    INFO("Testing appx " << score.total << " ~ " << .76);
-    REQUIRE(approx(score.total, .76));
-}

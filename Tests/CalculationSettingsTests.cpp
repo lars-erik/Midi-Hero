@@ -12,37 +12,47 @@
 
 using namespace Catch::Matchers;
 
-TEST_CASE("Settings have the scored millisecond intervals")
+struct SettingsFixture
 {
-    auto settingsPtr = createDefaultSettings();
-    MidiHeroSettings& settings = *settingsPtr;
-    auto timing = settings.getTiming();
+public:
+    SettingsFixture() :
+        settingsPtr(createDefaultSettings()),
+        timing(&settingsPtr->getTiming())
+    {  }
 
-    array expected = { 10, 20, 40, 80 };
-    array actual{
-        timing.getPerfectMs(),
-        timing.getGreatMs(),
-        timing.getGoodMs(),
-        timing.getOffMs()
-    };
+private:
+    shared_ptr<MidiHeroSettings> settingsPtr;
+public:
+    MidiHeroSettings::TimingSettings* timing;
+};
 
-    REQUIRE_THAT(actual, RangeEquals(expected));
-}
-
-TEST_CASE("Settings may have scaled millisecond intervals")
+TEST_CASE_METHOD(SettingsFixture, "Settings have the scored millisecond intervals")
 {
-    auto settingsPtr = createDefaultSettings();
-    MidiHeroSettings& settings = *settingsPtr;
-    auto timing = settings.getTiming();
-    timing.setScale(.5);
+    SECTION("Unscaled")
+    {
+        array expected = { 10, 20, 40, 80 };
+        array actual{
+            timing->getPerfectMs(),
+            timing->getGreatMs(),
+            timing->getGoodMs(),
+            timing->getOffMs()
+        };
 
-    array expected = { 5, 10, 20, 40 };
-    array actual{
-        timing.getScaledPerfectMs(),
-        timing.getScaledGreatMs(),
-        timing.getScaledGoodMs(),
-        timing.getScaledOffMs()
-    };
+        REQUIRE_THAT(actual, RangeEquals(expected));
+    }
 
-    REQUIRE_THAT(actual, RangeEquals(expected));
+    SECTION("Scaled by half")
+    {
+        timing->setScale(.5);
+
+        array expected = { 5, 10, 20, 40 };
+        array actual{
+            timing->getScaledPerfectMs(),
+            timing->getScaledGreatMs(),
+            timing->getScaledGoodMs(),
+            timing->getScaledOffMs()
+        };
+
+        REQUIRE_THAT(actual, RangeEquals(expected));
+    }
 }

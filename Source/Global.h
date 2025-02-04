@@ -11,7 +11,7 @@ private:\
     Value name;\
 \
 public:\
-    type get##name() {\
+    type get##name() const {\
         return static_cast<type>(name.getValue());\
     }\
 \
@@ -38,26 +38,26 @@ public:\
 struct CtorLogger
 {
     CtorLogger() {
-        cout << "Default ctor" << endl;
+        cout << "Default ctor for " << this << endl;
     };
 
     ~CtorLogger() {
-        cout << "Default dtor" << endl;
+        cout << "Default dtor for " << this << endl;
     };
 
     CtorLogger(const CtorLogger& other)
     {
-        cout << "Copy ctor" << endl;
+        cout << "Copy ctor for " << this << endl;
     }
 
     CtorLogger(CtorLogger&& other) noexcept
     {
-        cout << "Move ctor" << endl;
+        cout << "Move ctor for " << this << endl;
     }
 
     CtorLogger& operator=(const CtorLogger& other)
     {
-        cout << "Copy assign" << endl;
+        cout << "Copy assign for " << this << endl;
         if (this == &other)
             return *this;
         return *this;
@@ -65,7 +65,7 @@ struct CtorLogger
 
     CtorLogger& operator=(CtorLogger&& other) noexcept
     {
-        cout << "Move assign" << endl;
+        cout << "Move assign for " << this << endl;
         if (this == &other)
             return *this;
         return *this;
