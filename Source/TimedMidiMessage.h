@@ -10,16 +10,15 @@ struct TimedMidiMessage
     shared_ptr<AudioPlayHead::PositionInfo> position;
     double sampleRate;
 
-    TimedMidiMessage() = default;
-
-    // TODO: Pass reference to settings?
     TimedMidiMessage(
         const MidiMessage&& message,
         const shared_ptr<AudioPlayHead::PositionInfo>& position,
+        const shared_ptr<MidiHeroSettings>& settings,
         const double sampleRate
     ) :
         message(std::move(message)),
         position(position),
+        settings(settings),
         sampleRate(sampleRate)
     {
     }
@@ -53,8 +52,9 @@ struct TimedMidiMessage
         return getPosition() - getIntendedPosition(divisionLevel);
     }
 
-    int getPpqDiffInMs(const int divisionLevel) const
+    int getPpqDiffInMs() const
     {
+        const int divisionLevel = settings->getDivisionLevel();
         double secPerQuarterNote = 60 / position->getBpm().orFallback(60); // 0.5 in 120
         double diff = getPpqDiff(divisionLevel); // ratio of 0.5? (yes)
         double diffInSeconds = diff * secPerQuarterNote;
@@ -62,27 +62,31 @@ struct TimedMidiMessage
         return result;
     }
 
-    double getScore(const int divisionLevel) const
+    double getScore() const
     {
-        const int diff = abs(getPpqDiffInMs(divisionLevel));
-        if (diff < 10) return 1;
-        if (diff < 20) return .9;
-        if (diff < 40) return .6;
-        if (diff < 80) return .25;
+        auto* timing = &settings->getTiming();
+        const int diff = abs(getPpqDiffInMs());
+        if (diff < timing->getScaledPerfectMs()) return 1;
+        if (diff < timing->getScaledGreatMs()) return .9;
+        if (diff < timing->getScaledGoodMs()) return .6;
+        if (diff < timing->getScaledOffMs()) return .25;
         return 0;
     }
 
-    std::string getScoreName(const int divisionLevel) const
+    std::string getScoreName() const
     {
-        const int diff = abs(getPpqDiffInMs(divisionLevel));
-        if (diff < 10) return "Perfect";
-        if (diff < 20) return "Great";
-        if (diff < 40) return "Good";
-        if (diff < 80) return "Off";
+        auto* timing = &settings->getTiming();
+        const int diff = abs(getPpqDiffInMs());
+        if (diff < timing->getScaledPerfectMs()) return "Perfect";
+        if (diff < timing->getScaledGreatMs()) return "Great";
+        if (diff < timing->getScaledGoodMs()) return "Good";
+        if (diff < timing->getScaledOffMs()) return "Off";
         return "Bad";
     }
 
 private:
+    shared_ptr<MidiHeroSettings> settings;
+
     static double roundToDecimals(const double value, const int decimals) {
         double scale = pow(10.0, decimals);
         return round(value * scale) / scale;

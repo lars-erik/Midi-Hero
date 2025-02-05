@@ -22,6 +22,7 @@ struct StatisticsFixture
         notes(model.getNotes())
     {
         model.getSettings()->setDivisionLevel(divisionLevel);
+        model.getSettings()->getTiming().setScale(1.0);
     }
 
     string buildReport() const
@@ -33,7 +34,7 @@ struct StatisticsFixture
 
 struct QuantizedFixture : StatisticsFixture
 {
-    QuantizedFixture() : StatisticsFixture(8, quantizedCsv) { }
+    QuantizedFixture() : StatisticsFixture(16, quantizedCsv) { }
 };
 
 TEST_CASE_METHOD(QuantizedFixture, "Quantized scoring")
@@ -46,7 +47,7 @@ TEST_CASE_METHOD(QuantizedFixture, "Quantized scoring")
 
     SECTION("has score 100%")
     {
-        auto score = model.getScore(model.getSettings()->getDivisionLevel());
+        auto score = model.getScore();
         REQUIRE_THAT(score.total, WithinAbs(1, .001f));
     }
 }
@@ -67,8 +68,15 @@ TEST_CASE_METHOD(OffFixture, "Off scoring")
 
     SECTION("has unscaled score 76%")
     {
-        auto score = model.getScore(model.getSettings()->getDivisionLevel());
+        auto score = model.getScore();
         REQUIRE_THAT(score.total, WithinAbs(.76f, .001f));
+    }
+
+    SECTION("has scaled to .5 score 50%")
+    {
+        model.getSettings()->getTiming().setScale(.5f);
+        auto score = model.getScore();
+        REQUIRE_THAT(score.total, WithinAbs(.5f, .001f));
     }
 }
 

@@ -66,7 +66,7 @@ juce_generate_juce_header(MidiHero)
 
 # Set build options
 set_target_properties(SharedCode PROPERTIES
-    CXX_STANDARD 17
+    CXX_STANDARD 20
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
 )
@@ -101,6 +101,7 @@ set(GLOBAL_FILES
     Source/PluginEditor.cpp
     Source/PluginEditor.h
     Source/PluginProcessor.cpp
+    Source/PluginProcessor.plumbing.cpp
     Source/PluginProcessor.h
 )
 

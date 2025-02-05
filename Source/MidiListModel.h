@@ -5,6 +5,55 @@
 #include "MidiHeroSettings.h"
 #include "TimedMidiMessage.h"
 
+#include <ranges>
+
+struct Scoring
+{
+    inline static std::vector<std::string> keys = {
+        "Perfect", "Great", "Good", "Off", "Bad"
+    };
+
+    long notes;
+    double score;
+    double total;
+
+    Scoring() = default;
+
+    Scoring(long notes, double score, double total)
+        : notes(notes),
+        score(score),
+        total(total)
+    {
+    }
+
+    std::string getScoreName() const
+    {
+        if (total >= .9) return "Perfect";
+        if (total >= .8) return "Great";
+        if (total >= .6) return "Good";
+        if (total >= .25) return "Off";
+        return "Bad";
+    }
+
+    Colour getColour() const
+    {
+        return getColour(getScoreName());
+    }
+
+    static Colour getColour(const std::string& scoreName)
+    {
+        static const std::unordered_map<std::string, Colour> colors = {
+            {"Perfect", Colours::green },
+            {"Great", Colours::lightgreen },
+            {"Good", Colours::greenyellow },
+            {"Off", Colours::orange },
+            {"Bad", Colours::red }
+        };
+
+        return colors.at(scoreName);
+    }
+};
+
 // Stores the last N messages. Safe to access from the message thread only.
 class MidiListModel
 #ifdef UNIT_TESTS
@@ -71,54 +120,6 @@ public:
         NoteCount.setValue(newCount);
     }
 
-    /*
-    template <typename It>
-    void addMessages(It begin, It end)
-    {
-        if (begin == end)
-            return;
-
-        const auto numNewMessages = (int)std::distance(begin, end);
-        const auto numToAdd = juce::jmin(numToStore, numNewMessages);
-        const auto numToRemove = jmax(0, (int)messages.size() + numToAdd - numToStore);
-        messages.erase(messages.begin(), std::next(messages.begin(), numToRemove));
-        messages.insert(messages.end(), std::prev(end, numToAdd), end);
-
-        newNotes.clear();
-        copy_if(begin, end, std::back_inserter(newNotes), [](const TimedMidiMessage& m) { return m.message.isNoteOn(); });
-
-        bool hasStartStop = false;
-        bool isStart = false;
-        for_each(begin, end, [&hasStartStop, &isStart](const TimedMidiMessage& msg)
-        {
-            if (msg.message.isMidiStart())
-            {
-                hasStartStop = true;
-                isStart = true;
-            }
-            if (msg.message.isMidiStop())
-            {
-                hasStartStop = true;
-                isStart = false;
-            }
-        });
-        if (hasStartStop)
-        {
-            // TODO: If setting & bar 0?
-            if (hasStartStop && isStart)
-            {
-                messages.clear();
-                NoteCount.setValue(0);
-            }
-
-            IsPlaying.setValue(isStart);
-        }
-
-        int newCount = static_cast<int>(newNotes.size()) + static_cast<int>(NoteCount.getValue());
-        NoteCount.setValue(newCount);
-    }
-    */
-
     void clear()
     {
         messages.clear();
@@ -157,72 +158,30 @@ public:
         return newNotes;
     }
 
-    struct Scoring
+    std::vector<shared_ptr<TimedMidiMessage>> getNotes()
     {
-        inline static std::vector<std::string> keys = {
-            "Perfect", "Great", "Good", "Off", "Bad"
-        };
+        return filterMessages([&](const shared_ptr<TimedMidiMessage>& msg) { return msg->message.isNoteOn(); });
+    }
 
-        long notes;
-        double score;
-        double total;
-
-        Scoring() = default;
-
-        Scoring(long notes, double score, double total)
-            : notes(notes),
-            score(score),
-            total(total)
-        {
-        }
-
-        std::string getScoreName() const
-        {
-            if (total >= .9) return "Perfect";
-            if (total >= .8) return "Great";
-            if (total >= .6) return "Good";
-            if (total >= .25) return "Off";
-            return "Bad";
-        }
-
-        Colour getColour() const
-        {
-            return getColour(getScoreName());
-        }
-
-        static Colour getColour(const std::string& scoreName)
-        {
-            static const std::unordered_map<std::string, Colour> colors = {
-                {"Perfect", Colours::green },
-                {"Great", Colours::lightgreen },
-                {"Good", Colours::greenyellow },
-                {"Off", Colours::orange },
-                {"Bad", Colours::red }
-            };
-
-            return colors.at(scoreName);
-        }
-    };
-
-    static Scoring getScore(std::vector<shared_ptr<TimedMidiMessage>> notes, int divisionLevel)
+    Scoring getScore(std::vector<shared_ptr<TimedMidiMessage>> notes) const
     {
         vector<double> scores;
-        transform(notes.begin(), notes.end(), back_inserter(scores), [divisionLevel](const shared_ptr<TimedMidiMessage> m) { return m->getScore(divisionLevel); });
+        std::transform(begin(notes), end(notes), back_inserter(scores), [&](const shared_ptr<TimedMidiMessage>& m) { return m->getScore(); });
         const long totalNotes = static_cast<long>(notes.size());
         const double score = std::accumulate(scores.begin(), scores.end(), 0.0);
         const double totalScore = round(score / totalNotes * 100) / 100;
         return { totalNotes, score, totalScore };
     }
 
-    std::vector<shared_ptr<TimedMidiMessage>> getNotes()
+    Scoring getBatchScore() const
     {
-        return filterMessages([&](const shared_ptr<TimedMidiMessage>& msg) { return msg->message.isNoteOn(); });
+        return getScore(newNotes);
     }
 
-    Scoring getScore(const int divisionLevel)
+    Scoring getScore()
     {
         auto notes = getNotes();
-        return getScore(notes, divisionLevel);
+        return getScore(notes);
     }
 
     std::map<std::string, int> getScoreCounts(const int divisionLevel)
@@ -239,7 +198,7 @@ public:
 
         for (shared_ptr<TimedMidiMessage> m : notes)
         {
-            scores[m->getScoreName(divisionLevel)]++;
+            scores[m->getScoreName()]++;
         }
 
         return scores;

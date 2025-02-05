@@ -44,7 +44,7 @@ public:
 private:
     void recalculate()
     {
-        const auto score = model.getScore(settings->getDivisionLevel());
+        const auto score = model.getScore();
         String scoreString(isnan(score.total) ? "" : to_string(static_cast<int>(round(score.total * 100))) + "%");
         scoreLabel.setText(scoreString, dontSendNotification);
         scoreNameLabel.setText(score.notes == 0 ? "" : score.getScoreName(), dontSendNotification);

@@ -78,12 +78,12 @@ inline string buildReport(vector<shared_ptr<TimedMidiMessage>> const& notes, int
         printColumn(stream, *note->position->getPpqPositionOfLastBarStart(), 10);
         printColumn(stream, note->getPosition(), 10);
         printColumn(stream, note->getPositionFormatted(), 10, false);
-        printColumn(stream, note->getPpqDiffInMs(divisionLevel), 10);
+        printColumn(stream, note->getPpqDiffInMs(), 10);
         printColumn(stream, note->getIntendedPosition(divisionLevel), 10);
         printColumn(stream, note->getIntendedPositionFormatted(divisionLevel), 10, false);
         printColumn(stream, MidiTable::getDataString(note->message), 20, false);
-        printColumn(stream, note->getScore(divisionLevel), 10);
-        printColumn(stream, note->getScoreName(divisionLevel), 10, false);
+        printColumn(stream, note->getScore(), 10);
+        printColumn(stream, note->getScoreName(), 10, false);
         stream << endl;
     }
 

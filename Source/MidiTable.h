@@ -133,10 +133,10 @@ private:
                 case adjustedColumn:    return String(message->getPositionFormatted());
                 case intendedPpqColumn: return String(message->getIntendedPosition(divisionLevel));
                 case intendedColumn:    return String(message->getIntendedPositionFormatted(divisionLevel));
-                case diffColumn:        return String(message->getPpqDiffInMs(divisionLevel));
+                case diffColumn:        return String(message->getPpqDiffInMs());
                 case channelColumn:     return String(message->message.getChannel());
                 case dataColumn:        return getDataString(message->message);
-                case scoreColumn:       return String(message->getScoreName(divisionLevel));
+                case scoreColumn:       return String(message->getScoreName());
                 default:                break;
                 }
 

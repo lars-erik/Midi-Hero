@@ -17,15 +17,15 @@ public:
 
     size_t size() const { return fifo.getNumReady(); }
 
-    void push(const MidiBuffer& buffer, const shared_ptr<AudioPlayHead::PositionInfo>& position, const double sampleRate)
+    void push(const MidiBuffer& buffer, const shared_ptr<AudioPlayHead::PositionInfo>& position, const shared_ptr<MidiHeroSettings>& settings, const double sampleRate)
     {
         for (const auto metadata : buffer)
-            fifo.write(1).forEach([&](int dest) { messages[(size_t)dest] = make_shared<TimedMidiMessage>(metadata.getMessage(), position, sampleRate); });
+            fifo.write(1).forEach([&](int dest) { messages[(size_t)dest] = make_shared<TimedMidiMessage>(metadata.getMessage(), position, settings, sampleRate); });
     }
 
-    void push(MidiMessage& message, const shared_ptr<AudioPlayHead::PositionInfo>& position, const double sampleRate)
+    void push(MidiMessage& message, const shared_ptr<AudioPlayHead::PositionInfo>& position, const shared_ptr<MidiHeroSettings>& settings, const double sampleRate)
     {
-        fifo.write(1).forEach([&](int dest) { messages[(size_t)dest] = make_shared<TimedMidiMessage>(std::move(message), position, sampleRate); });
+        fifo.write(1).forEach([&](int dest) { messages[(size_t)dest] = make_shared<TimedMidiMessage>(std::move(message), position, settings, sampleRate); });
     }
 
     template <typename OutputIt>

@@ -69,7 +69,7 @@ inline std::vector<MidiData> readCsvFile(const string& csvData) {
     return midiDataList;
 }
 
-inline std::vector<shared_ptr<TimedMidiMessage>> transformToModel(std::vector<MidiData>& data, double bpm, double sampleRate)
+inline std::vector<shared_ptr<TimedMidiMessage>> transformToModel(std::vector<MidiData>& data, shared_ptr<MidiHeroSettings> const& settings, double bpm, double sampleRate)
 {
     std::vector<shared_ptr<TimedMidiMessage>> messages;
 
@@ -77,27 +77,26 @@ inline std::vector<shared_ptr<TimedMidiMessage>> transformToModel(std::vector<Mi
     timeSignature.numerator = 4;
     timeSignature.denominator = 4;
 
-    std::transform(
-        data.begin(), 
-        data.end(), 
-        std::back_inserter(messages),
-        [sampleRate, bpm, timeSignature](const MidiData& data)
-        {
-            auto position = AudioPlayHead::PositionInfo();
-            position.setBpm(bpm);
-            position.setPpqPosition(data.ppqPosition);
-            position.setPpqPositionOfLastBarStart(data.barPpqPosition);
-            position.setTimeInSeconds(data.timeInSeconds);
-            position.setTimeSignature(timeSignature);
+    ranges::transform(data, 
+      std::back_inserter(messages),
+      [&](const MidiData& item)
+      {
+          auto position = AudioPlayHead::PositionInfo();
+          position.setBpm(bpm);
+          position.setPpqPosition(item.ppqPosition);
+          position.setPpqPositionOfLastBarStart(item.barPpqPosition);
+          position.setTimeInSeconds(item.timeInSeconds);
+          position.setTimeSignature(timeSignature);
 
-            auto posPtr = make_shared<AudioPlayHead::PositionInfo>(position);
+          auto posPtr = make_shared<AudioPlayHead::PositionInfo>(position);
 
-            return make_shared<TimedMidiMessage>(
-                MidiMessage(data.byte1, data.byte2, data.byte3, data.timeStamp),
-                posPtr,
-                sampleRate
-            );
-        }
+          return make_shared<TimedMidiMessage>(
+              MidiMessage(item.byte1, item.byte2, item.byte3, item.timeStamp),
+              posPtr,
+              settings,
+              sampleRate
+          );
+      }
     );
 
     return messages;
@@ -105,7 +104,8 @@ inline std::vector<shared_ptr<TimedMidiMessage>> transformToModel(std::vector<Mi
 
 inline MidiListModel getTestData(const string& csvData, int bpm = 120, int sampleRate = 44100)
 {
+    auto settings = createDefaultSettings();
     auto midiData = readCsvFile(csvData);
-    auto model = transformToModel(midiData, bpm, sampleRate);
+    auto model = transformToModel(midiData, settings, bpm, sampleRate);
     return MidiListModel(model, createDefaultSettings());
 }
