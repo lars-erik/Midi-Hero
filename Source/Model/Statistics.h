@@ -26,7 +26,10 @@ public:
 
     void accumulate(shared_ptr<TimedMidiMessage> const& msg);
 
-    map<string, ScoreCount> getCounts();
+    map<string, ScoreCount> getCounts() const;
+    double getAvgMs() const;
+    int getMaxMs() const;
+    int getMinMs() const;
 
 private:
     const map<string, ScoreCount> scoreCountsTemplate = {
@@ -39,6 +42,10 @@ private:
 
     map<string, ScoreCount> scoreCounts = scoreCountsTemplate;
 
-    int total;
+    int totalNotes;
+    int totalMs;
+    double avgMs;
+    int maxMs;
+    int minMs;
 };
 

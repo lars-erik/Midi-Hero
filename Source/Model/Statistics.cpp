@@ -35,16 +35,41 @@ double Statistics::ScoreCount::lateRatio() const
 
 void Statistics::accumulate(shared_ptr<TimedMidiMessage> const& msg)
 {
+    totalNotes++;
+    int diff = msg->getPpqDiffInMs();
+    totalMs += diff;
+    maxMs = abs(diff) > abs(maxMs) ? diff : maxMs;
+    minMs = totalNotes == 1 || abs(diff) < abs(minMs) ? diff : minMs;
+    avgMs = static_cast<double>(totalMs) / max(static_cast<double>(totalNotes), 1.0);
     scoreCounts[msg->getScore().getScoreName()].accumulate(msg);
 }
 
 void Statistics::clear()
 {
-    total = 0;
+    totalNotes = 0;
+    totalMs = 0;
+    avgMs = 0;
+    minMs = 0;
+    maxMs = 0;
     scoreCounts = scoreCountsTemplate;
 }
 
-map<string, Statistics::ScoreCount> Statistics::getCounts()
+map<string, Statistics::ScoreCount> Statistics::getCounts() const
 {
     return scoreCounts;
+}
+
+double Statistics::getAvgMs() const
+{
+    return avgMs;
+}
+
+int Statistics::getMaxMs() const
+{
+    return maxMs;
+}
+
+int Statistics::getMinMs() const
+{
+    return minMs;
 }

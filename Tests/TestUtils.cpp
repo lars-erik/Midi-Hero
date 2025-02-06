@@ -83,13 +83,17 @@ string buildStatisticsReport(MidiListModel const& model)
 
     stream << "Summary" << endl << endl;
 
-    stream << "Total:   " << (model.getScore().average * 100) << "% - " << model.getScore().getScoreName() << endl << endl;
+    stream << "Total:           " << formatPercent(model.getScore().average) << " - " << model.getScore().getScoreName() << endl;
+    stream << "Average MS diff: " << setprecision(0) << model.getStatistics().getAvgMs() << "ms" << endl;
+    stream << "Max MS diff:     " << setprecision(0) << model.getStatistics().getMaxMs() << "ms" << endl;
+    stream << "Min MS diff:     " << setprecision(0) << model.getStatistics().getMinMs() << "ms" << endl;
+    stream << endl;
 
     stream << setw(10) << left << "Key" << setw(10) << "Total" << setw(10) << "Early" << setw(10) << "Perfect" << setw(10) << "Late" << endl;
     for (auto key : Scoring::keys)
     {
         stream
-            << setw(10) << left << key
+            << setw(10) << left << (key + ":")
             << setw(10) << (to_string(scoreCounts[key].total) + " (" + formatPercent(scoreCounts[key].ratioOf(model.getNoteCount())) + ")")
             << setw(10) << (to_string(scoreCounts[key].early) + " (" + formatPercent(scoreCounts[key].earlyRatio()) + ")")
             << setw(10) << (to_string(scoreCounts[key].exact) + " (" + formatPercent(scoreCounts[key].exactRatio()) + ")")
