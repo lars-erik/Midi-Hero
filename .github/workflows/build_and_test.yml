@@ -88,10 +88,10 @@ jobs:
         run: cmake --build build --config Release --parallel
 
       - name: Run Tests
-        run: ./build/Tests_artefacts/Tests -s -d yes
+        run: ./build/Tests_artefacts/Release/Tests -s -d yes
 
       - name: Run Tests for publish
-        run: ./build/Tests_artefacts/Tests --reporter junit --out test-results.xml
+        run: ./build/Tests_artefacts/Release/Tests --reporter junit --out test-results.xml
         
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
