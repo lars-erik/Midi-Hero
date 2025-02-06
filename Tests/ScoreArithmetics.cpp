@@ -7,6 +7,8 @@
 
 #include "TimedMidiMessage.h"
 
+using namespace Catch::Matchers;
+
 TEST_CASE("Score accumulation")
 {
     Scoring scores []{
@@ -19,6 +21,6 @@ TEST_CASE("Score accumulation")
     Scoring total = std::accumulate(begin(scores), end(scores), Scoring());
 
     REQUIRE(total.notes == 4);
-    REQUIRE_THAT(total.score, Catch::Matchers::WithinAbs(3.5, .0001));
-    REQUIRE_THAT(total.average, Catch::Matchers::WithinAbs(.88, .0001));
+    REQUIRE_THAT(total.score, WithinAbs(3.5, .0001));
+    REQUIRE_THAT(total.average, WithinAbs(.88, .0001));
 }

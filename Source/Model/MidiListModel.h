@@ -4,8 +4,8 @@
 #include "Observer.h"
 #include "MidiHeroSettings.h"
 #include "Scoring.h"
+#include "Statistics.h"
 #include "TimedMidiMessage.h"
-
 
 // Stores the last N messages. Safe to access from the message thread only.
 class MidiListModel
@@ -34,6 +34,8 @@ public:
     Scoring getBatchScore() const;
 
     Scoring getScore() const;
+
+    Statistics getStatistics() const;
 
     std::map<std::string, int> getScoreCounts() const;
 
@@ -81,4 +83,5 @@ private:
     std::vector<shared_ptr<TimedMidiMessage>> notes;
     Scoring score = Scoring();
     Scoring batchScore = Scoring();
+    Statistics stats = Statistics();
 };

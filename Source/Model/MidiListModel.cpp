@@ -9,8 +9,7 @@ MidiListModel::MidiListModel(const std::vector<shared_ptr<TimedMidiMessage>>& me
 
     if (!messages.empty())
     {
-        notes = filterMessages(isNoteOn);
-        recalculateScores();
+        for_each(begin(messages), end(messages), [&](auto const& msg) { processMessage(msg); });
     }
 
     NoteCount.setValue(static_cast<int>(notes.size()));
@@ -26,11 +25,13 @@ const TimedMidiMessage& MidiListModel::operator[] (size_t ind) const { return *m
 void MidiListModel::recalculateScores()
 {
     scoreCounts = scoreCountTemplate;
+    stats.clear();
     score = accumulate(std::begin(notes), std::end(notes), Scoring(), [&](Scoring rt, shared_ptr<TimedMidiMessage> const& m)
-        {
-            scoreCounts[m->getScore().getScoreName()]++;
-            return rt + m->getScore();
-        });
+    {
+        stats.accumulate(m);
+        scoreCounts[m->getScore().getScoreName()]++;
+        return rt + m->getScore();
+    });
 }
 
 void MidiListModel::addMessages(MidiQueue& queue)
@@ -77,6 +78,7 @@ void MidiListModel::processMessage(shared_ptr<TimedMidiMessage> const& msg)
         score += scoring;
         batchScore += scoring;
         scoreCounts[scoring.getScoreName()]++;
+        stats.accumulate(msg);
     }
 }
 
@@ -85,6 +87,7 @@ void MidiListModel::clear()
     messages.clear();
     notes.clear();
     newNotes.clear();
+    stats.clear();
     score = Scoring();
     scoreCounts = scoreCountTemplate;
     NoteCount.setValue(0);
@@ -92,34 +95,18 @@ void MidiListModel::clear()
 
 size_t MidiListModel::size() const { return messages.size(); }
 
-vector<shared_ptr<TimedMidiMessage>> MidiListModel::getMessages() const
-{
-    return messages;
-}
+vector<shared_ptr<TimedMidiMessage>> MidiListModel::getMessages() const { return messages; }
 
-vector<shared_ptr<TimedMidiMessage>> MidiListModel::getNewNotes() const
-{
-    return newNotes;
-}
+vector<shared_ptr<TimedMidiMessage>> MidiListModel::getNewNotes() const { return newNotes; }
 
-vector<shared_ptr<TimedMidiMessage>> MidiListModel::getNotes() const
-{
-    return notes;
-}
+vector<shared_ptr<TimedMidiMessage>> MidiListModel::getNotes() const { return notes; }
 
-Scoring MidiListModel::getBatchScore() const
-{
-    return batchScore;
-}
+Scoring MidiListModel::getBatchScore() const { return batchScore; }
 
-Scoring MidiListModel::getScore() const
-{
-    return score;
-}
+Scoring MidiListModel::getScore() const { return score; }
 
-std::map<std::string, int> MidiListModel::getScoreCounts() const
-{
-    return scoreCounts;
-}
+Statistics MidiListModel::getStatistics() const { return stats; }
+
+std::map<std::string, int> MidiListModel::getScoreCounts() const { return scoreCounts; }
 
 shared_ptr<MidiHeroSettings> const& MidiListModel::getSettings() const { return settings; }

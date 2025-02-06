@@ -30,7 +30,7 @@ struct StatisticsFixture
     string buildReport() const
     {
         int divisionLevel = model.getSettings()->getDivisionLevel();
-        auto summary = ::buildScoreCountReport(model);
+        auto summary = ::buildStatisticsReport(model);
         auto details = ::buildReport(model.getNotes(), divisionLevel);
 
         return summary + details;

@@ -10,6 +10,7 @@ struct TimedMidiMessage
 {
     MidiMessage message;
     shared_ptr<AudioPlayHead::PositionInfo> position;
+    shared_ptr<MidiHeroSettings> settings;
 
     TimedMidiMessage(
         MidiMessage&& message,
@@ -33,7 +34,6 @@ struct TimedMidiMessage
     Scoring getScore() const;
 
 private:
-    shared_ptr<MidiHeroSettings> settings;
     double sampleRate;
 
     static double roundToDecimals(const double value, const int decimals);

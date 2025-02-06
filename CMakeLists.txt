@@ -80,6 +80,10 @@ file(GLOB_RECURSE GLOBAL_FILES "Source/Plugin/*.*")
 # Add sources to the target
 target_sources(SharedCode INTERFACE ${MODEL_FILES} ${GUI_FILES} ${GLOBAL_FILES})
 
+target_include_directories(MidiHero PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Source/Model)
+target_include_directories(MidiHero PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Source/GUI)
+target_include_directories(MidiHero PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Source/Plugin)
+
 # Automatically reflect folder structure in VS Solution Explorer
 source_group(TREE ${CMAKE_SOURCE_DIR}/Source PREFIX "Source Files" FILES ${MODEL_FILES} ${GUI_FILES} ${GLOBAL_FILES})
 
