@@ -1,4 +1,3 @@
-#pragma once
 #include "JuceHeader.h"
 
 #include <ApprovalTests/Approvals.h>
