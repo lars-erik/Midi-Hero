@@ -44,11 +44,14 @@ The plugin-in automatically switches between "Hero" and "Statistics" as the play
 This is a hobby project and may never get another release.  
 However, these are the planned features:
 
-- Prettier UI (flexbox, fonts, colors, general layout)
-- Settings tab
-  - Setting to disable auto-switch between "Hero" and "Statistics"
-  - Settings for millisecond levels
-  - Settings for score percentages
-  - Setting for "slack" (i.e. scale the millisecond levels)
-- Division level setting on more pages
-- Using a midi file as "target" instead of the "grid"
+- GUI
+  - Settings tab
+    - Setting to disable auto-switch between "Hero" and "Statistics"
+    - Settings for millisecond levels
+    - Settings for score percentages
+    - Setting for "slack" (i.e. scale the millisecond levels)
+    - Division level setting
+  - More stats to show
+  - Even Prettier UI (flexbox, fonts, colors, general layout)
+- Features
+  - Using a midi file as "target" instead of the "grid"
