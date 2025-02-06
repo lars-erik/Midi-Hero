@@ -100,6 +100,11 @@ jobs:
           name: Test Results - ${{ matrix.os }}
           path: test-results.xml
   
+      - name: Publish Test Results in GitHub UI
+        uses: mikepenz/action-junit-report@v3
+        with:
+          report_paths: "**/test-results.xml"
+    
       - name: Check for Artifact Publish Trigger
         id: check_artifact
         run: |
