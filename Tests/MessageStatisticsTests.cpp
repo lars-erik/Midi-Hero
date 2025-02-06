@@ -14,16 +14,15 @@ using namespace Catch::Matchers;
 
 struct StatisticsFixture
 {
-    shared_ptr<MidiHeroSettings> settings;
     MidiListModel model;
-    vector<shared_ptr<TimedMidiMessage>> notes;
+    shared_ptr<MidiHeroSettings> settings;
 
     StatisticsFixture(int divisionLevel, const string& csvData) :
         model(getTestData(csvData)),
-        notes(model.getNotes())
+        settings(model.getSettings())
     {
-        model.getSettings()->setDivisionLevel(divisionLevel);
-        model.getSettings()->getTiming().setScale(1.0);
+        settings->setDivisionLevel(divisionLevel);
+        settings->getTiming().setScale(1.0);
 
         juce::MessageManager::getInstance()->runDispatchLoopUntil(10);
     }
@@ -31,7 +30,10 @@ struct StatisticsFixture
     string buildReport() const
     {
         int divisionLevel = model.getSettings()->getDivisionLevel();
-        return ::buildReport(notes, divisionLevel);
+        auto summary = ::buildScoreCountReport(model);
+        auto details = ::buildReport(model.getNotes(), divisionLevel);
+
+        return summary + details;
     }
 };
 

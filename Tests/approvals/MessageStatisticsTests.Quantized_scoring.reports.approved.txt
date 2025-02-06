@@ -1,3 +1,15 @@
+Summary
+
+Total:   100% - Perfect
+
+Perfect: 16
+Great:   0
+Good:    0
+Off:     0
+Bad:     0
+
+Details
+
 Bar        PPQ        Position   MS Offset  Int. PPQ   Intended   Data                 Score      Judgement  
          0          0 1.1.1               0          0 1.1.1      C3 Velocity 100               1 Perfect    
          0          1 1.2.1               0          1 1.2.1      E3 Velocity 100               1 Perfect    
@@ -15,4 +27,5 @@ Bar        PPQ        Position   MS Offset  Int. PPQ   Intended   Data          
          4      7.125 2.4.2               0      7.125 2.4.2      E3 Velocity 100               1 Perfect    
          4       7.25 2.4.2               0       7.25 2.4.2      G3 Velocity 100               1 Perfect    
          4      7.375 2.4.3               0      7.375 2.4.3      E3 Velocity 100               1 Perfect    
+
 

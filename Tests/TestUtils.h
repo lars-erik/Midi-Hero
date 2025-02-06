@@ -61,6 +61,8 @@ inline string buildReport(vector<shared_ptr<TimedMidiMessage>> const& notes, int
 {
     ostringstream stream;
 
+    stream << "Details" << endl << endl;
+
     printColumn(stream, "Bar", 10, false);
     printColumn(stream, "PPQ", 10, false);
     printColumn(stream, "Position", 10, false);
@@ -86,6 +88,28 @@ inline string buildReport(vector<shared_ptr<TimedMidiMessage>> const& notes, int
         printColumn(stream, note->getScore().getScoreName(), 10, false);
         stream << endl;
     }
+
+    stream << endl;
+
+    return stream.str();
+}
+
+inline string buildScoreCountReport(MidiListModel const& model)
+{
+    auto scoreCounts = model.getScoreCounts();
+    ostringstream stream;
+
+    stream << "Summary" << endl << endl;
+
+    stream << "Total:   " << (model.getScore().average * 100) << "% - " << model.getScore().getScoreName() << endl << endl;
+
+    stream << "Perfect: " << scoreCounts["Perfect"] << endl;
+    stream << "Great:   " << scoreCounts["Great"] << endl;
+    stream << "Good:    " << scoreCounts["Good"] << endl;
+    stream << "Off:     " << scoreCounts["Off"] << endl;
+    stream << "Bad:     " << scoreCounts["Bad"] << endl;
+
+    stream << endl;
 
     return stream.str();
 }

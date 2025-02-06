@@ -19,7 +19,7 @@ public:
 
         if (!messages.empty())
         {
-            notes = filterMessages([](shared_ptr<TimedMidiMessage> const& m) { return m->message.isNoteOn(); });
+            notes = filterMessages(isNoteOn);
             recalculateScores();
         }
 
@@ -33,7 +33,12 @@ public:
 
     void recalculateScores()
     {
-        score = accumulate(std::begin(notes), std::end(notes), Scoring(), [](Scoring rt, shared_ptr<TimedMidiMessage> const& m) { return rt + m->getScore(); });
+        scoreCounts = scoreCountTemplate;
+        score = accumulate(std::begin(notes), std::end(notes), Scoring(), [&](Scoring rt, shared_ptr<TimedMidiMessage> const& m)
+        {
+            scoreCounts[m->getScore().getScoreName()]++;
+            return rt + m->getScore();
+        });
     }
 
     void addMessages(MidiQueue& queue)
@@ -53,28 +58,7 @@ public:
 
         newNotes.clear();
         batchScore = Scoring();
-        for_each(first, last, [&](const shared_ptr<TimedMidiMessage> msg)
-        {
-            if (msg->message.isMidiStart())
-            {
-                IsPlaying.setValue(true);
-
-                // TODO: If enabled &| is at bar 0
-                clear();
-            }
-            if (msg->message.isMidiStop())
-            {
-                IsPlaying.setValue(false);
-            }
-            if (msg->message.isNoteOn())
-            {
-                notes.push_back(msg);
-                newNotes.push_back(msg);
-                auto scoring = msg->getScore();
-                score += scoring;
-                batchScore += scoring;
-            }
-        });
+        for_each(first, last, [&](auto const& msg) { processMessage(msg); });
 
         int newCount = static_cast<int>(newNotes.size()) + static_cast<int>(NoteCount.getValue());
         NoteCount.setValue(newCount);
@@ -86,6 +70,7 @@ public:
         notes.clear();
         newNotes.clear();
         score = Scoring();
+        scoreCounts = scoreCountTemplate;
         NoteCount.setValue(0);
     }
 
@@ -93,19 +78,19 @@ public:
 
     size_t size() const { return messages.size(); }
 
-    vector<shared_ptr<TimedMidiMessage>> getMessages()
+    vector<shared_ptr<TimedMidiMessage>> getMessages() const
     {
         return messages;
     }
 
-    vector<shared_ptr<TimedMidiMessage>> getNewNotes()
+    vector<shared_ptr<TimedMidiMessage>> getNewNotes() const
     {
         return newNotes;
     }
 
-    vector<shared_ptr<TimedMidiMessage>> getNotes()
+    vector<shared_ptr<TimedMidiMessage>> getNotes() const
     {
-        return filterMessages([&](const shared_ptr<TimedMidiMessage>& msg) { return msg->message.isNoteOn(); });
+        return notes;
     }
 
     Scoring getBatchScore() const
@@ -118,24 +103,9 @@ public:
         return score;
     }
 
-    std::map<std::string, int> getScoreCounts()
+    std::map<std::string, int> getScoreCounts() const
     {
-        auto notes = getNotes();
-
-        std::map<std::string, int> scores = {
-            {"Perfect", 0 },
-            {"Great", 0 },
-            {"Good", 0 },
-            {"Off", 0 },
-            {"Bad", 0 }
-        };
-
-        for (shared_ptr<TimedMidiMessage> m : notes)
-        {
-            scores[m->getScore().getScoreName()]++;
-        }
-
-        return scores;
+        return scoreCounts;
     }
 
     shared_ptr<MidiHeroSettings> const& getSettings() const { return settings; }
@@ -145,6 +115,32 @@ public:
     READONLY_OBSERVABLE(bool, IsPlaying)
 
 private:
+    static bool isNoteOn(shared_ptr<TimedMidiMessage> const& msg) { return msg->message.isNoteOn(); }
+
+    void processMessage(shared_ptr<TimedMidiMessage> msg)
+    {
+        if (msg->message.isMidiStart())
+        {
+            IsPlaying.setValue(true);
+
+            // TODO: If enabled &| is at bar 0
+            clear();
+        }
+        if (msg->message.isMidiStop())
+        {
+            IsPlaying.setValue(false);
+        }
+        if (msg->message.isNoteOn())
+        {
+            notes.push_back(msg);
+            newNotes.push_back(msg);
+            auto scoring = msg->getScore();
+            score += scoring;
+            batchScore += scoring;
+            scoreCounts[scoring.getScoreName()]++;
+        }
+    }
+
     template <typename Predicate>
     std::vector<shared_ptr<TimedMidiMessage>> filterMessages(Predicate predicate)
     {
@@ -157,6 +153,16 @@ private:
         );
         return notes;
     }
+
+    const map<string, int> scoreCountTemplate = {
+        {"Perfect", 0 },
+        {"Great", 0 },
+        {"Good", 0 },
+        {"Off", 0 },
+        {"Bad", 0 }
+    };
+
+    map<string, int> scoreCounts = scoreCountTemplate;
 
     shared_ptr<MidiHeroSettings> settings;
     Observer<int> divisionLevelObserver;

@@ -1,3 +1,15 @@
+Summary
+
+Total:   76% - Good
+
+Perfect: 3
+Great:   4
+Good:    5
+Off:     1
+Bad:     0
+
+Details
+
 Bar        PPQ        Position   MS Offset  Int. PPQ   Intended   Data                 Score      Judgement  
          0       0.16 1.1.2             -45       0.25 1.1.2      C4 Velocity 127            0.25 Off        
          0      1.022 1.2.1              11          1 1.2.1      E4 Velocity 127             0.9 Great      
@@ -12,4 +24,5 @@ Bar        PPQ        Position   MS Offset  Int. PPQ   Intended   Data          
          4       6.56 2.3.3              30        6.5 2.3.3      G4 Velocity 127             0.6 Good       
          4      6.827 2.3.4              38       6.75 2.3.4      E4 Velocity 127             0.6 Good       
          4      7.001 2.4.1               1          7 2.4.1      C4 Velocity 127               1 Perfect    
+
 
