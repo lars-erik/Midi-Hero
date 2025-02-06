@@ -10,7 +10,6 @@ class LogTablePage :
 {
 public:
     LogTablePage(MidiHeroAudioProcessor&);
-    ~LogTablePage() override;
 
     void paint(juce::Graphics&) override;
     void resized() override;

@@ -47,6 +47,7 @@ CPMAddPackage("gh:approvals/ApprovalTests.cpp@.10.13.0")
 #add_executable(Tests ${TestFiles})
 juce_add_console_app(Tests)
 target_sources(Tests PRIVATE ${TestFiles})
+source_group("Tests" FILES ${TestFiles})
 
 target_compile_features(Tests PRIVATE cxx_std_20)
 

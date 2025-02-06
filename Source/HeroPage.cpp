@@ -1,4 +1,5 @@
 #include "HeroPage.h"
+#include "Scoring.h"
 
 HeroPage::HeroPage(MidiHeroAudioProcessor& processor) :
     Component("Hero"),
@@ -56,7 +57,7 @@ void HeroPage::resized()
 
 void HeroPage::scoreNewNotes()
 {
-        const int nextLabelIndex = currentLabel++ % MaxLabels;
+    const int nextLabelIndex = currentLabel++ % MaxLabels;
     JudgementLabel* label = labels[nextLabelIndex];
 
     auto score = audioProcessor.model.getBatchScore();

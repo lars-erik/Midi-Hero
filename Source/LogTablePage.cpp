@@ -1,4 +1,5 @@
 #include "LogTablePage.h"
+#include "Scoring.h"
 
 std::string intToHex(int value) {
     std::ostringstream oss;
@@ -17,10 +18,6 @@ LogTablePage::LogTablePage(MidiHeroAudioProcessor& audioProcessor) :
 
     clearButton.onClick = [&] { audioProcessor.model.clear(); };
     copyButton.onClick = [&]() { copyToClip(); };
-}
-
-LogTablePage::~LogTablePage()
-{
 }
 
 void LogTablePage::copyToClip() const

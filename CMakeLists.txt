@@ -32,6 +32,7 @@ juce_add_plugin(MidiHero
     PRODUCT_NAME "Midi Hero"
 )
 
+
 # This lets us use our code in both the JUCE targets and our Test target
 # Without running into ODR violations
 add_library(SharedCode INTERFACE)
@@ -73,9 +74,13 @@ set_target_properties(SharedCode PROPERTIES
 
 set(MODEL_FILES
     Source/MidiListModel.h
+    Source/MidiListModel.cpp
+    Source/Scoring.h
+    Source/Scoring.cpp
     Source/MidiQueue.h
     Source/Observer.h
     Source/TimedMidiMessage.h
+    Source/TimedMidiMessage.cpp
 )
 
 set(GUI_FILES
@@ -112,5 +117,3 @@ source_group("Source Files\\GUI" FILES ${GUI_FILES})
 source_group("Source Files\\Plugin" FILES ${GLOBAL_FILES})
 
 include(Tests)
-
-

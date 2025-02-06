@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Global.h"
+#include "Scoring.h"
 #include "MidiHeroSettings.h"
 #include "MidiListModel.h"
 #include "TimedMidiMessage.h"
