@@ -72,48 +72,17 @@ set_target_properties(SharedCode PROPERTIES
     CXX_EXTENSIONS NO
 )
 
-set(MODEL_FILES
-    Source/MidiListModel.h
-    Source/MidiListModel.cpp
-    Source/Scoring.h
-    Source/Scoring.cpp
-    Source/MidiQueue.h
-    Source/Observer.h
-    Source/TimedMidiMessage.h
-    Source/TimedMidiMessage.cpp
-)
+# Recursively find all source and header files
+file(GLOB_RECURSE MODEL_FILES "Source/Model/*.*")
+file(GLOB_RECURSE GUI_FILES "Source/GUI/*.*")
+file(GLOB_RECURSE GLOBAL_FILES "Source/Plugin/*.*")
 
-set(GUI_FILES
-    Source/DivisionLevelComponent.h
-    Source/HeroPage.cpp
-    Source/HeroPage.h
-    Source/JudgementLabel.cpp
-    Source/JudgementLabel.h
-    Source/LogTablePage.cpp
-    Source/LogTablePage.h
-    Source/MidiTable.h
-    Source/ScoreCountsComponent.h
-    Source/StatisticsPage.cpp
-    Source/StatisticsPage.h
-    Source/TabsComponent.cpp
-    Source/TabsComponent.h
-    Source/TotalScoreComponent.h
-)
-
-set(GLOBAL_FILES
-    Source/Global.h
-    Source/MidiHeroSettings.h
-    Source/PluginEditor.cpp
-    Source/PluginEditor.h
-    Source/PluginProcessor.cpp
-    Source/PluginProcessor.plumbing.cpp
-    Source/PluginProcessor.h
-)
-
+# Add sources to the target
 target_sources(SharedCode INTERFACE ${MODEL_FILES} ${GUI_FILES} ${GLOBAL_FILES})
 
-source_group("Source Files\\Model" FILES ${MODEL_FILES})
-source_group("Source Files\\GUI" FILES ${GUI_FILES})
-source_group("Source Files\\Plugin" FILES ${GLOBAL_FILES})
+# Automatically reflect folder structure in VS Solution Explorer
+source_group(TREE ${CMAKE_SOURCE_DIR}/Source PREFIX "Source Files" FILES ${MODEL_FILES} ${GUI_FILES} ${GLOBAL_FILES})
+
+message(${JUCE_MODULES_DIR})
 
 include(Tests)

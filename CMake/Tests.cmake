@@ -17,7 +17,7 @@ file(GLOB_RECURSE TestFiles CONFIGURE_DEPENDS
     )
 
 include(EmbedCsv)
-set(FILES_AND_NAMES
+set(CSV_ITEMS
     "${CMAKE_CURRENT_SOURCE_DIR}/Tests/Off.csv|offCsv"
     "${CMAKE_CURRENT_SOURCE_DIR}/Tests/Quantized.csv|quantizedCsv"
 )
@@ -25,7 +25,7 @@ set(FILES_AND_NAMES
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Resources)
 embed_csv(
     "${CMAKE_BINARY_DIR}/Resources/CsvFiles.h"
-    ${FILES_AND_NAMES}
+    ${CSV_ITEMS}
 )
 include_directories("${CMAKE_BINARY_DIR}/Resources")
 
@@ -53,6 +53,9 @@ target_compile_features(Tests PRIVATE cxx_std_20)
 
 # Our test executable also wants to know about our plugin code...
 target_include_directories(Tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Source)
+target_include_directories(Tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Source/Model)
+target_include_directories(Tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Source/GUI)
+target_include_directories(Tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Source/Plugin)
 
 target_include_directories(Tests PRIVATE
     ${CMAKE_BINARY_DIR}/MidiHero_artefacts/JuceLibraryCode
