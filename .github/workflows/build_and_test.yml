@@ -48,17 +48,27 @@ jobs:
 #        id: gitversion
 #        uses: GitTools/actions/gitversion/execute@v0
 
-      - name: Cache CPM & CMake Dependencies
+      - name: Cache CMake & JUCE Object Files
         uses: actions/cache@v4
         with:
           path: |
-            ~/.cache/CPM  # ✅ Cache CPM package downloads
+            ~/.cache/CPM  # ✅ CPM package downloads
+            build/_deps   # ✅ CMake's external dependencies (Catch2, ApprovalTests)
             build/CMakeCache.txt
             build/CMakeFiles
             build/JUCE/CMakeFiles
+            build/MidiHero_artefacts  # ✅ Plugin binaries (VST3, AU)
           key: ${{ runner.os }}-cpm-${{ hashFiles('CMakeLists.txt') }}
           restore-keys: |
             ${{ runner.os }}-cpm-
+
+      - name: Cache JUCE Modules
+        uses: actions/cache@v4
+        with:
+          path: build/JUCE/modules/CMakeFiles
+          key: ${{ runner.os }}-juce-${{ hashFiles('CMakeLists.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-juce-
 
       - name: Install JUCE's Linux Deps
         if: runner.os == 'Linux'
