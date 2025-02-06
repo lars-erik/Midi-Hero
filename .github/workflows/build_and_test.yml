@@ -88,8 +88,17 @@ jobs:
         run: cmake --build build --config Release --parallel
 
       - name: Run Tests
-        run: ctest --test-dir build --output-on-failure
+        run: ./build/Tests_artefacts/Tests -s -d yes
 
+      - name: Run Tests for publish
+        run: ./build/Tests_artefacts/Tests --reporter junit --out test-results.xml
+        
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: Test Results
+          path: test-results.xml
+  
       - name: Check for Artifact Publish Trigger
         id: check_artifact
         run: |
