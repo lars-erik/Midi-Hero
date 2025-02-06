@@ -32,7 +32,7 @@ public:\
     void set##name(type value) {\
         name.setValue(value);\
     }\
-\
+
 
 #ifdef UNIT_TESTS
 struct CtorLogger

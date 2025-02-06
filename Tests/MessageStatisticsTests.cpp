@@ -14,6 +14,7 @@ using namespace Catch::Matchers;
 
 struct StatisticsFixture
 {
+    shared_ptr<MidiHeroSettings> settings;
     MidiListModel model;
     vector<shared_ptr<TimedMidiMessage>> notes;
 
@@ -23,6 +24,8 @@ struct StatisticsFixture
     {
         model.getSettings()->setDivisionLevel(divisionLevel);
         model.getSettings()->getTiming().setScale(1.0);
+
+        juce::MessageManager::getInstance()->runDispatchLoopUntil(10);
     }
 
     string buildReport() const
@@ -34,7 +37,9 @@ struct StatisticsFixture
 
 struct QuantizedFixture : StatisticsFixture
 {
-    QuantizedFixture() : StatisticsFixture(16, quantizedCsv) { }
+    QuantizedFixture() : StatisticsFixture(16, quantizedCsv)
+    {
+    }
 };
 
 TEST_CASE_METHOD(QuantizedFixture, "Quantized scoring")
@@ -49,13 +54,15 @@ TEST_CASE_METHOD(QuantizedFixture, "Quantized scoring")
     {
         auto theModel = model;
         auto score = model.getScore();
-        REQUIRE_THAT(score.total, WithinAbs(1, .001f));
+        REQUIRE_THAT(score.average, WithinAbs(1, .001f));
     }
 }
 
 struct OffFixture : StatisticsFixture
 {
-    OffFixture() : StatisticsFixture(4, offCsv) {}
+    OffFixture() : StatisticsFixture(4, offCsv)
+    {
+    }
 };
 
 TEST_CASE_METHOD(OffFixture, "Off scoring")
@@ -70,14 +77,21 @@ TEST_CASE_METHOD(OffFixture, "Off scoring")
     SECTION("has unscaled score 76%")
     {
         auto score = model.getScore();
-        REQUIRE_THAT(score.total, WithinAbs(.76f, .001f));
+
+        vector<TimedMidiMessage> notes;
+        auto notePtrs = model.getNotes();
+        transform(begin(notePtrs), end(notePtrs), back_inserter(notes), [](shared_ptr<TimedMidiMessage> const& m) { return *m; });
+
+        REQUIRE_THAT(score.average, WithinAbs(.76f, .001f));
     }
 
     SECTION("has scaled to .5 score 50%")
     {
         model.getSettings()->getTiming().setScale(.5f);
+        juce::MessageManager::getInstance()->runDispatchLoopUntil(10);
+
         auto score = model.getScore();
-        REQUIRE_THAT(score.total, WithinAbs(.5f, .001f));
+        REQUIRE_THAT(score.average, WithinAbs(.5f, .001f));
     }
 }
 

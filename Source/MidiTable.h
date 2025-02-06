@@ -131,12 +131,12 @@ private:
                 case barColumn:         return String(message->position->getPpqPositionOfLastBarStart().orFallback(0));
                 case ppqColumn:         return String(message->position->getPpqPosition().orFallback(0));
                 case adjustedColumn:    return String(message->getPositionFormatted());
-                case intendedPpqColumn: return String(message->getIntendedPosition(divisionLevel));
-                case intendedColumn:    return String(message->getIntendedPositionFormatted(divisionLevel));
+                case intendedPpqColumn: return String(message->getIntendedPosition());
+                case intendedColumn:    return String(message->getIntendedPositionFormatted());
                 case diffColumn:        return String(message->getPpqDiffInMs());
                 case channelColumn:     return String(message->message.getChannel());
                 case dataColumn:        return getDataString(message->message);
-                case scoreColumn:       return String(message->getScoreName());
+                case scoreColumn:       return String(message->getScore().getScoreName());
                 default:                break;
                 }
 

@@ -4,9 +4,6 @@
 #include "Observer.h"
 
 class MidiHeroSettings
-#ifdef UNIT_TESTS
-    : CtorLogger
-#endif
 {
 public:
     /*
@@ -14,16 +11,11 @@ public:
      */
 
     class TimingSettings
-#ifdef UNIT_TESTS
-        : CtorLogger
-#endif
     {
     public:
         explicit TimingSettings(ValueTree& state)
             : state(state)
         {
-            cout << "TimingSettings ctor " << this << endl;
-
             initialize();
         }
 
@@ -86,8 +78,6 @@ public:
         state(state),
         timing(state)
     {
-        cout << "MidiHeroSettings ctor " << this << endl;
-
         initialize();
     }
 

@@ -27,7 +27,7 @@ void LogTablePage::copyToClip() const
 {
     std::ostringstream str;
     str << "TimeInSeconds;PpqPosition;BarPpqPosition;Byte1;Byte2;Byte3;TimeStamp\r\n";
-    for (const auto& msg : audioProcessor.model)
+    for (const auto& msg : audioProcessor.model.getMessages())
     {
         const uint8* rawData = msg->message.getRawData();
         const int rawSize = msg->message.getRawDataSize();

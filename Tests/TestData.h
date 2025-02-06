@@ -77,7 +77,7 @@ inline std::vector<shared_ptr<TimedMidiMessage>> transformToModel(std::vector<Mi
     timeSignature.numerator = 4;
     timeSignature.denominator = 4;
 
-    ranges::transform(data, 
+    std::transform(begin(data), end(data),
       std::back_inserter(messages),
       [&](const MidiData& item)
       {

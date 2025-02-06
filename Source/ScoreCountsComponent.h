@@ -25,9 +25,8 @@ public:
     {
         g.fillAll(findColour(ResizableWindow::backgroundColourId));
 
-        int divisionLevel = settings->getDivisionLevel();
         const auto score = model.getScore();
-        auto scores = model.getScoreCounts(divisionLevel);
+        auto scores = model.getScoreCounts();
 
         double maxPercent = 0;
         for (const std::string& key : Scoring::keys)
