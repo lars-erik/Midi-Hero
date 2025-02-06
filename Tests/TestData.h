@@ -102,10 +102,15 @@ inline std::vector<shared_ptr<TimedMidiMessage>> transformToModel(std::vector<Mi
     return messages;
 }
 
+inline MidiListModel getTestData(const string& csvData, shared_ptr<MidiHeroSettings> const& settings, int bpm = 120, int sampleRate = 44100)
+{
+    auto midiData = readCsvFile(csvData);
+    auto model = transformToModel(midiData, settings, bpm, sampleRate);
+    return MidiListModel(model, settings);
+}
+
 inline MidiListModel getTestData(const string& csvData, int bpm = 120, int sampleRate = 44100)
 {
     auto settings = createDefaultSettings();
-    auto midiData = readCsvFile(csvData);
-    auto model = transformToModel(midiData, settings, bpm, sampleRate);
-    return MidiListModel(model, createDefaultSettings());
+    return getTestData(csvData, settings, bpm, sampleRate);
 }

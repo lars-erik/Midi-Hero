@@ -163,10 +163,10 @@ public:
         return filterMessages([&](const shared_ptr<TimedMidiMessage>& msg) { return msg->message.isNoteOn(); });
     }
 
-    Scoring getScore(std::vector<shared_ptr<TimedMidiMessage>> notes) const
+    static Scoring getScore(std::vector<shared_ptr<TimedMidiMessage>> const& notes)
     {
         vector<double> scores;
-        std::transform(begin(notes), end(notes), back_inserter(scores), [&](const shared_ptr<TimedMidiMessage>& m) { return m->getScore(); });
+        std::transform(std::begin(notes), std::end(notes), back_inserter(scores), [&](const shared_ptr<TimedMidiMessage>& m) { return m->getScore(); });
         const long totalNotes = static_cast<long>(notes.size());
         const double score = std::accumulate(scores.begin(), scores.end(), 0.0);
         const double totalScore = round(score / totalNotes * 100) / 100;

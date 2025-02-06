@@ -47,6 +47,7 @@ TEST_CASE_METHOD(QuantizedFixture, "Quantized scoring")
 
     SECTION("has score 100%")
     {
+        auto theModel = model;
         auto score = model.getScore();
         REQUIRE_THAT(score.total, WithinAbs(1, .001f));
     }
