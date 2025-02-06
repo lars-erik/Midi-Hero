@@ -1,5 +1,6 @@
 #pragma once
 #include "Global.h"
+#include "MidiHeroSettings.h"
 #include "TimedMidiMessage.h"
 
 class Statistics
@@ -20,16 +21,16 @@ public:
         double lateRatio() const;
     };
 
-    Statistics() = default;
+    Statistics(shared_ptr<MidiHeroSettings> const&);
 
     void clear();
 
     void accumulate(shared_ptr<TimedMidiMessage> const& msg);
 
     map<string, ScoreCount> getCounts() const;
-    double getAvgMs() const;
-    int getMaxMs() const;
-    int getMinMs() const;
+    Accuracy getAvgAccuracy() const;
+    Accuracy getMaxAccuracy() const;
+    Accuracy getMinAccuracy() const;
 
 private:
     const map<string, ScoreCount> scoreCountsTemplate = {
@@ -42,10 +43,12 @@ private:
 
     map<string, ScoreCount> scoreCounts = scoreCountsTemplate;
 
-    int totalNotes;
-    int totalMs;
-    double avgMs;
-    int maxMs;
-    int minMs;
+    shared_ptr<MidiHeroSettings> settings;
+
+    int totalNotes = 0;
+    int totalMs = 0;
+    double avgMs = 0;
+    int maxMs = 0;
+    int minMs = 0;
 };
 

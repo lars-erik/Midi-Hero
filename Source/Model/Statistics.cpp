@@ -33,6 +33,11 @@ double Statistics::ScoreCount::lateRatio() const
     return static_cast<double>(late) / static_cast<double>(total);
 }
 
+Statistics::Statistics(shared_ptr<MidiHeroSettings> const& settings) :
+    settings(settings)
+{
+}
+
 void Statistics::accumulate(shared_ptr<TimedMidiMessage> const& msg)
 {
     totalNotes++;
@@ -59,17 +64,17 @@ map<string, Statistics::ScoreCount> Statistics::getCounts() const
     return scoreCounts;
 }
 
-double Statistics::getAvgMs() const
+Accuracy Statistics::getAvgAccuracy() const
 {
-    return avgMs;
+    return Accuracy(avgMs, settings);
 }
 
-int Statistics::getMaxMs() const
+Accuracy Statistics::getMaxAccuracy() const
 {
-    return maxMs;
+    return Accuracy(maxMs, settings);
 }
 
-int Statistics::getMinMs() const
+Accuracy Statistics::getMinAccuracy() const
 {
-    return minMs;
+    return Accuracy(minMs, settings);
 }

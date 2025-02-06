@@ -1,32 +1,35 @@
 Summary
 
-Total:   100% - Perfect
+Total:           100% - Perfect
+Average MS diff: 0 (Exact)
+Max MS diff:     0 (Exact)
+Min MS diff:     0 (Exact)
 
 Key       Total     Early     Perfect   Late      
-Perfect   16 (100%) 0 (0%)    16 (100%) 0 (0%)    
-Great     0 (0%)    0 (0%)    0 (0%)    0 (0%)    
-Good      0 (0%)    0 (0%)    0 (0%)    0 (0%)    
-Off       0 (0%)    0 (0%)    0 (0%)    0 (0%)    
-Bad       0 (0%)    0 (0%)    0 (0%)    0 (0%)    
+Perfect:  16 (100%) 0 (0%)    16 (100%) 0 (0%)    
+Great:    0 (0%)    0 (0%)    0 (0%)    0 (0%)    
+Good:     0 (0%)    0 (0%)    0 (0%)    0 (0%)    
+Off:      0 (0%)    0 (0%)    0 (0%)    0 (0%)    
+Bad:      0 (0%)    0 (0%)    0 (0%)    0 (0%)    
 
 Details
 
-Bar        PPQ        Position   MS Offset  Int. PPQ   Intended   Data                 Score      Judgement  
-         0          0 1.1.1               0          0 1.1.1      C3 Velocity 100               1 Perfect    
-         0          1 1.2.1               0          1 1.2.1      E3 Velocity 100               1 Perfect    
-         0          2 1.3.1               0          2 1.3.1      G3 Velocity 100               1 Perfect    
-         0          3 1.4.1               0          3 1.4.1      E3 Velocity 100               1 Perfect    
-         0          4 2.1.1               0          4 2.1.1      C3 Velocity 100               1 Perfect    
-         4        4.5 2.1.3               0        4.5 2.1.3      E3 Velocity 100               1 Perfect    
-         4          5 2.2.1               0          5 2.2.1      G3 Velocity 100               1 Perfect    
-         4        5.5 2.2.3               0        5.5 2.2.3      E3 Velocity 100               1 Perfect    
-         4          6 2.3.1               0          6 2.3.1      C3 Velocity 100               1 Perfect    
-         4       6.25 2.3.2               0       6.25 2.3.2      E3 Velocity 100               1 Perfect    
-         4        6.5 2.3.3               0        6.5 2.3.3      G3 Velocity 100               1 Perfect    
-         4       6.75 2.3.4               0       6.75 2.3.4      E3 Velocity 100               1 Perfect    
-         4          7 2.4.1               0          7 2.4.1      C3 Velocity 100               1 Perfect    
-         4      7.125 2.4.2               0      7.125 2.4.2      E3 Velocity 100               1 Perfect    
-         4       7.25 2.4.2               0       7.25 2.4.2      G3 Velocity 100               1 Perfect    
-         4      7.375 2.4.3               0      7.375 2.4.3      E3 Velocity 100               1 Perfect    
+Bar        PPQ        Position   Accuracy               Int. PPQ   Intended   Score      Judgement  Data                 
+         0          0 1.1.1      0 (Exact)                       0 1.1.1               1 Perfect    C3 Velocity 100      
+         0          1 1.2.1      0 (Exact)                       1 1.2.1               1 Perfect    E3 Velocity 100      
+         0          2 1.3.1      0 (Exact)                       2 1.3.1               1 Perfect    G3 Velocity 100      
+         0          3 1.4.1      0 (Exact)                       3 1.4.1               1 Perfect    E3 Velocity 100      
+         0          4 2.1.1      0 (Exact)                       4 2.1.1               1 Perfect    C3 Velocity 100      
+         4        4.5 2.1.3      0 (Exact)                     4.5 2.1.3               1 Perfect    E3 Velocity 100      
+         4          5 2.2.1      0 (Exact)                       5 2.2.1               1 Perfect    G3 Velocity 100      
+         4        5.5 2.2.3      0 (Exact)                     5.5 2.2.3               1 Perfect    E3 Velocity 100      
+         4          6 2.3.1      0 (Exact)                       6 2.3.1               1 Perfect    C3 Velocity 100      
+         4       6.25 2.3.2      0 (Exact)                    6.25 2.3.2               1 Perfect    E3 Velocity 100      
+         4        6.5 2.3.3      0 (Exact)                     6.5 2.3.3               1 Perfect    G3 Velocity 100      
+         4       6.75 2.3.4      0 (Exact)                    6.75 2.3.4               1 Perfect    E3 Velocity 100      
+         4          7 2.4.1      0 (Exact)                       7 2.4.1               1 Perfect    C3 Velocity 100      
+         4      7.125 2.4.2      0 (Exact)                   7.125 2.4.2               1 Perfect    E3 Velocity 100      
+         4       7.25 2.4.2      0 (Exact)                    7.25 2.4.2               1 Perfect    G3 Velocity 100      
+         4      7.375 2.4.3      0 (Exact)                   7.375 2.4.3               1 Perfect    E3 Velocity 100      
 
 

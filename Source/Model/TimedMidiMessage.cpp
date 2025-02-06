@@ -51,6 +51,12 @@ int TimedMidiMessage::getPpqDiffInMs() const
     return result;
 }
 
+Accuracy TimedMidiMessage::getAccuracy()
+{
+    if (accuracy.isEmpty()) accuracy = Accuracy(shared_from_this());
+    return accuracy;
+}
+
 Scoring TimedMidiMessage::getScore() const
 {
     if (!message.isNoteOn())

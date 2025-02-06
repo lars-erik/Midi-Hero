@@ -2,7 +2,8 @@
 
 MidiListModel::MidiListModel(const std::vector<shared_ptr<TimedMidiMessage>>& messages, const shared_ptr<MidiHeroSettings>& settings) :
     settings(settings),
-    messages(messages)
+    messages(messages),
+    stats(settings)
 {
     settings->observeDivisionLevel(&divisionLevelObserver, [&](int) { recalculateScores(); });
     settings->getTiming().observeScale(&scalingObserver, [&](float) { recalculateScores(); });
@@ -24,12 +25,10 @@ const TimedMidiMessage& MidiListModel::operator[] (size_t ind) const { return *m
 
 void MidiListModel::recalculateScores()
 {
-    scoreCounts = scoreCountTemplate;
     stats.clear();
     score = accumulate(std::begin(notes), std::end(notes), Scoring(), [&](Scoring rt, shared_ptr<TimedMidiMessage> const& m)
     {
         stats.accumulate(m);
-        scoreCounts[m->getScore().getScoreName()]++;
         return rt + m->getScore();
     });
 }
@@ -77,7 +76,6 @@ void MidiListModel::processMessage(shared_ptr<TimedMidiMessage> const& msg)
         auto scoring = msg->getScore();
         score += scoring;
         batchScore += scoring;
-        scoreCounts[scoring.getScoreName()]++;
         stats.accumulate(msg);
     }
 }
@@ -89,7 +87,6 @@ void MidiListModel::clear()
     newNotes.clear();
     stats.clear();
     score = Scoring();
-    scoreCounts = scoreCountTemplate;
     NoteCount.setValue(0);
 }
 
@@ -106,7 +103,5 @@ Scoring MidiListModel::getBatchScore() const { return batchScore; }
 Scoring MidiListModel::getScore() const { return score; }
 
 Statistics MidiListModel::getStatistics() const { return stats; }
-
-std::map<std::string, int> MidiListModel::getScoreCounts() const { return scoreCounts; }
 
 shared_ptr<MidiHeroSettings> const& MidiListModel::getSettings() const { return settings; }

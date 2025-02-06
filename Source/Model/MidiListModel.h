@@ -37,8 +37,6 @@ public:
 
     Statistics getStatistics() const;
 
-    std::map<std::string, int> getScoreCounts() const;
-
     shared_ptr<MidiHeroSettings> const& getSettings() const;
 
     READONLY_OBSERVABLE(int, NoteCount)
@@ -63,16 +61,6 @@ private:
         return notes;
     }
 
-    const map<string, int> scoreCountTemplate = {
-        {"Perfect", 0 },
-        {"Great", 0 },
-        {"Good", 0 },
-        {"Off", 0 },
-        {"Bad", 0 }
-    };
-
-    map<string, int> scoreCounts = scoreCountTemplate;
-
     shared_ptr<MidiHeroSettings> settings;
     Observer<int> divisionLevelObserver;
     Observer<float> scalingObserver;
@@ -83,5 +71,5 @@ private:
     std::vector<shared_ptr<TimedMidiMessage>> notes;
     Scoring score = Scoring();
     Scoring batchScore = Scoring();
-    Statistics stats = Statistics();
+    Statistics stats;
 };

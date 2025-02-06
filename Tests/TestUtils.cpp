@@ -40,12 +40,12 @@ string buildReport(vector<shared_ptr<TimedMidiMessage>> const& notes, int const 
     printColumn(stream, "Bar", 10, false);
     printColumn(stream, "PPQ", 10, false);
     printColumn(stream, "Position", 10, false);
-    printColumn(stream, "MS Offset", 10, false);
+    printColumn(stream, "Accuracy", 22, false);
     printColumn(stream, "Int. PPQ", 10, false);
     printColumn(stream, "Intended", 10, false);
-    printColumn(stream, "Data", 20, false);
     printColumn(stream, "Score", 10, false);
     printColumn(stream, "Judgement", 10, false);
+    printColumn(stream, "Data", 20, false);
     stream << endl;
 
     for (auto& note : notes)
@@ -54,12 +54,12 @@ string buildReport(vector<shared_ptr<TimedMidiMessage>> const& notes, int const 
         printColumn(stream, *note->position->getPpqPositionOfLastBarStart(), 10);
         printColumn(stream, note->getPosition(), 10);
         printColumn(stream, note->getPositionFormatted(), 10, false);
-        printColumn(stream, note->getPpqDiffInMs(), 10);
+        printColumn(stream, note->getAccuracy().toString(), 22, false);
         printColumn(stream, note->getIntendedPosition(), 10);
         printColumn(stream, note->getIntendedPositionFormatted(), 10, false);
-        printColumn(stream, MidiTable::getDataString(note->message), 20, false);
         printColumn(stream, note->getScore().score, 10);
         printColumn(stream, note->getScore().getScoreName(), 10, false);
+        printColumn(stream, MidiTable::getDataString(note->message), 20, false);
         stream << endl;
     }
 
@@ -84,9 +84,9 @@ string buildStatisticsReport(MidiListModel const& model)
     stream << "Summary" << endl << endl;
 
     stream << "Total:           " << formatPercent(model.getScore().average) << " - " << model.getScore().getScoreName() << endl;
-    stream << "Average MS diff: " << setprecision(0) << model.getStatistics().getAvgMs() << "ms" << endl;
-    stream << "Max MS diff:     " << setprecision(0) << model.getStatistics().getMaxMs() << "ms" << endl;
-    stream << "Min MS diff:     " << setprecision(0) << model.getStatistics().getMinMs() << "ms" << endl;
+    stream << "Average MS diff: " << setprecision(0) << model.getStatistics().getAvgAccuracy() << endl;
+    stream << "Max MS diff:     " << setprecision(0) << model.getStatistics().getMaxAccuracy() << endl;
+    stream << "Min MS diff:     " << setprecision(0) << model.getStatistics().getMinAccuracy() << endl;
     stream << endl;
 
     stream << setw(10) << left << "Key" << setw(10) << "Total" << setw(10) << "Early" << setw(10) << "Perfect" << setw(10) << "Late" << endl;

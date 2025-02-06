@@ -25,7 +25,10 @@ public:
 
     void push(MidiMessage& message, const shared_ptr<AudioPlayHead::PositionInfo>& position, const shared_ptr<MidiHeroSettings>& settings, const double sampleRate)
     {
-        fifo.write(1).forEach([&](int dest) { messages[(size_t)dest] = make_shared<TimedMidiMessage>(std::move(message), position, settings, sampleRate); });
+        fifo.write(1).forEach([&](int dest)
+        {
+            messages[(size_t)dest] = make_shared<TimedMidiMessage>(std::move(message), position, settings, sampleRate);
+        });
     }
 
     template <typename OutputIt>

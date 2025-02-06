@@ -26,28 +26,30 @@ public:
         g.fillAll(findColour(ResizableWindow::backgroundColourId));
 
         const auto score = model.getScore();
-        auto scores = model.getScoreCounts();
+        auto stats = model.getStatistics();
+        auto scores = stats.getCounts();
 
         double maxPercent = 0;
         for (const std::string& key : Scoring::keys)
         {
-            maxPercent = max(static_cast<double>(scores[key]) / score.notes, maxPercent);
+            maxPercent = max(scores[key].ratioOf(score.notes), maxPercent);
         }
 
         const int maxBarWidth = max(static_cast<int>(static_cast<double>(getLocalBounds().getWidth() - 185) / maxPercent), 50);
 
         int y = 0;
         int i = 0;
+        // TODO: Fetch from settings
         string ms[] = { "<10ms", "<20ms", "<40ms", "<80ms", ">=80ms" };
         for (const std::string& key : Scoring::keys)
         {
             g.setColour(findColour(Label::textColourId));
             g.drawText(String(key + " (" + ms[i++] + "): "), 0, y, 110, 25, Justification::centredLeft, false);
 
-            double percent = static_cast<double>(scores[key]) / score.notes;
+            double percent = scores[key].ratioOf(score.notes);
             const int width = static_cast<int>(percent * maxBarWidth);
 
-            g.drawText(String(scores[key]) + " (" + String(round(percent * 100)) + "%)", 120 + width + 5, y, 50, 25, Justification::centredLeft);
+            g.drawText(String(scores[key].total) + " (" + String(round(percent * 100)) + "%)", 120 + width + 5, y, 50, 25, Justification::centredLeft);
 
             g.setColour(Scoring::getColour(key));
             g.fillRect(120, y, width, 25);
