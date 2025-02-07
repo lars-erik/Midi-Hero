@@ -4,6 +4,10 @@
 
 A work in progress... 
 
+Status:  
+Dev: ![Dev Test Status](https://github.com/lars-erik/Midi-Hero/actions/workflows/build_and_test.yml/badge.svg?branch=dev)  
+Main: ![Main Test Status](https://github.com/lars-erik/Midi-Hero/actions/workflows/build_and_test.yml/badge.svg)  
+
 Logs midi on messages and times them against the grid.  
 Scores each note as:  
 
