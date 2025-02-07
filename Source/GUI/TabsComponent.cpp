@@ -2,6 +2,7 @@
 
 #include "HeroPage.h"
 #include "LogTablePage.h"
+#include "SettingsPage.h"
 #include "StatisticsPage.h"
 
 TabsComponent::TabsComponent(
@@ -16,6 +17,7 @@ TabsComponent::TabsComponent(
     addTab("Hero", colour, new HeroPage(processor), true);
     addTab("Statistics", colour, new StatisticsPage(processor), true);
     addTab("Log", colour, new LogTablePage(processor), true);
+    addTab("Settings", colour, new SettingsPage(processor.settings), true);
 
     processor.model.observeIsPlaying(&isPlayingObserver, [&](const bool& v) {
         DBG("Is playing: " << to_string(v));
