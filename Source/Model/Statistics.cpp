@@ -47,6 +47,12 @@ void Statistics::accumulate(shared_ptr<TimedMidiMessage> const& msg)
     minMs = totalNotes == 1 || abs(diff) < abs(minMs) ? diff : minMs;
     avgMs = static_cast<double>(totalMs) / max(static_cast<double>(totalNotes), 1.0);
     scoreCounts[msg->getScore().getScoreName()].accumulate(msg);
+
+    while (rangeAccuracies.size() >= settings->getRangeToKeep())
+    {
+        rangeAccuracies.pop_back();
+    }
+    rangeAccuracies.push_front(msg->getAccuracy());
 }
 
 void Statistics::clear()
@@ -77,4 +83,16 @@ Accuracy Statistics::getMaxAccuracy() const
 Accuracy Statistics::getMinAccuracy() const
 {
     return Accuracy(minMs, settings);
+}
+
+Accuracy Statistics::getRangeAccuracy() const
+{
+    Accuracy total = std::accumulate(begin(rangeAccuracies), end(rangeAccuracies), Accuracy());
+    Accuracy avg = total / rangeAccuracies.size();
+    return avg;
+}
+
+void Statistics::setRangeSize(int newSize)
+{
+    accuraciesToKeep = newSize;
 }

@@ -109,8 +109,14 @@ inline MidiListModel getTestData(const string& csvData, shared_ptr<MidiHeroSetti
     return MidiListModel(model, settings);
 }
 
-inline MidiListModel getTestData(const string& csvData, int bpm = 120, int sampleRate = 44100)
+inline MidiListModel getTestData(const string& csvData, function<void(shared_ptr<MidiHeroSettings>)> const& manipulate = nullptr, int bpm = 120, int sampleRate = 44100)
 {
     auto settings = createDefaultSettings();
+
+    if (manipulate != nullptr)
+    {
+        manipulate(settings);
+    }
+
     return getTestData(csvData, settings, bpm, sampleRate);
 }

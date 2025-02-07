@@ -92,6 +92,7 @@ public:
     TimingSettings& getTiming() { return timing; }
 
     OBSERVABLE(int, DivisionLevel)
+    OBSERVABLE(int, RangeToKeep)
 
 private:
     void initialize()
@@ -99,13 +100,15 @@ private:
         if (!state.hasType("settingsState"))
         {
             state.addChild({ "settingsState", {
-                { "divisionLevel", 4 }
+                { "divisionLevel", 4 },
+                { "rangeToKeep", 20 }
             }, {} }, -1, nullptr);
         }
 
         settingsState = state.getChildWithName("settingsState");
 
         DivisionLevel.referTo(settingsState.getPropertyAsValue("divisionLevel", nullptr));
+        RangeToKeep.referTo(settingsState.getPropertyAsValue("rangeToKeep", nullptr));
     }
 
     ValueTree& state;

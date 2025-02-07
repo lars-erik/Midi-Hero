@@ -32,6 +32,9 @@ public:
     Accuracy getMaxAccuracy() const;
     Accuracy getMinAccuracy() const;
 
+    Accuracy getRangeAccuracy() const;
+    void setRangeSize(int rangeSize);
+
 private:
     const map<string, ScoreCount> scoreCountsTemplate = {
         {"Perfect", ScoreCount() },
@@ -43,6 +46,9 @@ private:
 
     map<string, ScoreCount> scoreCounts = scoreCountsTemplate;
 
+    int accuraciesToKeep = 20;
+    deque<Accuracy> rangeAccuracies;
+    
     shared_ptr<MidiHeroSettings> settings;
 
     int totalNotes = 0;

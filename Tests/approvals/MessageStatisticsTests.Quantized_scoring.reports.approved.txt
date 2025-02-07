@@ -1,9 +1,11 @@
 Summary
 
-Total:           100% - Perfect
-Average MS diff: 0 (Exact)
-Max MS diff:     0 (Exact)
-Min MS diff:     0 (Exact)
+Total:            100% - Perfect
+Accuracy:
+Average: 0 (Exact)
+Worst:   0 (Exact)
+Best:    0 (Exact)
+Last 5:  0 (Exact)
 
 Key       Total     Early     Perfect   Late      
 Perfect:  16 (100%) 0 (0%)    16 (100%) 0 (0%)    

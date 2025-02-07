@@ -83,10 +83,12 @@ string buildStatisticsReport(MidiListModel const& model)
 
     stream << "Summary" << endl << endl;
 
-    stream << "Total:           " << formatPercent(model.getScore().average) << " - " << model.getScore().getScoreName() << endl;
-    stream << "Average MS diff: " << setprecision(0) << model.getStatistics().getAvgAccuracy() << endl;
-    stream << "Max MS diff:     " << setprecision(0) << model.getStatistics().getMaxAccuracy() << endl;
-    stream << "Min MS diff:     " << setprecision(0) << model.getStatistics().getMinAccuracy() << endl;
+    stream << "Total:            " << formatPercent(model.getScore().average) << " - " << model.getScore().getScoreName() << endl;
+    stream << "Accuracy:" << endl;
+    stream << "Average: " << model.getStatistics().getAvgAccuracy() << endl;
+    stream << "Worst:   " << model.getStatistics().getMaxAccuracy() << endl;
+    stream << "Best:    " << model.getStatistics().getMinAccuracy() << endl;
+    stream << "Last " << model.getSettings()->getRangeToKeep() << ":  " << model.getStatistics().getRangeAccuracy() << endl;
     stream << endl;
 
     stream << setw(10) << left << "Key" << setw(10) << "Total" << setw(10) << "Early" << setw(10) << "Perfect" << setw(10) << "Late" << endl;

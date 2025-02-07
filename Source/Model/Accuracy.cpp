@@ -14,6 +14,38 @@ Accuracy::Accuracy(int ms, shared_ptr<MidiHeroSettings> const& settings) :
 {
 }
 
+Accuracy Accuracy::operator+(Accuracy const& other)
+{
+    return
+    {
+        getMs() + other.getMs(),
+        settings == nullptr
+            ? other.settings
+            : settings
+    };
+}
+
+Accuracy Accuracy::operator+=(Accuracy const& other)
+{
+    if (message != nullptr)
+    {
+        ms = message->getPpqDiffInMs();
+        message = nullptr;
+    }
+    if (settings == nullptr)
+    {
+        settings = other.settings;
+    }
+    ms += other.getMs();
+    return *this;
+}
+
+Accuracy Accuracy::operator/(int divisor)
+{
+    int quotient = static_cast<int>(ceil(static_cast<double>(getMs()) / static_cast<double>(divisor)));
+    return { quotient, settings };
+}
+
 bool Accuracy::isEmpty() const
 {
     return settings == nullptr;

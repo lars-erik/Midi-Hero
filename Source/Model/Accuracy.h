@@ -2,7 +2,7 @@
 #include "Global.h"
 #include "MidiHeroSettings.h"
 
-class TimedMidiMessage;
+class TimedMidiMessage;;
 
 class Accuracy
 {
@@ -16,6 +16,10 @@ public:
     string toString() const;
 
     friend ostream& operator<<(ostream& os, const Accuracy& acc);
+
+    Accuracy operator+(Accuracy const&);
+    Accuracy operator+=(Accuracy const&);
+    Accuracy operator/(int);
 
 private:
     int getMs() const;

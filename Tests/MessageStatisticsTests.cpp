@@ -17,7 +17,7 @@ struct StatisticsFixture
     shared_ptr<MidiHeroSettings> settings;
 
     StatisticsFixture(int divisionLevel, const string& csvData) :
-        model(getTestData(csvData)),
+        model(getTestData(csvData, [](shared_ptr<MidiHeroSettings> const& s) { s->setRangeToKeep(5); })),
         settings(model.getSettings())
     {
         settings->setDivisionLevel(divisionLevel);

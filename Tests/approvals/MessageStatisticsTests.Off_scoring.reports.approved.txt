@@ -1,9 +1,11 @@
 Summary
 
-Total:           76% - Good
-Average MS diff: 4 (Exact)
-Max MS diff:     -45 (Too early)
-Min MS diff:     1 (Exact)
+Total:            76% - Good
+Accuracy:
+Average: 4 (Exact)
+Worst:   -45 (Too early)
+Best:    1 (Exact)
+Last 5:  19 (Slightly late)
 
 Key       Total     Early     Perfect   Late      
 Perfect:  3 (23%)   0 (0%)    3 (100%)  0 (0%)    
